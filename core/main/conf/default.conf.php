@@ -3,9 +3,9 @@ return array(
 	'Database' => array(
 			'Driver' => 'mysql',
 			'DBHost' => 'localhost',
-			'DB' => 'mydb',
+			'DB' => 'signcube',
 			'Username' => 'root',
-			'Password' => ''
+			'Password' => 'root'
 		)
 );
 
