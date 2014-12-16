@@ -2,7 +2,7 @@
 <configuration>
 	<authorization>
 		<allow pages="*" users="@" />
-		<allow pages="Login.*" users="*" />
+		<allow pages="FrontPage.*" users="*" />
 		<deny pages="*" users="?" />
 	</authorization>
 </configuration>
