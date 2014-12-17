@@ -6,14 +6,14 @@
  * @subpackage Controller
  * @author     lhe<helin16@gmail.com>
  */
-class LoginController extends BPCPageAbstract
+class LoginController extends FrontPageAbstract
 {
 	public function onLoad($param)
 	{
 		parent::onLoad($param);
 		if(Core::getUser() instanceof UserAccount)
 			$this->getResponse()->redirect('/');
-		$cScripts = BPCPageAbstract::getLastestJS(get_class($this));
+		$cScripts = FrontPageAbstract::getLastestJS(get_class($this));
 	    if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 	        $this->getPage()->getClientScript()->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
 	    if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
