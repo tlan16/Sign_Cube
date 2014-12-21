@@ -12,3 +12,5 @@ c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\structur
 Pause
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\data.sql
 Pause
+c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\signcube.sql
+Pause
