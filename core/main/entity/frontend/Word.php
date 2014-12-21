@@ -61,16 +61,6 @@ class Word extends BaseEntityAbstract
 	    $this->video = $value;
 	    return $this;
 	}
-	public function preSave()
-	{
-	}
-	/**
-	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::getJson()
-	 */
-	public function getJson($extra = '', $reset = false)
-	{
-	}
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()

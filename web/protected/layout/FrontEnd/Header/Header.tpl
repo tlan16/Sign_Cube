@@ -13,9 +13,9 @@
 			<div class="collapse navbar-collapse" id="top-menu-div">
 				<ul class="nav navbar-nav navbar-right top-menu" >
 					<li><a href="/">Home</a></li>
+					<li><a href="/words.html">Word List</a></li>
+					<li><a href="#">News</a></li>
 					<li><a href="/aboutus.html">About Us</a></li>
-					<li><a href="#">Blog</a></li>
-					<li><a href="#">Why Us</a></li>
 					<li><a href="/contactus.html">Contact Us</a></li>
 				</ul>
 			</div>
