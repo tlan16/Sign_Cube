@@ -239,9 +239,7 @@ class TBaseActiveCallbackControl extends TBaseActiveControl
 			}
 			else
 			{
-				// TCheckBoxList overrides findControl() with a fake implementation
-				// but accepts a second parameter to use the standard one
-				$control=$this->getControl()->findControl($id, true);
+				 $control=$this->getControl()->findControl($id);
 			}
 
 			if($control instanceof TCallbackOptions)

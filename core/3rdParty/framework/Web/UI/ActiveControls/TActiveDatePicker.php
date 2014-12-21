@@ -139,7 +139,7 @@ class TActiveDatePicker extends TDatePicker  implements ICallbackEventHandler, I
 		$cs->registerPradoScript("activedatepicker");
 	}
 
-	protected function renderClientControlScript($writer)
+	protected function registerCalendarClientScriptPost()
 	{
 		$cs = $this->getPage()->getClientScript();
 		if(!$cs->isEndScriptRegistered('TDatePicker.spacer'))

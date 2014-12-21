@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('UTC');
 /**
  * Boostrapper for the Core module
  * 
@@ -22,11 +21,13 @@ abstract class SystemCoreAbstract
 			$base . '/conf/',
 			$base . '/db/',
 			$base . '/entity/',
-			$base . '/entity/bank/',
+			$base . '/entity/content/',
+			$base . '/entity/property/',
 			$base . '/entity/system/',
 			$base . '/exception/',
-			$base . '/utils/',
-			$base . '/utils/html_parser/',
+			$base . '/util/',
+			$base . '/util/Connectors',
+			$base . '/util/Connectors/comms/',
 		);
 		foreach ($autoloadPaths as $path)
 		{
@@ -41,8 +42,8 @@ abstract class SystemCoreAbstract
 }
 spl_autoload_register(array('SystemCoreAbstract','autoload'));
 // Bootstrap the Prado framework
-// require_once dirname(__FILE__) . '/../3rdParty/PHPExcel/Classes/PHPExcel.php';
-// require_once dirname(__FILE__) . '/../3rdParty/PHPMailer/PHPMailerAutoload.php';
+require_once dirname(__FILE__) . '/../3rdParty/PHPExcel/Classes/PHPExcel.php';
+require_once dirname(__FILE__) . '/../3rdParty/PHPMailer/PHPMailerAutoload.php';
 require_once dirname(__FILE__) . '/../3rdParty/framework/prado.php';
 
 ?>

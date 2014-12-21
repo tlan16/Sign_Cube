@@ -1148,7 +1148,6 @@ Prado.WebUI.TBaseValidator = Class.create(Prado.WebUI.Control,
 	 				return Prado.WebUI.TDatePicker.getDropDownDate(control);//.getTime();
 	 			}
 	 		case 'THtmlArea':
-	 		case 'THtmlArea4':
 	 			if(typeof tinyMCE != "undefined")
 					tinyMCE.triggerSave();
 				return $F(control);
@@ -1181,7 +1180,6 @@ Prado.WebUI.TBaseValidator = Class.create(Prado.WebUI.Control,
 			case 'TDatePicker':
 				return value;
 			case 'THtmlArea':
-			case 'THtmlArea4':
 				return this.trim(value);
 			case 'TRadioButton':
 				return value;

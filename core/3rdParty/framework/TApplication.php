@@ -6,7 +6,7 @@
  * @link http://www.pradosoft.com/
  * @copyright Copyright &copy; 2005-2013 PradoSoft
  * @license http://www.pradosoft.com/license/
- * @version $Id: TApplication.php 3317 2013-09-03 10:19:09Z ctrlaltca $
+ * @version $Id: TApplication.php 3272 2013-02-13 21:43:28Z ctrlaltca $
  * @package System
  */
 
@@ -24,8 +24,8 @@ Prado::using('System.TService');
 Prado::using('System.Exceptions.TErrorHandler');
 Prado::using('System.Caching.TCache');
 Prado::using('System.IO.TTextWriter');
-Prado::using('System.Collections.TPriorityList');
-Prado::using('System.Collections.TPriorityMap');
+Prado::using('System.Collections.TList');
+Prado::using('System.Collections.TMap');
 Prado::using('System.Collections.TStack');
 Prado::using('System.Xml.TXmlDocument');
 Prado::using('System.Security.TAuthorizationRule');
@@ -105,7 +105,7 @@ Prado::using('System.I18N.TGlobalization');
  * </code>
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: TApplication.php 3317 2013-09-03 10:19:09Z ctrlaltca $
+ * @version $Id: TApplication.php 3272 2013-02-13 21:43:28Z ctrlaltca $
  * @package System
  * @since 3.0
  */
@@ -972,8 +972,7 @@ class TApplication extends TComponent
 			$module->setSubProperty($name,$value);
 		}
 		$this->setModule($id,$module);
-		// keep the key to avoid reuse of the old module id
-		$this->_lazyModules[$id]=null;
+		unset($this->_lazyModules[$id]);
 
 		return array($module,$configElement);
 	}
@@ -1280,7 +1279,7 @@ class TApplication extends TComponent
  * - Normal: the application is running in normal production mode.
  * - Performance: the application is running in performance mode.
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: TApplication.php 3317 2013-09-03 10:19:09Z ctrlaltca $
+ * @version $Id: TApplication.php 3272 2013-02-13 21:43:28Z ctrlaltca $
  * @package System
  * @since 3.0.4
  */
@@ -1300,7 +1299,7 @@ class TApplicationMode extends TEnumerable
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author Carl G. Mathisen <carlgmathisen@gmail.com>
- * @version $Id: TApplication.php 3317 2013-09-03 10:19:09Z ctrlaltca $
+ * @version $Id: TApplication.php 3272 2013-02-13 21:43:28Z ctrlaltca $
  * @package System
  * @since 3.0
  */
@@ -1809,7 +1808,7 @@ class TApplicationConfiguration extends TComponent
  * Cache will be exploited if it is enabled.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: TApplication.php 3317 2013-09-03 10:19:09Z ctrlaltca $
+ * @version $Id: TApplication.php 3272 2013-02-13 21:43:28Z ctrlaltca $
  * @package System
  * @since 3.0
  */

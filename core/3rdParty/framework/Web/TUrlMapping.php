@@ -246,8 +246,9 @@ class TUrlMapping extends TUrlManager
 					$class=null;
 					if(!isset($url['class']))
 						$class=$defaultClass;
+					$pattern=Prado::createComponent($class,$this);
 					$properties = isset($url['properties'])?$url['properties']:array();
-					$this->buildUrlMapping($class,$properties,$url);
+					$this->buildUrlMapping($class,$pattern,$properties,$url);
 				}
 			}
 		}
@@ -258,12 +259,13 @@ class TUrlMapping extends TUrlManager
 				$properties=$url->getAttributes();
 				if(($class=$properties->remove('class'))===null)
 					$class=$defaultClass;
-				$this->buildUrlMapping($class,$properties,$url);
+				$pattern=Prado::createComponent($class,$this);
+				$this->buildUrlMapping($class,$pattern,$properties,$url);
 			}
 		}
 	}
 
-	private function buildUrlMapping($class, $properties, $url)
+	private function buildUrlMapping($class, $pattern, $properties, $url)
 	{
 		$pattern=Prado::createComponent($class,$this);
 		if(!($pattern instanceof TUrlMappingPattern))

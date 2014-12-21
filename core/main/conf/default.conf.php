@@ -7,6 +7,10 @@ return array(
 			'Username' => 'root',
 			'Password' => 'root'
 		)
+	,'Application' => array(
+		'name' => 'signcube'
+		,'version' => '1.0.0'
+	)
 );
 
 ?>

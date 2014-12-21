@@ -9,111 +9,95 @@
 class Person extends BaseEntityAbstract
 {
     /**
-     * The firstname of the person
+     * The email
+     *
+     * @var string
+     */
+    private $email;
+    /**
+     * The first name of the user
+     * 
      * @var string
      */
     private $firstName;
     /**
-     * The lastname of the person
+     * The last name of the user
+     * 
      * @var string
      */
     private $lastName;
     /**
-     * The useraccounts of the person
-     * @var array
-     */
-    protected $userAccounts;
-    /**
-     * getter UserAccount
+     * Getter for firstName
      *
-     * @return UserAccount
+     * @return string
      */
-    public function getUserAccounts()
-    {
-        $this->loadOneToMany('userAccounts');
-        return $this->userAccounts;
-    }
-    /**
-     * Setter UserAccount
-     *
-     * @param array $userAccounts The useraccounts
-     *
-     * @return Person
-     */
-    public function setUserAccounts(array $userAccounts)
-    {
-        $this->userAccounts = $userAccounts;
-        return $this;
-    }
-     
-    /**
-     * getter FirstName
-     *
-     * @return String
-     */
-    public function getFirstName()
+    public function getFirstName() 
     {
         return $this->firstName;
     }
     /**
-     * Setter FirstName
+     * Setter for firstName
      *
-     * @param String FirstName The firstName of the person
+     * @param string $value The firstName
      *
      * @return Person
      */
-    public function setFirstName($FirstName)
+    public function setFirstName($value) 
     {
-        $this->firstName = $FirstName;
+        $this->firstName = $value;
         return $this;
     }
     /**
-     * getter LastName
+     * Getter for lastName
      *
-     * @return String
+     * @return 
      */
-    public function getLastName()
+    public function getLastName() 
     {
         return $this->lastName;
     }
     /**
-     * Setter LastName
+     * Setter for lastName
      *
-     * @param String $LastName The last name
+     * @param string $value The lastName
      *
      * @return Person
      */
-    public function setLastName($LastName)
+    public function setLastName($value) 
     {
-        $this->lastName = $LastName;
+        $this->lastName = $value;
         return $this;
     }
     /**
-     * getting the fullname of the person
+     * Getter for email
      *
-     * @return string
+     * @return 
      */
-    public function getFullName()
+    public function getEmail() 
     {
-        $names = array();
-        if(($firstName = trim($this->getFirstName())) !== '')
-        	$names[] = $firstName;
-        if(($lastName = trim($this->getLastName())) !== '')
-        	$names[] = $lastName;
-        return trim(implode(' ', $names));
+        return $this->email;
     }
     /**
-     * (non-PHPdoc)
-     * @see BaseEntityAbstract::getJson()
+     * Setter for email
+     *
+     * @param string $value The email
+     *
+     * @return Person
      */
-    public function getJson($extra = '', $reset = false)
+    public function setEmail($value)
     {
-    	$array = array();
-    	if(!$this->isJsonLoaded($reset))
-    	{
-    		$array['fullname'] = trim($this->getFullName());
-    	}
-    	return parent::getJson($array, $reset);
+        $this->email = $value;
+        return $this;
+    }
+    /**
+     * getter Person
+     *
+     * @return Person
+     */
+    public function getPerson()
+    {
+        $this->loadManyToOne("person");
+        return $this->person;
     }
     /**
      * (non-PHPdoc)
@@ -121,9 +105,24 @@ class Person extends BaseEntityAbstract
      */
     public function __toString()
     {
-        if(($name = $this->getFullName()) !== '')
-            return $name;
-        return parent::__toString();
+        return $this->getEmail();
+    }
+    /**
+     * Getting the full name of the user
+     * @return string
+     */
+    public function getFullName()
+    {
+    	return trim(trim($this->getFirstName()) . ' ' . trim($this->getLastName()));
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::preSave()
+     */
+    public function preSave()
+    {
+    	if(trim($this->getEmail()) === '')
+    		throw new EntityException('Email can NOT be empty', 'exception_entity_person_email_empty');
     }
     /**
      * (non-PHPdoc)
@@ -132,14 +131,46 @@ class Person extends BaseEntityAbstract
     public function __loadDaoMap()
     {
         DaoMap::begin($this, 'p');
-        DaoMap::setStringType('firstName');
-        DaoMap::setStringType('lastName');
-        DaoMap::setOneToMany('userAccounts', 'UserAccount', 'ua');
+        DaoMap::setStringType('email', 'varchar', 100);
+        DaoMap::setStringType('firstName', 'varchar', 50);
+        DaoMap::setStringType('lastName', 'varchar', 50);
         parent::__loadDaoMap();
         
+        DaoMap::createIndex('email');
         DaoMap::createIndex('firstName');
         DaoMap::createIndex('lastName');
         DaoMap::commit();
+    }
+    /**
+     * creating a perosn
+     * 
+     * @param unknown $firstName
+     * @param unknown $lastName
+     * @param unknown $email
+     * 
+     * @return Person
+     */
+    public static function create($firstName, $lastName, $email)
+    {
+    	$entity = new Person();
+    	return $entity->setFirstName(trim($firstName))
+    		->setLastName(trim($lastName))
+    		->setEmail($email)
+    		->save()
+    		->addLog(Log::TYPE_SYS, 'Person (' . $firstName . ' ' . $lastName . ') created now with an email address: ' . $email);
+    }
+    /**
+     * Getting all the users for this property
+     *
+     * @param Property $property
+     * @param Role     $role
+     *
+     * @return multitype:UserAccount
+     */
+    public static function getUsersForProperty(Property $property, Role $role = null)
+    {
+    	$rels = PropertyRel::getRelationships($property, null, $role);
+    	return array_unique(array_map(create_function('$a', 'return $a->getPerson();'), $rels));
     }
 }
 

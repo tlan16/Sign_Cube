@@ -106,30 +106,32 @@ class Session extends BaseEntityAbstract
 	 */
 	public static function write($sessionId, $sessionData)
 	{
-		$user = (($user = Core::getUser()) instanceof UserAccount ? $user : UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
+		$user = (($user = Core::getUser()) instanceof UserAccount ? $user : UserAccount::get(UserAccount::ID_GUEST_ACCOUNT));
 		Core::setUser($user, Core::getRole());
-		$session = (($session = self::getSession($sessionId)) instanceof Session ? $session : new Session());
-		return $session->setKey($sessionId)
+		$session = ($session = self::getSession($sessionId)) instanceof Session ? $session : new Session();
+		$session->setKey($sessionId)
 			->setData($sessionData)
 			->save();
+		return $session;
 	}
 	/**
 	 * Writting the Session Data
 	 *
 	 * @param string $sessionId The sesison ID
 	 *
-	 * @return SessionService
+	 * @return bool
 	 */
 	public static function delete($sessionId)
 	{
 		self::deleteByCriteria('`key` = ?', array($sessionId));
+		return true;
 	}
 	/**
 	 * delete all sessions that has been timed out
 	 *
 	 * @param int $maxTimeOut The number of seconds for the session's life time
 	 *
-	 * @return SessionService
+	 * @return bool
 	 */
 	public static function cleanUp($maxTimeOut)
 	{
@@ -146,7 +148,7 @@ class Session extends BaseEntityAbstract
 	 */
 	public static function getSession($sessionId)
 	{
-		$session = self::getAllByCriteria('`key` = ?', array($sessionId), true, 1, 1);
+		$session =self::getAllByCriteria('`key` = ?', array($sessionId), true, 1, 1);
 		return (count($session) > 0 ? $session[0] : null);
 	}
 }

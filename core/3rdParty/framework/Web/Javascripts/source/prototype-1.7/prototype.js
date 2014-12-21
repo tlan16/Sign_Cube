@@ -2755,12 +2755,9 @@ Ajax.PeriodicalUpdater = Class.create(Ajax.Base, {
   }
 
   var PROBLEMATIC_ATTRIBUTE_READING = (function() {
-    // This test used to set 'onclick' to `Prototype.emptyFunction`, but that
-    // caused an (uncatchable) error in IE 10. For some reason, switching to
-    // an empty array prevents this issue.
-    DIV.setAttribute('onclick', []);
+    DIV.setAttribute('onclick', Prototype.emptyFunction);
     var value = DIV.getAttribute('onclick');
-    var isFunction = Object.isArray(value);
+    var isFunction = (typeof value === 'function');
     DIV.removeAttribute('onclick');
     return isFunction;
   })();

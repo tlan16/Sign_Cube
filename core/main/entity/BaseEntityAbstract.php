@@ -13,6 +13,12 @@ abstract class BaseEntityAbstract
 	 * @var array
 	 */
 	protected $_jsonArray = array();
+	/**
+	 * The entity level runtime cache
+	 * 
+	 * @var array
+	 */
+	private static $_entityCache = array();
     /**
      * Internal id used by all application entities
      *
@@ -45,13 +51,6 @@ abstract class BaseEntityAbstract
      * @var bool
      */
     protected $proxyMode = false;
-    /**
-     * __constructor
-     */
-    public function __construct()
-    {
-    	
-    }
     /**
      * Set the primary key for this entity
      *
@@ -93,7 +92,7 @@ abstract class BaseEntityAbstract
     public function getCreated()
     {
         if (is_string($this->created))
-        $this->created = new UDate($this->created);
+        	$this->created = new UDate($this->created);
         return $this->created;
     }
     /**
@@ -228,7 +227,7 @@ abstract class BaseEntityAbstract
 
         DaoMap::loadMap($cls);
         $alias = DaoMap::$map[strtolower($cls)]['_']['alias'];
-        $field = StringUtilsAbstract::lcFirst($thisClass);
+        $field = strtolower(substr($thisClass, 0, 1)) . substr($thisClass, 1);
         $this->$property = Dao::findByCriteria(new DaoQuery($cls), sprintf('%s.`%sId`=?', $alias, $field), array($this->getId()));
          
         return $this;
@@ -262,18 +261,17 @@ abstract class BaseEntityAbstract
             }
             //if the property is one of these, as when we are trying to save them, we don't have the iniated value
             if (in_array($property, array('createdBy', 'updatedBy')))
-            $this->$property = Core::getUser();
+            	$this->$property = Core::getUser();
             else
-            throw new Exception('Property (' . get_class($this) . '::' . $property . ') must be initialised to integer or proxy prior to lazy loading.', 1);
+            	throw new EntityException('Property (' . get_class($this) . '::' . $property . ') must be initialised to integer or proxy prior to lazy loading.', 1);
         }
          
         // Load the DAO map for this entity
         $cls = DaoMap::$map[strtolower(get_class($this))][$property]['class'];
         if (!$this->$property instanceof BaseEntityAbstract)
-        throw new DaoException('The property(' . $property . ') for "' . get_class($this) . '" is NOT a BaseEntity!');
-        $qry = new DaoQuery($cls);
-        $qry->setSelectActiveOnly(false);
-        $this->$property = Dao::findById($qry, $this->$property->getId());
+        	throw new DaoException('The property(' . $property . ') for "' . get_class($this) . '" is NOT a BaseEntity!');
+        if($this->$property->getProxyMode())
+        	$this->$property = Dao::findById(new DaoQuery($cls), $this->$property->getId());
         return $this;
     }
     /**
@@ -344,22 +342,9 @@ abstract class BaseEntityAbstract
 	            if($field === '_' || isset($fieldMap['rel']))
 	                continue;
 	            $getterMethod = 'get' . ucfirst($field);
-	            if(!method_exists($this, $getterMethod))
-	            	continue;
-	            $value = $this->$getterMethod();
-	            switch(trim($fieldMap['type']))
-	            {
-	            	case 'bool':
-	            		{
-	            			$array[$field] = (trim($value) === '1' ? true : false);
-	            			break;
-	            		}
-	            	default:
-	            		{
-	            			$array[$field] = trim($value);
-	            			break;
-	            		}
-	            }
+	            $array[$field] = trim($this->$getterMethod());
+	            if(trim($fieldMap['type']) === 'bool')
+	                $array[$field] = (trim($array[$field]) === '1' ? true : false);
 	        }
 	        $this->_jsonArray = array_merge($array, $extra);
     	}
@@ -377,60 +362,6 @@ abstract class BaseEntityAbstract
     	return (is_array($this->_jsonArray) && count($this->_jsonArray) > 0 );
     }
     /**
-     * Adding the comments for this entity;
-     * 
-     * @param string $comments The new comments
-     * @param string $type     The type of the comments
-     * @param string $groupId  The group identifier for the comments
-     * 
-     * @return BaseEntityAbstract
-     */
-    public function addComment($comments, $type = Comments::TYPE_NORMAL, $groupId = '')
-    {
-    	Comments::addComments($this, $comments, $type, $groupId);
-    	return $this;
-    }
-    /**
-     * Getting the comments for this entity
-     * 
-     * @param string $type
-     * @param string $pageNo
-     * @param int    $pageSize
-     * @param array  $orderBy
-     * 
-     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
-     */
-    public function getComment($type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$pageStats = array())
-    {
-    	if(count($orderBy) === 0)
-    		$orderBy = array('comm.id' => 'desc');
-    	$where = 'entityName = ? and entityId = ?';
-    	$params = array(get_class($this), $this->getId());
-    	if(($type = trim($type)) !== '')
-    	{
-    		$where .= ' AND type = ?';
-    		$params[] = $type;
-    	}
-    	$stats = array();
-    	$results = Comments::getAllByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy, $stats);
-    	return $results;
-    }
-    /**
-     * Adding a log to this entity
-     * 
-     * @param string $msg
-     * @param string $type
-     * @param string $comments
-     * @param string $funcName
-     * 
-     * @return BaseEntityAbstract
-     */
-    public function addLog($msg, $type, $comments = '', $funcName = '')
-    {
-    	Log::LogEntity($this, $msg, $type, $comments = '', $funcName = '');
-    	return $this;
-    }
-    /**
      * Default toString implementation
      *
      * @return string
@@ -438,6 +369,38 @@ abstract class BaseEntityAbstract
     public function __toString()
     {
         return get_class($this) . ' (#' . $this->getId() . ')';
+    }
+    /**
+     * Adding logs to this entity
+     * 
+     * @param string $type
+     * @param string $comments
+     * @param string $funcName
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function addLog($type, $comments = '', $funcName = '')
+    {
+    	Log::LogEntity($this, $type, $comments, $funcName);
+    	return $this;
+    }
+    /**
+     * Getting the logs for this entity
+     * 
+     * @param string $type       The type of the logs
+     * @param bool   $activeOnly
+     * @param int    $pageNo
+     * @param int    $pageSize
+     * @param array  $orderBy
+     * @param array  $stats
+     * 
+     * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
+     */
+    public function getLogs($type = null, $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+    {
+    	if(count($orderBy) === 0)
+    		$orderBy = array('log.id' => 'desc');
+    	return Log::getAllByCriteria('entityId = ? AND entityName = ?', array($this->getId(), trim(get_class($this))), $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
     }
     /**
      * load the default elments of the base entity
@@ -463,11 +426,11 @@ abstract class BaseEntityAbstract
         return $errorMsgs;
     }
     /**
-     * function before save the entity
+     * dosomething before this entity is saved
      */
     public function preSave() {}
     /**
-     * function after save the entity
+     * so something after this entity is saved
      */
     public function postSave() {}
     /**
@@ -478,6 +441,61 @@ abstract class BaseEntityAbstract
     public function save() 
     {
     	return FactoryAbastract::dao(get_class($this))->save($this);
+    }
+    /**
+     * Getting the runtime cache
+     * 
+     * @param string $key The key of the cache 
+     * 
+     * @param mixed
+     */
+    protected static function getCache($key)
+    {
+    	if(!self::cacheExsits($key))
+    		return null;
+    	$class = get_called_class();
+    	return BaseEntityAbstract::$_entityCache[$class][$key];
+    }
+    /**
+     * adding the runtime cache
+     *
+     * @param string $key  The key of the cache
+     * @param mixed  $data The data of the cache
+     *
+     * @param mixed
+     */
+    protected static function addCache($key, $data)
+    {
+    	$class = get_called_class();
+    	BaseEntityAbstract::$_entityCache[$class][$key] = $data;
+    	return BaseEntityAbstract::$_entityCache[$class][$key];
+    }
+    /**
+     * Check whether the key exsits in the runtime cache
+     * 
+     * @param string $key The key of the cache
+     * 
+     * @return boolean
+     */
+    protected static function cacheExsits($key)
+    {
+    	$class = get_called_class();
+    	return isset(BaseEntityAbstract::$_entityCache[$class]) && isset(BaseEntityAbstract::$_entityCache[$class][$key]);
+    }
+    /**
+     * remove the cache from runtime cache
+     * 
+     * @param string $key The key of the cache
+     * 
+     * @return boolean
+     */
+    protected static function removeCache($key)
+    {
+    	if(!self::cacheExsits($key))
+    		return false;
+    	$class = get_called_class();
+    	unset(BaseEntityAbstract::$_entityCache[$class][$key]);
+    	return true;
     }
     /**
      * Find all entities
@@ -564,6 +582,20 @@ abstract class BaseEntityAbstract
     	return FactoryAbastract::dao(get_called_class())->countByCriteria($criteria, $params);
     }
     /**
+     * replace into
+     * 
+     * @param string $table   The table name
+     * @param array  $columns The name of the columns
+     * @param array  $values  The values that will match agains the column names
+     * @param array  $params  The params
+     * 
+     * @return PDOStatement
+     */
+    public function replaceInto($table, $columns, $values, $params = array())
+    {
+        return FactoryAbastract::dao(get_called_class())->replaceInto($table, $columns, $values, $params);
+    }
+    /**
      * Getting the DaoQuery
      * 
      * @return DaoQuery
@@ -571,32 +603,6 @@ abstract class BaseEntityAbstract
     public static function getQuery()
     {
     	return FactoryAbastract::dao(get_called_class())->getQuery();
-    }
-    /**
-     * Add a join table record for many to many relationship
-     *
-     * @param BaseEntityAbstract $leftEntity  The left entity
-     * @param BaseEntityAbstract $rightEntity The right entity
-     *
-     * @return int
-     */
-    public function saveManyToManyJoin(BaseEntityAbstract &$leftEntity, BaseEntityAbstract $rightEntity)
-    {
-    	FactoryAbastract::dao(get_called_class())->saveManyToManyJoin($leftEntity, $rightEntity);
-    	return $leftEntity;
-    }
-    /**
-     * Remove a join table record for many to many relationship
-     *
-     * @param BaseEntityAbstract $leftEntity  The left entity
-     * @param BaseEntityAbstract $rightEntity The right entity
-     *
-     * @return int
-     */
-    public function deleteManyToManyJoin(BaseEntityAbstract &$leftEntity, BaseEntityAbstract $rightEntity)
-    {
-    	FactoryAbastract::dao(get_called_class())->deleteManyToManyJoin($leftEntity, $rightEntity);
-    	return $leftEntity;
     }
 }
 

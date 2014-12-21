@@ -10,7 +10,7 @@ class SchemaGenerator
 {
 	private $isVersioned = array();
 	const MAP_FILE="Map.txt";
-	const EXCLUDING_FILES="BaseEntityAbstract.php;TreeEntityAbstract.php;InfoAbstract.php;InfoTypeAbstract.php;InfoEntityAbstract.php;.svn";
+	const EXCLUDING_FILES="BaseEntityAbstract.php;ConfirmEntityAbstract.php;.svn";
 	
 	const DB_DRIVER="mysql";
 	const DB_PORT="3306";
@@ -266,7 +266,7 @@ class SchemaGenerator
 		{
 			$value = $mods['default'];
 			$output .= "DEFAULT ";
-			if((isset($mods['rel']) && $mods['nullable']))
+			if(isset($mods['rel']) && $mods['nullable'])
 			{
 				$output .= "NULL";
 			} else if(is_string($value))

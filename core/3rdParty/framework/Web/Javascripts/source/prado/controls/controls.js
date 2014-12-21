@@ -419,10 +419,9 @@ Prado.WebUI.DefaultButton = Class.create(Prado.WebUI.Control,
 	{
 		var enterPressed = Event.keyCode(ev) == Event.KEY_RETURN;
 		var isTextArea = Event.element(ev).tagName.toLowerCase() == "textarea";
-		var isHyperLink = Event.element(ev).tagName.toLowerCase() == "a" && Event.element(ev).hasAttribute("href");
 		var isValidButton = Event.element(ev).tagName.toLowerCase() == "input" &&  Event.element(ev).type.toLowerCase() == "submit";
 		
-		if(enterPressed && !isTextArea && !isValidButton && !isHyperLink)
+		if(enterPressed && !isTextArea && !isValidButton)
 		{
 			var defaultButton = $(this.options['Target']);
 			if(defaultButton)

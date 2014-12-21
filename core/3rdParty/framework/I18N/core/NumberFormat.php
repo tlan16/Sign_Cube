@@ -115,9 +115,6 @@ class NumberFormat
 	 */
 	function format($number, $pattern='d', $currency='USD', $charset='UTF-8')
 	{
-		$oldLocale=setLocale(LC_NUMERIC, '0');
-	    setlocale(LC_NUMERIC, 'C');
-
 		$this->setPattern($pattern);
 
 		if(strtolower($pattern) == 'p')
@@ -151,8 +148,6 @@ class NumberFormat
 		}
 
 		$result = str_replace('¤',$symbol, $result);
-
-		setlocale(LC_NUMERIC, $oldLocale);
 
 		return I18N_toEncoding($result, $charset);
 	}

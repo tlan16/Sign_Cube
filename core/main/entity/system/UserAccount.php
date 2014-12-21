@@ -6,14 +6,20 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserAccount extends BaseEntityAbstract
+class UserAccount extends ConfirmEntityAbstract
 {
+    /**
+     * The id of the GUEST account
+     * 
+     * @var int
+     */
+    const ID_GUEST_ACCOUNT = 1;
     /**
      * The id of the system account
      * 
      * @var int
      */
-    const ID_SYSTEM_ACCOUNT = 10;
+    const ID_SYSTEM_ACCOUNT = 42;
     /**
      * The username
      *
@@ -27,38 +33,32 @@ class UserAccount extends BaseEntityAbstract
      */
     private $password;
     /**
-     * The person
-     *
+     * the person of the user account
+     * 
      * @var Person
      */
     protected $person;
-    /**
-     * The roles that this person has
-     *
-     * @var array
-     */
-    protected $roles;
-    /**
-     * getter UserName
-     *
-     * @return String
-     */
-    public function getUserName()
-    {
-        return $this->username;
-    }
-    /**
-     * Setter UserName
-     *
-     * @param String $UserName The username
-     *
-     * @return UserAccount
-     */
-    public function setUserName($UserName)
-    {
-        $this->username = $UserName;
-        return $this;
-    }
+   	/**
+   	 * Getter for username
+   	 *
+   	 * @return string
+   	 */
+   	public function getUsername() 
+   	{
+   	    return $this->username;
+   	}
+   	/**
+   	 * Setter for username
+   	 *
+   	 * @param string $value The username
+   	 *
+   	 * @return UserAccount
+   	 */
+   	public function setUsername($value) 
+   	{
+   	    $this->username = $value;
+   	    return $this;
+   	}
     /**
      * getter Password
      *
@@ -103,76 +103,20 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
-     * getter Roles
-     *
-     * @return Roles
-     */
-    public function getRoles()
-    {
-        $this->loadManyToMany("roles");
-        return $this->roles;
-    }
-    /**
-     * setter Roles
-     *
-     * @param array $Roles The roles that this user has
-     *
-     * @return UserAccount
-     */
-    public function setRoles(array $Roles)
-    {
-        $this->roles = $Roles;
-        return $this;
-    }
-    /**
-     * Clear all the roles
-     * 
-     * @return UserAccount
-     */
-    public function clearRoles()
-    {
-    	if(trim($this->getId()) === '')
-    		return $this;
-    	foreach($this->getRoles() as $role)
-    		$this->removeRole($role);
-    	return $this;
-    }
-    /**
-     * Adding a role
-     * 
-     * @param Role $role
-     * 
-     * @throws CoreException
-     * @return UserAccount
-     */
-    public function addRole(Role $role)
-    {
-    	if(trim($this->getId()) === '')
-    		throw new CoreException('Save this useraccount first!');
-    	self::saveManyToManyJoin($role, $this);
-    	return $this;
-    }
-    /**
-     * Deleting the role
-     * 
-     * @param Role $role
-     * 
-     * @return UserAccount
-     */
-    public function removeRole(Role $role)
-    {
-    	if(trim($this->getId()) === '')
-    		return $this;
-    	self::deleteManyToManyJoin($role, $this);
-    	return $this;
-    }
-    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */
     public function __toString()
     {
-        return $this->getUserName();
+        return $this->getUsername();
+    }
+    /**
+     * Getting the full name of the user
+     * @return string
+     */
+    public function getFullName()
+    {
+    	return trim($this->getPerson()->getFullName());
     }
     /**
      * (non-PHPdoc)
@@ -184,11 +128,19 @@ class UserAccount extends BaseEntityAbstract
     	if(!$this->isJsonLoaded($reset))
     	{
     		$array['person'] = $this->getPerson()->getJson();
-    		$array['roles'] = array();
-    		foreach($this->getRoles() as $role)
-    			$array['roles'][] = $role->getJson();
     	}
     	return parent::getJson($array, $reset);
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::preSave()
+     */
+    public function preSave()
+    {
+    	if(trim($this->getUsername()) === '')
+    		throw new EntityException('Username can NOT be empty', 'exception_entity_useraccount_username_empty');
+    	if(trim($this->getPassword()) === '')
+    		throw new EntityException('Password can NOT be empty', 'exception_entity_useraccount_password_empty');
     }
     /**
      * (non-PHPdoc)
@@ -199,18 +151,17 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
-        DaoMap::setManyToOne("person", "Person", "p");
-        DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
+        DaoMap::setManyToOne('person', 'Person');
         parent::__loadDaoMap();
         
-        DaoMap::createUniqueIndex('username');
+        DaoMap::createIndex('username');
         DaoMap::createIndex('password');
         DaoMap::commit();
     }
     /**
      * Getting UserAccount
      *
-     * @param string  $username The username string
+     * @param string  $email    The email string
      * @param string  $password The password string
      *
      * @throws AuthenticationException
@@ -219,34 +170,45 @@ class UserAccount extends BaseEntityAbstract
      */
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
-    	self::getQuery()->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
-    	if(count($userAccounts) === 1)
+    	$query = self::getQuery();
+    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 1);
+    	if(count($userAccounts) > 0)
     		return $userAccounts[0];
-    	else if(count($userAccounts) > 1)
-    		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
-    	else
-    		throw new AuthenticationException("No User Found!");
+    	return null;
     }
     /**
-     * Getting UserAccount by username
+     * Creating a new useraccount
      *
-     * @param string $username    The username string
+     * @param string $email
+     * @param string $password
+     * @param Person   $person
      *
-     * @throws AuthenticationException
-     * @throws Exception
-     * @return Ambigous <BaseEntityAbstract>|NULL
+     * @return UserAccount
      */
-    public static function getUserByUsername($username)
+    public static function createUser($username, $password, Person $person)
     {
-    	self::getQuery()->eagerLoad('UserAccount.roles', DaoQuery::DEFAULT_JOIN_TYPE, 'r');
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username  AND r.id != :roleId", array('username' => $username), true, 1, 2);
-    	if(count($userAccounts) === 1)
-    		return $userAccounts[0];
-    	else if(count($userAccounts) > 1)
-    		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
-    	else
-    		throw new AuthenticationException("No User Found!");
+    	$userAccount = new UserAccount();
+    	return $userAccount->setUserName($username)
+    		->setPassword($password)
+    		->setPerson($person)
+    		->save()
+    		->addLog(Log::TYPE_SYS, 'UserAccount created with (username=' . $username . ') with person(id=' . $person->getId() . ')');
+    }
+    /**
+     * Updating an useraccount
+     *
+     * @param UserAccount $userAccount
+     * @param string      $username
+     * @param string      $password
+     *
+     * @return Ambigous <BaseEntity, BaseEntityAbstract>
+     */
+    public static function updateUser(UserAccount &$userAccount, $username, $password)
+    {
+    	return $userAccount->setUserName($username)
+    		->setPassword($password)
+    		->save()
+    		->addLog(Log::TYPE_SYS, 'UserAccount updated with (username=' . $username . ') with person(id=' . $userAccount->getPerson()->getId() . ')' );
     }
 }
 

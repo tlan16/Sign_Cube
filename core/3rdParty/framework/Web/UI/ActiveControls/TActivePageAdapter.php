@@ -56,10 +56,6 @@ class TActivePageAdapter extends TControlAdapter
 	 */
 	const CALLBACK_STYLESHEETLIST_HEADER = 'X-PRADO-STYLESHEETLIST';
 	/**
-	 * Stylesheet header name.
-	 */
-	const CALLBACK_STYLESHEET_HEADER = 'X-PRADO-STYLESHEET';
-	/**
 	 * Hidden field list header name.
 	 */
 	const CALLBACK_HIDDENFIELDLIST_HEADER = 'X-PRADO-HIDDENFIELDLIST';
@@ -216,11 +212,6 @@ class TActivePageAdapter extends TControlAdapter
 		if (count($stylesheets)>0)
 		$this->appendContentPart($response, self::CALLBACK_STYLESHEETLIST_HEADER, TJavaScript::jsonEncode($stylesheets));
 
-		// collect all stylesheet snippets references
-		$stylesheets = $cs->getStyleSheetCodes();
-		if (count($stylesheets)>0)
-		$this->appendContentPart($response, self::CALLBACK_STYLESHEET_HEADER, TJavaScript::jsonEncode($stylesheets));
-
 		// collect all script file references
 		$scripts = $cs->getScriptUrls();
 		if (count($scripts)>0)
@@ -356,13 +347,7 @@ class TCallbackErrorHandler extends TErrorHandler
 		if($this->getApplication()->getMode()===TApplication::STATE_DEBUG)
 		{
 			$response = $this->getApplication()->getResponse();
-			$trace = $this->getExceptionStackTrace($exception);
-			try {
-				$trace = TJavaScript::jsonEncode($trace);
-			} catch (Exception $e) {
-				// strip everythin not 7bit ascii
-				$trace = preg_replace('/[^(\x20-\x7F)]*/','', serialize($trace));
-			}
+			$trace = TJavaScript::jsonEncode($this->getExceptionStackTrace($exception));
 			$response->setStatusCode(500, 'Internal Server Error');
 			$response->appendHeader(TActivePageAdapter::CALLBACK_ERROR_HEADER.': '.$trace);
 		}
