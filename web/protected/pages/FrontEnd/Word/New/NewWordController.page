@@ -1,0 +1,7 @@
+<com:TContent ID="MainContent">
+<com:TCallback ID="saveWordBtn" onCallback="Page.saveWord" />
+<com:Application.controls.FancyBox.FancyBox />
+<div class="container backend-div-wrapper">
+	<div id="item-details-div"></div>
+</div>
+</com:TContent>
