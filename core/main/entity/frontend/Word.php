@@ -14,12 +14,6 @@ class Word extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
-	 * The video of the word
-	 * 
-	 * @var string
-	 */
-	private $video;
-	/**
 	 * Getter for name
 	 *
 	 * @return string
@@ -37,7 +31,7 @@ class Word extends BaseEntityAbstract
 	 */
 	public function setName($value) 
 	{
-	    $this->name = $value;
+	    $this->name = trim($value);
 	    return $this;
 	}
 	/**
@@ -47,7 +41,7 @@ class Word extends BaseEntityAbstract
 	 */
 	public function getVideo() 
 	{
-	    return $this->video;
+// 	    return $this->video;
 	}
 	/**
 	 * Setter for video
@@ -58,8 +52,8 @@ class Word extends BaseEntityAbstract
 	 */
 	public function setVideo($value) 
 	{
-	    $this->video = $value;
-	    return $this;
+// 	    $this->video = $value;
+// 	    return $this;
 	}
 	/**
 	 * (non-PHPdoc)
@@ -70,28 +64,24 @@ class Word extends BaseEntityAbstract
 		DaoMap::begin($this, 'word');
 	
 		DaoMap::setStringType('name','varchar', 32);
-		DaoMap::setStringType('video','varchar', 128);
 	
 		parent::__loadDaoMap();
 	
 		DaoMap::createIndex('name');
-		DaoMap::createIndex('video');
 	
 		DaoMap::commit();
 	}
 	/**
-	 * Creating a address object
+	 * Creating a word object
 	 *
 	 * @param string $name       The name of the word
-	 * @param string $video         The video of the word
 	 *
-	 * @return Address
+	 * @return Word
 	 */
-	public static function create($name, $video)
+	public static function create($name)
 	{
 		$obj = new Word();
 		return $obj->setName($name)
-			->setVideo($video)
 			->save();
 	}
 }
