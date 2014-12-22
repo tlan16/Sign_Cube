@@ -76,6 +76,16 @@ FrontPageJs.prototype = {
 		tmp.j = (tmp.j = tmp.Int.length) > 3 ? tmp.j % 3 : 0;
 		return tmp.dollar + tmp.sign + (tmp.j ? tmp.Int.substr(0, tmp.j) + tmp.thousandPoint : "") + tmp.Int.substr(tmp.j).replace(/(\d{3})(?=\d)/g, "$1" + tmp.thousandPoint) + (tmp.decimal ? tmp.decimalPoint + Math.abs(number - tmp.Int).toFixed(tmp.decimal).slice(2) : "");
 	}
+	//get video div (video.js)
+	,getVideo: function(width, height, source, format = 'mp4', poster = '') {
+		var tmp = {};
+		tmp.format = 'video/' . format;
+		return new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'controls': '', 'preload': 'auto', 'width': width, 'height': height, 'poster': poster} )
+			.insert({'bottom': new Element('source', {'src': source, 'type': 'video/' + format }) })
+			.insert({'bottom': new Element('p', {'class': 'vjs-no-js', 'type': 'video/ogg'}).update('To view this video please enable JavaScript, and consider upgrading to a web browser that')
+				.insert({'bottom': new Element('a', {'href': 'http://videojs.com/html5-video-support/', 'target':'_blank'}).update('supports HTML5 video') })
+			});
+	}
 	//do key enter
 	,keydown: function (event, enterFunc, nFunc) {
 		//if it's not a enter key, then return true;

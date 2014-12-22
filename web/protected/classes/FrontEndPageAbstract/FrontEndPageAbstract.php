@@ -85,8 +85,8 @@ abstract class FrontEndPageAbstract extends TPage
 	{
 		$clientScript = $this->getPage()->getClientScript();
 		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'videoJs' . DIRECTORY_SEPARATOR);
-		$clientScript->registerHeadScriptFile('videoJs.js', $folder . '/video.js');
-		$clientScript->registerHeadScriptFile('videoJs.css', $folder . '/video-js.css');
+		$clientScript->registerHeadScriptFile('videoJs.js', $folder . '/video.dev.js');
+		$clientScript->registerStyleSheetFile('videoJs.css', $folder . '/video-js.css');
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path
