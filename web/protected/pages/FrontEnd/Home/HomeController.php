@@ -8,5 +8,16 @@
  */
 class HomeController extends FrontEndPageAbstract
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see CRUDPageAbstract::_getEndJs()
+	 */
+	protected function _getEndJs()
+	{
+		$js = parent::_getEndJs();
+		$js .= "pageJs.setHTMLIDs(" . json_encode(array('itemDivId' => 'item-details-div')) . ")";
+		$js .= ".load();";
+		return $js;
+	}
 }
 ?>

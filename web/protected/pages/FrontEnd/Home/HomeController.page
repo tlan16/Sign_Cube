@@ -1,4 +1,6 @@
 <com:TContent ID="MainContent">
-    <div class="homepageWrapper">
-    </div>
+<com:Application.controls.FancyBox.FancyBox />
+<div class="container backend-div-wrapper">
+	<div id="item-details-div"></div>
+</div>
 </com:TContent>
