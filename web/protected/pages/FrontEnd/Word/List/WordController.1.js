@@ -32,7 +32,7 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 			,'onSuccess': function(sender, param) {
 				try{
 					tmp.result = tmp.me.getResp(param, false, true);
-					console.debug(tmp.result);
+//					console.debug(tmp.result);
 					if(!tmp.result)
 						return;
 					//reset div
@@ -50,17 +50,22 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 					});
 					
 					//show all items
-					tmp.result.items.each(function(item) {
-						$(tmp.resultDiv).insert({'bottom': tmp.me._getResultRow(item).addClassName('item_row').writeAttribute('item_id', item.id) });
-					});
-					$(tmp.resultDiv).insert({'bottom': new Element('div')
-						.insert({'bottom': new Element('video', {'class': 'video-js vjs-default-skin', 'controls': '', 'preload': 'auto', 'width': 640, 'height': 264, 'poster': 'http://video-js.zencoder.com/oceans-clip.png', 'data-setup': '{"example_option":true}'} ) 
-							.insert({'bottom': new Element('source', {'src': '/themes/default/videos/oceans-clip.mp4', 'type': 'video/mp4'}) })
-							.insert({'bottom': new Element('p', {'class': 'vjs-no-js', 'type': 'video/ogg'}).update('To view this video please enable JavaScript, and consider upgrading to a web browser that')
-								.insert({'bottom': new Element('a', {'href': 'http://videojs.com/html5-video-support/', 'target':'_blank'}).update('supports HTML5 video') })
-							})
-						})
-					});
+					
+						for(var i = 0; i<tmp.result.items.length ; i+=4){
+							$(tmp.resultDiv).insert({'bottom': tmp.me._getResultRow(tmp.result.items.slice(i,i+4)) });
+							
+						}					
+					
+					
+					
+//					$(tmp.resultDiv).insert({'bottom': new Element('div')
+//						.insert({'bottom': new Element('video', {'class': 'video-js vjs-default-skin', 'controls': '', 'preload': 'auto', 'width': 640, 'height': 264, 'poster': 'http://video-js.zencoder.com/oceans-clip.png', 'data-setup': '{"example_option":true}'} ) 
+//							.insert({'bottom': new Element('source', {'src': '/themes/default/videos/oceans-clip.mp4', 'type': 'video/mp4'}) })
+//							.insert({'bottom': new Element('p', {'class': 'vjs-no-js', 'type': 'video/ogg'}).update('To view this video please enable JavaScript, and consider upgrading to a web browser that')
+//								.insert({'bottom': new Element('a', {'href': 'http://videojs.com/html5-video-support/', 'target':'_blank'}).update('supports HTML5 video') })
+//							})
+//						})
+//					});
 					//show the next page button
 					if(tmp.result.pageStats.pageNumber < tmp.result.pageStats.totalPages)
 						tmp.resultDiv.insert({'bottom': tmp.me._getNextPageBtn().addClassName('paginWrapper') });
@@ -96,14 +101,25 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		return {};
 	}
 	
-	,_getResultRow: function(word) {
+	,_getResultRow: function(words) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug(word);
-		tmp.newDiv = new Element('div', {'class': 'row'}).store(word)
-			.insert({'bottom': new Element('div', {'class': 'col-sm-6'}).update(word.name)})
-			.insert({'bottom': new Element('div', {'class': 'col-sm-6'}).update(word.video)})
-			;
+//		console.debug(words);
+		tmp.newDiv = new Element('div', {'class': 'row'})
+		
+			console.debug(words);
+			words.each(function(word){
+				tmp.newDiv
+				.insert({'bottom': new Element('div', {'class': 'word-container well well-lg col-sm-3'}).store('data',word)
+					.insert({'bottom': new Element('div', {'class': 'col-sm-2 '}).update(word.name)})
+					.insert({'bottom': new Element('div', {'class': 'col-sm-1 '}).update(word.video)})
+					.insert({'bottom': new Element('div', {'class': 'row'})})
+					.insert({'bottom': new Element('video', {'class': 'video-js vjs-default-skin', 'controls': '', 'preload': 'auto', 'width': 200, 'height': 100, 'poster': 'http://video-js.zencoder.com/oceans-clip.png', 'data-setup': '{"example_option":true}'} ) 
+					.insert({'bottom': new Element('source', {'src': '/themes/default/videos/oceans-clip.mp4', 'type': 'video/mp4'}) })
+					})
+				})
+			});
+		
 		return tmp.newDiv;
 	}
 	

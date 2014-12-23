@@ -16,13 +16,28 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.newDiv = new Element('div')
 			.insert({'bottom': new Element('div', {'class': 'page-header'})
 				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('h4', {'class': 'col-sm-3'}).update('Adding Word: ')
+					.insert({'bottom': new Element('h1', {'class': 'col-sm-12'}).update('Welcome to SignCube ')
 					})
-					.insert({'bottom': new Element('div', {'class': 'input-group col-sm-9'})
-						.insert({'bottom': tmp.searchBox = new Element('input', {'id': tmp.me._htmlIDs.addrSearchTxtBox, 'class': 'form-control', 'placeholder': 'Type in an word'}) })
+				})
+			})
+			.insert({'bottom': new Element('div', {'class': 'page-body'})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('p', {'class': 'col-sm-12'}).update('SignCube is a langugage resources site for various languages around the globe. For each langugage you will find:  ')
+					})
+				})
+				.insert({'bottom': new Element('ul', {'class': 'ul'})
+					.insert({'bottom': new Element('li', {'class': 'col-sm-12'}).update('an extensive dictionary')})
+					.insert({'bottom': new Element('li', {'class': 'col-sm-12'}).update('detailed alphabet spelling')})
+					.insert({'bottom': new Element('li', {'class': 'col-sm-12'}).update('number signs')})
+					.insert({'bottom': new Element('li', {'class': 'col-sm-12'}).update('links to additional information about the region the sign language originated')})
+				})
+				.insert({'bottom': new Element('div', {'class': 'row'})
+					.insert({'bottom': new Element('p', {'class': 'col-sm-12'}).update('<br>Users of SignCube- deaf people, deaf students, sign language interpreters, or parents of deaf children- are all encouraged to provide feedback, via the links below, to help improve the dictionaries. If you would like to upload a video of yourself or someone else performing a sign, we invite you to Sign Up as an Administrator using the links above.')
 					})
 				})
 			});
+			
+			
 		$(tmp.me._htmlIDs.itemDivId).update(tmp.newDiv);
 		return tmp.me;
 	}
