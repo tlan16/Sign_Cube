@@ -1,7 +1,6 @@
 <com:TContent ID="MainContent">
-	<div class="pageWrapper helppage">
-		<div class="container">
-			test
-		</div>
-	</div>
+<com:Application.controls.FancyBox.FancyBox />
+<div class="container backend-div-wrapper">
+	<div id="item-details-div"></div>
+</div>
 </com:TContent>

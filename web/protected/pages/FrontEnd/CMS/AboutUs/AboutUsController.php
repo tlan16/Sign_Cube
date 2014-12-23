@@ -15,6 +15,8 @@ class AboutUsController extends FrontEndPageAbstract
     protected function _getEndJs()
     {
         $js = parent::_getEndJs();
-        return $js;SystemSettings;
+		$js .= "pageJs.setHTMLIDs(" . json_encode(array('itemDivId' => 'item-details-div')) . ")";
+		$js .= ".load();";
+        return $js;
     }
 }
