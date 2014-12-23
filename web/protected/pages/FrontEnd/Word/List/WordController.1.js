@@ -108,8 +108,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.newDiv = new Element('div', {'class': 'row'});
 		words.each(function(word){
 			tmp.newDiv.insert({'bottom': new Element('div', {'class': 'word-container well well-lg col-sm-3'}).store('data',word)
-				.insert({'bottom': new Element('div', {'class': 'row'}).update(word.name)})
-				.insert({'bottom': new Element('div', {'class': 'row'}).update(word.video ? word.video : tmp.me.getVideo(200, 100, '/themes/default/videos/oceans-clip.mp4', '/themes/default/videos/oceans-clip.png'))})
+				.insert({'bottom': new Element('div', {'class': 'row', 'style': 'text-align: center'}).update(word.name)})
+				.insert({'bottom': new Element('div', {'class': 'row', 'style': 'text-align: center'}).update(word.video ? word.video : tmp.me.getVideo(200, 100, '/themes/default/videos/oceans-clip.mp4', '/themes/default/videos/oceans-clip.png'))})
 			});
 		});
 		
