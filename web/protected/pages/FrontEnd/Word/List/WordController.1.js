@@ -105,20 +105,13 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 //		console.debug(words);
-		tmp.newDiv = new Element('div', {'class': 'row'})
-		
-			console.debug(words);
-			words.each(function(word){
-				tmp.newDiv
-				.insert({'bottom': new Element('div', {'class': 'word-container well well-lg col-sm-3'}).store('data',word)
-					.insert({'bottom': new Element('div', {'class': 'col-sm-2 '}).update(word.name)})
-					.insert({'bottom': new Element('div', {'class': 'col-sm-1 '}).update(word.video)})
-					.insert({'bottom': new Element('div', {'class': 'row'})})
-					.insert({'bottom': new Element('video', {'class': 'video-js vjs-default-skin', 'controls': '', 'preload': 'auto', 'width': 200, 'height': 100, 'poster': 'http://video-js.zencoder.com/oceans-clip.png', 'data-setup': '{"example_option":true}'} ) 
-					.insert({'bottom': new Element('source', {'src': '/themes/default/videos/oceans-clip.mp4', 'type': 'video/mp4'}) })
-					})
-				})
+		tmp.newDiv = new Element('div', {'class': 'row'});
+		words.each(function(word){
+			tmp.newDiv.insert({'bottom': new Element('div', {'class': 'word-container well well-lg col-sm-3'}).store('data',word)
+				.insert({'bottom': new Element('div', {'class': 'row'}).update(word.name)})
+				.insert({'bottom': new Element('div', {'class': 'row'}).update(word.video ? word.video : tmp.me.getVideo(200, 100, '/themes/default/videos/oceans-clip.mp4', '/themes/default/videos/oceans-clip.png'))})
 			});
+		});
 		
 		return tmp.newDiv;
 	}
