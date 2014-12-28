@@ -35,6 +35,12 @@ class NewWordController extends FrontEndPageAbstract
 		try
 		{
 			Dao::beginTransaction();
+			
+			$searchTxt = trim($param->CallbackParameter->searchTxt);
+			$words = Word::getAllByCriteria('word.name = :name', array('name'=> $searchTxt));
+			
+			
+			
 			if(!isset($param->CallbackParameter->relTypeId) || !($role = Role::get($param->CallbackParameter->relTypeId)) instanceof Role)
 				throw new Exception('System Error: Invalid rel type provided.');
 			

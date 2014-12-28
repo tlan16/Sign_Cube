@@ -37,11 +37,16 @@ class Word extends BaseEntityAbstract
 	/**
 	 * Getter for video
 	 *
-	 * @return string
+	 * @return array Video
 	 */
-	public function getVideo() 
+	public function getVideos() 
 	{
-// 	    return $this->video;
+		$wordVideos = WordVideo::getAllByCriteria('wv.wordid = :wordid', array('wordid'=> $this->id));
+		$videos = array();
+		foreach ($wordVideos->getVideoid() as $item) {
+			$videos[] = Video::get($item);
+		}
+	    return $this->$videos;
 	}
 	/**
 	 * Setter for video
@@ -50,10 +55,23 @@ class Word extends BaseEntityAbstract
 	 *
 	 * @return Word
 	 */
-	public function setVideo($value) 
+	public function setVideo(Video $video) 
 	{
-// 	    $this->video = $value;
-// 	    return $this;
+		WordVideo::create($this, $video);
+	    return $this;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::preSave()
+	 */
+	public function preSave()
+	{
+		$name = trim($this->getName());
+		$where = array('name = ? ');
+		$params = array($name);
+		$exsitingName = Word::countByCriteria(implode(' AND ', $where), $params);
+		if($exsitingName > 0)
+			throw new EntityException('The NAME(=' . $name . ') is already exists!' );
 	}
 	/**
 	 * (non-PHPdoc)
@@ -72,6 +90,18 @@ class Word extends BaseEntityAbstract
 		DaoMap::commit();
 	}
 	/**
+	 * Getting the word via name
+	 *
+	 * @param string $name The name of the word
+	 *
+	 * @return Ambigous <NULL, BaseEntityAbstract>
+	 */
+	public static function getByName($name)
+	{
+		$words = self::getAllByCriteria('name = ? ', array(trim($name)), true, 1, 1);
+		return (count($words) === 0 ? null : $words[0]);
+	}
+	/**
 	 * Creating a word object
 	 *
 	 * @param string $name       The name of the word
@@ -80,8 +110,11 @@ class Word extends BaseEntityAbstract
 	 */
 	public static function create($name)
 	{
-		$obj = new Word();
-		return $obj->setName($name)
-			->save();
+		if(!($word = self::getByName($name)) instanceof Word)
+			$word = new Word();
+		$word->setName($name);
+		
+		
+		return $word->save();
 	}
 }

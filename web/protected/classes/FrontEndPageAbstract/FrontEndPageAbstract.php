@@ -60,7 +60,6 @@ abstract class FrontEndPageAbstract extends TPage
 	public function onPreInit($param)
 	{
 	    parent::onPreInit($param);
-	    $this->_Load3rdPartyJs();
 	    $clientScript = $this->getPage()->getCLientScript();
 	    
 	    $clientScript->registerPradoScript('ajax');
@@ -80,13 +79,6 @@ abstract class FrontEndPageAbstract extends TPage
 		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 			$this->getPage()->getClientScript()->registerScriptFile('frontEndPageJs', Prado::getApplication()->getAssetManager()->publishFilePath(dirname(__FILE__) . '/'  . $lastestJs, true));
 	    return $this;
-	}
-	private function _Load3rdPartyJs()
-	{
-		$clientScript = $this->getPage()->getClientScript();
-		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'videoJs' . DIRECTORY_SEPARATOR);
-		$clientScript->registerHeadScriptFile('videoJs.js', $folder . '/video.dev.js');
-		$clientScript->registerStyleSheetFile('videoJs.css', $folder . '/video-js.css');
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path

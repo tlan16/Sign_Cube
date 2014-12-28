@@ -56,7 +56,8 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 							
 						}					
 					
-					
+						
+					jQuery('video,audio').mediaelementplayer();
 					
 //					$(tmp.resultDiv).insert({'bottom': new Element('div')
 //						.insert({'bottom': new Element('video', {'class': 'video-js vjs-default-skin', 'controls': '', 'preload': 'auto', 'width': 640, 'height': 264, 'poster': 'http://video-js.zencoder.com/oceans-clip.png', 'data-setup': '{"example_option":true}'} ) 
@@ -109,10 +110,9 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		words.each(function(word){
 			tmp.newDiv.insert({'bottom': new Element('div', {'class': 'word-container well well-lg col-sm-3'}).store('data',word)
 				.insert({'bottom': new Element('div', {'class': 'row', 'style': 'text-align: center'}).update(word.name)})
-				.insert({'bottom': new Element('div', {'class': 'row', 'style': 'text-align: center'}).update(word.video ? word.video : tmp.me.getVideo(200, 100, '/themes/default/videos/oceans-clip.mp4', '/themes/default/videos/oceans-clip.png'))})
+				.insert({'bottom': new Element('div', {'class': 'row', 'style': 'text-align: center'}).update(word.video ? word.video : tmp.me.getVideo(200, 100, {'mp4': '/themes/default/videos/test.mp4'}, '/themes/default/videos/test.png'))})
 			});
 		});
-		
 		return tmp.newDiv;
 	}
 	

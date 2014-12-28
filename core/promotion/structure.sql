@@ -5,7 +5,7 @@ CREATE TABLE `asset` (
 	`assetId` varchar(32) NOT NULL DEFAULT '',
 	`filename` varchar(100) NOT NULL DEFAULT '',
 	`mimeType` varchar(50) NOT NULL DEFAULT '',
-	`content` varchar(50) NOT NULL DEFAULT '',
+	`path` varchar(200) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -16,10 +16,11 @@ CREATE TABLE `asset` (
 	,INDEX (`updatedById`)
 	,UNIQUE INDEX (`assetId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `content`;
-CREATE TABLE `content` (
+DROP TABLE IF EXISTS `auslanvideo`;
+CREATE TABLE `auslanvideo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`content` longtext NOT NULL ,
+	`media` varchar(255) NOT NULL DEFAULT '',
+	`poster` varchar(255) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -28,6 +29,106 @@ CREATE TABLE `content` (
 	PRIMARY KEY (`id`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `auslanword`;
+CREATE TABLE `auslanword` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(32) NOT NULL DEFAULT '',
+	`href` text NOT NULL ,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `auslanwordrel`;
+CREATE TABLE `auslanwordrel` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`wordId` int(10) unsigned NOT NULL DEFAULT 0,
+	`videoId` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`wordId`)
+	,INDEX (`videoId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `definition`;
+CREATE TABLE `definition` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`content` text NOT NULL ,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `explanation`;
+CREATE TABLE `explanation` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`content` text NOT NULL ,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `video`;
+CREATE TABLE `video` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`location` varchar(255) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `word`;
+CREATE TABLE `word` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(32) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `wordvideo`;
+CREATE TABLE `wordvideo` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`wordid` varchar(32) NOT NULL DEFAULT '',
+	`videoid` varchar(32) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`wordid`)
+	,INDEX (`videoid`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `address`;
 CREATE TABLE `address` (
@@ -252,3 +353,5 @@ CREATE TABLE `useraccount` (
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 
 -- Completed CRUD Setup.
+
+INSERT INTO `signcube`.`systemsettings` (`id`, `type`, `value`, `description`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES (NULL, 'asset_root', 'C:\\Users\\Frank-Desktop\\git\\Sign_Cube\\web\\tmp', '', '1', '0001-01-01 00:00:00', '0', CURRENT_TIMESTAMP, '0');

@@ -37,6 +37,9 @@
 			<!-- BackEnd:: home page -->
 			<url ServiceParameter="BackEnd.Home.Controller" pattern="/backend.html" />
 			
+			<!-- BackEnd:: Auslan:: List page -->
+			<url ServiceParameter="BackEnd.3rdParty.List.Controller" pattern="/backend/3rdparty.html" />
+			
 			<!-- BackEnd:: Property:: List page -->
 			<url ServiceParameter="BackEnd.Property.List.Controller" pattern="/backend/properties.html" />
 			<!-- BackEnd:: Property:: Details page -->

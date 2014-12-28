@@ -76,15 +76,43 @@ FrontPageJs.prototype = {
 		tmp.j = (tmp.j = tmp.Int.length) > 3 ? tmp.j % 3 : 0;
 		return tmp.dollar + tmp.sign + (tmp.j ? tmp.Int.substr(0, tmp.j) + tmp.thousandPoint : "") + tmp.Int.substr(tmp.j).replace(/(\d{3})(?=\d)/g, "$1" + tmp.thousandPoint) + (tmp.decimal ? tmp.decimalPoint + Math.abs(number - tmp.Int).toFixed(tmp.decimal).slice(2) : "");
 	}
-	//get video div (video.js)
-	,getVideo: function(width, height, source, format = 'mp4', poster = '') {
+	//get video div
+	,getVideo: function(width, height, source, poster = '', preload = 'none', srclang = 'en') {
 		var tmp = {};
+		if(typeof source === 'string')
+			throw ' getVideo: Invalid source passed in!';
 		tmp.format = 'video/' . format;
-		return new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'controls': '', 'preload': 'auto', 'width': width, 'height': height, 'poster': poster} )
-			.insert({'bottom': new Element('source', {'src': source, 'type': 'video/' + format }) })
-			.insert({'bottom': new Element('p', {'class': 'vjs-no-js', 'type': 'video/ogg'}).update('To view this video please enable JavaScript, and consider upgrading to a web browser that')
-				.insert({'bottom': new Element('a', {'href': 'http://videojs.com/html5-video-support/', 'target':'_blank'}).update('supports HTML5 video') })
-			});
+		
+		tmp.videoEl = new Element('video', {'class': 'mejs-player', 'data-mejsoptions': 'alwaysShowControls: true', 'width': width, 'height': height, 'poster': poster, 'controls': 'controls', 'preload': preload,} );
+		$H(source).each(function(item){
+			switch(item.key) {
+			case 'mp4':
+				tmp.videoEl.insert({'bottom': new Element('source', {'type': 'video/mp4', 'src': item.value}) });
+				break; 
+			case 'webm':
+				tmp.videoEl.insert({'bottom': new Element('source', {'type': 'video/webm', 'src': item.value}) });
+				break; 
+			case 'ogg':
+				tmp.videoEl.insert({'bottom': new Element('source', {'type': 'video/ogg', 'src': item.value}) });
+				break; 
+			case 'ogv':
+				tmp.videoEl.insert({'bottom': new Element('source', {'type': 'video/ogg', 'src': item.value}) });
+				break; 
+			case 'srt':
+				tmp.videoEl.insert({'bottom': new Element('track', {'kind': 'subtitles', 'src': item.value, 'srclang': srclang}) });
+				break; 
+			default:
+				tmp.videoEl.insert({'bottom': new Element('source', {'type': 'video/mp4', 'src': item.value}) });
+				break; 
+			}
+		});
+	-[]
+		tmp.videoEl.insert({'bottom': new Element('object', {'width': width, 'height': height, 'type': 'application/x-shockwave-flash', 'data': '/themes/default/videos/flashmediaelement.swf'})
+			.insert({'bottom': new Element('param', {'name': 'movie', 'value': '/themes/default/videos/flashmediaelement.swf'}) })
+			.insert({'bottom': new Element('param', {'name': 'flashvars', 'value': ('controls=true&file=' + $H(source).toObject().mp4) }) })
+			.insert({'bottom': new Element('img', {'src': poster, 'width': width, 'height': height, 'title': 'No video playback capabilities'}) })
+		});
+		return tmp.videoEl;
 	}
 	//do key enter
 	,keydown: function (event, enterFunc, nFunc) {

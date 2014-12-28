@@ -158,7 +158,10 @@ abstract class StringUtilsAbstract
 	
 			case "mp3" :
 				return "audio/mpeg3";
-	
+				
+			case "mp4" :
+				return "video/mp4";
+			
 			case "wav" :
 				return "audio/wav";
 	
