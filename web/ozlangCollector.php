@@ -5,6 +5,13 @@ require_once 'bootstrap.php';
 echo '<pre>';
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
+// 	echo '<video width="320" height="240" controls>'
+// 		 . '<source src="'
+// 		 . AuslanVideo::get(1)->getVideoURL()
+// 		 .'" type="video/mp4">'
+// 		 . '</video>';
+// 	die;
+	
 foreach (getAllLinks('http://www.auslan.org.au/dictionary/') as $link)
 {
 	if(!empty(trim($link['href']) ) )
@@ -12,13 +19,21 @@ foreach (getAllLinks('http://www.auslan.org.au/dictionary/') as $link)
 		$data = array('word'=> $link['word'], 'href'=> $link['href'], 'videos'=> getVideos($link['href']) );
 		$auslanWord = AuslanWord::create($data['word'], $data['href']);
 		foreach ($data['videos'] as $video){
-			$newVideo = AuslanVideo::create($auslanWord->getId(), $video['video'], $video['poster']);
+			$newAsset = bindAsset($video['video']);
+			$newVideo = AuslanVideo::create($video['video'], $newAsset->getId(), $video['poster']);
 			$auslanWord->addVideo($newVideo);
 		}
 		echo $data['word'] . ': video(' . count($data['videos']) . ')<br/>';
 	}
 }
+function bindAsset($url)
+{
+	$videoTempFile = __DIR__ . '\tmp\tmp.video.mp4';
+	$videoTempFile = ComScriptCURL::downloadFile($url, $videoTempFile);
+	$asset = Asset::registerAsset('490_1.mp4', $videoTempFile);
 
+	return $asset;
+}
 function getAllLinks($url)
 {
 	// expample $url = 'http://www.auslan.org.au/dictionary/';

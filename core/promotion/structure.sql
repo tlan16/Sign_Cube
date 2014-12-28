@@ -21,6 +21,7 @@ CREATE TABLE `auslanvideo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`media` varchar(255) NOT NULL DEFAULT '',
 	`poster` varchar(255) NOT NULL DEFAULT '',
+	`assetId` varchar(255) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -353,5 +354,3 @@ CREATE TABLE `useraccount` (
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 
 -- Completed CRUD Setup.
-
-INSERT INTO `signcube`.`systemsettings` (`id`, `type`, `value`, `description`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES (NULL, 'asset_root', 'C:\\Users\\Frank-Desktop\\git\\Sign_Cube\\web\\tmp', '', '1', '0001-01-01 00:00:00', '0', CURRENT_TIMESTAMP, '0');

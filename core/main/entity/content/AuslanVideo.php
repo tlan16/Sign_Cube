@@ -19,6 +19,12 @@ class AuslanVideo extends BaseEntityAbstract
 	 * @var string
 	 */
 	private $poster;
+	/**
+	 * The AssetId of video of the word
+	 * 
+	 * @var string
+	 */
+	private $assetId;
     /**
      * getter AuslanVideo
      *
@@ -62,6 +68,27 @@ class AuslanVideo extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getter for AssetId
+	 *
+	 * @return string
+	 */
+	public function getAssetId() 
+	{
+	    return $this->assetId;
+	}
+	/**
+	 * Setter for AssetId
+	 *
+	 * @param string $value The AssetId
+	 *
+	 * @return AuslanVideo
+	 */
+	public function setAssetId($value) 
+	{
+	    $this->assetId = trim($value);
+	    return $this;
+	}
+	/**
 	 * getter AuslanVideo
 	 *
 	 * @return AuslanVideo
@@ -70,6 +97,15 @@ class AuslanVideo extends BaseEntityAbstract
 	{
 		$this->loadManyToOne("auslanVideo");
 		return $this->auslanVideo;
+	}
+	/**
+	 * getter AuslanVideo Asset URL
+	 *
+	 * @return string
+	 */
+	public function getVideoURL()
+	{
+		return Asset::get($this->getAssetId());
 	}
 	/**
 	 * (non-PHPdoc)
@@ -81,6 +117,7 @@ class AuslanVideo extends BaseEntityAbstract
 	
 		DaoMap::setStringType('media','varchar', 255);
 		DaoMap::setStringType('poster','varchar', 255);
+		DaoMap::setStringType('assetId','varchar', 255);
 		
 		parent::__loadDaoMap();
 		DaoMap::commit();
@@ -104,11 +141,12 @@ class AuslanVideo extends BaseEntityAbstract
 	 *
 	 * @return AuslanVideo
 	 */
-	public static function create($media, $poster = '')
+	public static function create($media, $assetId, $poster = '')
 	{
 		if(!($newVideo = self::getByMedia($media)) instanceof AuslanVideo)
 			$newVideo = new AuslanVideo();
 		$newVideo->setMedia($media)
+			->setAssetId($assetId)
 			->setPoster($poster)
 			->save();
 		return $newVideo;

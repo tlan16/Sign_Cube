@@ -16,7 +16,8 @@ try
 	
 	echo '<video width="320" height="240" controls>'
 		 . '<source src="'
-		 . $assetId->getUrl()
+// 		 . $assetId->getUrl()
+		 . Asset::get(4)->getUrl()
 		 .'" type="video/mp4">'
 		 . '</video>';
 	
@@ -26,6 +27,14 @@ try
 	throw new Exception('<pre>' . $ex->getMessage(). "\n" . $ex->getTraceAsString() . '</pre>');
 }
 
+function bindAsset($url)
+{
+	$videoTempFile = __DIR__ . '\tmp\tmp.video.mp4';
+	$videoTempFile = ComScriptCURL::downloadFile($url, $videoTempFile);
+	$assetId = Asset::registerAsset('490_1.mp4', $videoTempFile);
+	
+	return $assetId;
+}
 
 die;
 
