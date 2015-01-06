@@ -99,15 +99,6 @@ class AuslanWord extends BaseEntityAbstract
 			return $name;
 		return parent::__toString();
 	}
-	public function preSave()
-	{
-		$name = trim($this->getName());
-		$where = array('name = ? ');
-		$params = array($name);
-		$exsitingName = AuslanWord::countByCriteria(implode(' AND ', $where), $params);
-		if($exsitingName > 0)
-			throw new EntityException('The NAME(' . $name . ') is already exists!' );
-	}
 	/**
 	 * Getting the relationships for a user
 	 *

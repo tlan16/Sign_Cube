@@ -106,7 +106,6 @@ FrontPageJs.prototype = {
 				break; 
 			}
 		});
-	-[]
 		tmp.videoEl.insert({'bottom': new Element('object', {'width': width, 'height': height, 'type': 'application/x-shockwave-flash', 'data': '/themes/default/videos/flashmediaelement.swf'})
 			.insert({'bottom': new Element('param', {'name': 'movie', 'value': '/themes/default/videos/flashmediaelement.swf'}) })
 			.insert({'bottom': new Element('param', {'name': 'flashvars', 'value': ('controls=true&file=' + $H(source).toObject().mp4) }) })

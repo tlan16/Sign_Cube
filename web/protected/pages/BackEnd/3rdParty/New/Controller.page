@@ -1,0 +1,7 @@
+<com:TContent ID="MainContent">
+<com:TCallback ID="getAZLinksBtn" onCallback="Page.getAZLinks" />
+<com:TCallback ID="getPageLinksBtn" onCallback="Page.getPageLinks" />
+<div class="container  backend-div-wrapper">
+	<div id="body_container"></div>
+</div>
+</com:TContent>

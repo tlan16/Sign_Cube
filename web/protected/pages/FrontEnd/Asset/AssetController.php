@@ -40,23 +40,23 @@ class AssetController extends TService
     		throw new Exception('Nothing to get!');
     	$asset = null;
     	//try to use apc
-    	if(extension_loaded('apc') && ini_get('apc.enabled'))
-    	{
-    		if(!apc_exists($assetId))
-    		{
-    			$asset = Asset::getAsset($assetId);
-    			apc_add($assetId, $asset);
-    		}
-    		else
-    		{
-    			$asset = apc_fetch($assetId);
-    		}
+//     	if(extension_loaded('apc') && ini_get('apc.enabled'))
+//     	{
+//     		if(!apc_exists($assetId))
+//     		{
+//     			$asset = Asset::getAsset($assetId);
+//     			apc_add($assetId, $asset);
+//     		}
+//     		else
+//     		{
+//     			$asset = apc_fetch($assetId);
+//     		}
     		
-    	}
-    	else
-    	{
+//     	}
+//     	else
+//     	{
     		$asset = Asset::getAsset($assetId);
-    	}
+//     	}
     	
     	if(!$asset instanceof Asset)
 	        throw new Exception('invalid id(' . $assetId . ') to get!');

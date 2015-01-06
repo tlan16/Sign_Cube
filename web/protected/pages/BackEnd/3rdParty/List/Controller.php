@@ -15,10 +15,9 @@ class Controller extends BackEndPageAbstract
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
-		$js .= "pageJs.setHTMLIDs(" . json_encode(array('resultDivId' => 'result-div', 'totalNoOfItemsId' => 'totalNoOfItemsId')) . ")";
+		$js .= "pageJs";
 		$js .= ".setCallbackId('getItems', '" . $this->getItemsBtn->getUniqueID() . "')";
-		$js .= ".setPropRelTypes(" . Role::ID_TENANT . ", " . Role::ID_AGENT .", " . Role::ID_OWNER . ")";
-		$js .= ".getResults(true, 10);";
+ 		$js .= "._init();";
 		return $js;
 	}
 	/**
@@ -35,28 +34,14 @@ class Controller extends BackEndPageAbstract
 		try 
 		{
 			$pageNo = 1;
-			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
+			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE / 3;
 			
-			if(isset($param->CallbackParameter->pagination))
-			{
-				$pageNo = $param->CallbackParameter->pagination->pageNo;
-				$pageSize = $param->CallbackParameter->pagination->pageSize;
-			}
-			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			$where = array(1);
-			$params = array();
-			$stats = array();
-			AuslanWord::getQuery()->eagerLoad('AuslanWord.wdvids', 'inner join', 'auwdvid', 'auwdvid.wordid = auwd.id');
-			$objects = AuslanWord::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array(), $stats);
-			var_dump($objects);die;
-			$results['pageStats'] = $stats;
-			$results['items'] = array();
-			foreach($objects as $obj)
-			{
-				$array = $obj->getJson();
-				$array['curRoleIds'] = array_map(create_function('$a', 'return intval($a->getId());'), Role::getPropertyRoles($obj, Core::getUser()->getPerson()));
-				$results['items'][] = $array;
-			}
+			$array = array();
+			
+			foreach (AuslanVideo::getAll() as $video)
+				$array[] = $video->getJson();
+			 
+			$results['items'] = $array;
 		}
 		catch(Exception $ex)
 		{

@@ -7,19 +7,21 @@ Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 try
 {
-	$videoTempFile = __DIR__ . '\tmp\tmp.video.mp4';
-// 	var_dump($videoTempFile);
-	$url = 'http://media.auslan.org.au/mp4video/49/490_1.mp4';
-	$videoTempFile = ComScriptCURL::downloadFile($url, $videoTempFile);
-	$assetId = Asset::registerAsset('490_1.mp4', $videoTempFile);
-	var_dump($assetId->getUrl());
+// 	$videoTempFile = __DIR__ . '\tmp\tmp.video.mp4';
+// // 	var_dump($videoTempFile);
+// 	$url = 'http://media.auslan.org.au/mp4video/49/490_1.mp4';
+// 	$videoTempFile = ComScriptCURL::downloadFile($url, $videoTempFile);
+// 	$assetId = Asset::registerAsset('490_1.mp4', $videoTempFile);
+// 	var_dump($assetId->getUrl());
 	
-	echo '<video width="320" height="240" controls>'
-		 . '<source src="'
-// 		 . $assetId->getUrl()
-		 . Asset::get(4)->getUrl()
-		 .'" type="video/mp4">'
-		 . '</video>';
+	for($i =1; $i<6; $i++)
+	{
+		echo '<video width="320" height="240" controls>'
+			 . '<source src="'
+			 . Asset::get($i)->getUrl()
+			 .'" type="video/mp4">'
+			 . '</video>';
+	}
 	
 	
 } catch(Exception $ex)
