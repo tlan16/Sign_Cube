@@ -1,7 +1,7 @@
 <?php
 
 require_once 'bootstrap.php';
-
+// test
 echo '<pre>';
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
