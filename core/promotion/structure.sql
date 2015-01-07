@@ -1,4 +1,50 @@
 -- Setting Up Database
+DROP TABLE IF EXISTS `auslanvideo`;
+CREATE TABLE `auslanvideo` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`media` varchar(255) NOT NULL DEFAULT '',
+	`poster` varchar(255) NOT NULL DEFAULT '',
+	`assetId` varchar(255) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `auslanword`;
+CREATE TABLE `auslanword` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(32) NOT NULL DEFAULT '',
+	`href` text NOT NULL ,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `auslanwordrel`;
+CREATE TABLE `auslanwordrel` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`wordId` int(10) unsigned NOT NULL DEFAULT 0,
+	`videoId` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`wordId`)
+	,INDEX (`videoId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `asset`;
 CREATE TABLE `asset` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
