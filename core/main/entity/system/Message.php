@@ -1,18 +1,13 @@
 <?php
 class Message extends BaseEntityAbstract
 {
-	const TYPE_SYS = 'SYSTEM';
-	const TYPE_USER = 'USER';
+	const TYPE_EMAIL = 'EMAIL';
+	const TYPE_SMS = 'SMS';
 	
 	const SENT_TYPE_NEW = 'NEW';
 	const SENT_TYPE_SENDING = 'SENDING';
 	const SENT_TYPE_SENT = 'SENT';
-	/**
-	 * caching the transid
-	 *
-	 * @var string
-	 */
-	private static $_transId = '';
+	const SENT_TYPE_FAILED = 'FAILED';
 	/**
 	 * The message is send to
 	 * 
@@ -60,7 +55,7 @@ class Message extends BaseEntityAbstract
 	 *
 	 * @var string
 	 */
-	private $transId;
+	private $transId = '';
 	/**
 	 * Getter for to
 	 *
@@ -233,12 +228,17 @@ class Message extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::preSave()
+	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function preSave()
+	public function getJson($extra = '', $reset = false)
 	{
-		if(trim($this->getTransId()) === '')
-			$this->setTransId(self::getTransKey());
+		$array = array();
+		if(!$this->isJsonLoaded($reset))
+		{
+			$array['to'] = $this->getTo()->getJson();
+			$array['from'] = $this->getFrom()->getJson();
+		}
+		return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -276,19 +276,6 @@ class Message extends BaseEntityAbstract
 		DaoMap::commit();
 	}
 	/**
-	 * Getting the transid
-	 *
-	 * @param string $salt The salt of making the trans id
-	 *
-	 * @return string
-	 */
-	public static function getTransKey($salt = '')
-	{
-		if(trim(self::$_transId) === '')
-			self::$_transId = StringUtilsAbstract::getRandKey($salt);
-		return self::$_transId;
-	}
-	/**
 	 * creating a message
 	 * 
 	 * @param Person  $from
@@ -299,14 +286,14 @@ class Message extends BaseEntityAbstract
 	 * 
 	 * @return Message
 	 */
-	public static function create(Person $from, Person $to, $type, $subject, $body)
+	public static function create(Person $from, Person $to, $subject, $body, $type)
 	{
 		$entity = new Message();
 		return $entity->setTo($to)
 			->setFrom($from)
-			->setType($type)
-			->setSubject($subject)
-			->setBody($body)
+			->setType(trim($type))
+			->setSubject(trim($subject))
+			->setBody(trim($body))
 			->save();
 	}
 }

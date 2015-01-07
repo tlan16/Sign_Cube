@@ -1,4 +1,4 @@
-html,body,#main-form {
+html,body,.main-form {
 	width: 100%;
 	padding: 0px;
 	margin: 0px;
@@ -18,19 +18,19 @@ html,body,#main-form {
 	top: 10px;
 }
 
-#main-form>#mainbody,#main-form>#footer {
+.main-form>#mainbody,.main-form>#footer {
 	display: block;
 }
 
-#main-form>#mainbody {
+.main-form>#mainbody {
 	min-height: 70%;
 }
 
-#main-form>#mainbody .page-header {
+.main-form>#mainbody .page-header {
 	margin-top: 0px;
 }
 
-#main-form>#footer {
+.main-form>#footer {
 	min-height: 30%;
 }
 
@@ -159,7 +159,6 @@ a:link,a {
 }
 
 .contact-form .form-control {
-	border-color: #DDDDDD;
 	box-shadow: none;
 	height: 62px;
 	margin-bottom: 10px;
@@ -200,6 +199,15 @@ a:link,a {
 
 .green {
 	color: #09C798 !important;
+}
+
+.lime {
+	color: #73b819 !important;
+}
+
+.bg-lime {
+	background-color: #73b819 !important;
+	color: #f4f4f4 !important;
 }
 
 .highlight {
@@ -401,4 +409,66 @@ a.rel-type-selector:hover,a.rel-type-selector:active,a.rel-type-selector:focus,.
 	min-width: 200px;
 	max-width: 238px;
 	min-height: 70px;
+}
+
+.homepage-wrapper #home > .banner {
+	background-image: url('images/parallax-blog.jpg');
+	color: #efefef !important;
+}
+
+.desc-cell {
+	padding-bottom: 15px;
+}
+
+.desc-cell .desc-cell-desc {
+	line-height: 110%;
+	color: #c9c9c9 !important;
+	padding: 0 !important;
+	text-align: left;
+	font-size: 14px;
+	font-weight: 500;
+}
+.signup-now-wrapper .signup-now{
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+.signup-now-wrapper .signup-now.lime:hover{
+	background: #73b819;
+	color: #fff !important;
+	border-color: #73b819;
+}
+
+
+.home-services .lead {
+	margin: 0;
+	font-family: 'Raleway', sans-serif;
+	line-height: 130px;
+	font-size: 18px;
+	font-weight: 500;
+}
+.home-services ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+.home-services li:first-child {
+border-left: 1px solid #588f11;
+}
+.home-services li {
+	float: left;
+	width: 25%;
+	padding: 20px 3px;
+	border-right: 1px solid #588f11;
+	text-align: center;
+	overflow: hidden;
+	white-space: nowrap;
+	-webkit-transition: width 300ms;
+	-o-transition: width 300ms;
+	transition: width 300ms;
+}
+.home-services li i {
+	font-size: 52px;
 }

@@ -8,7 +8,6 @@
  */
 class SystemSettings extends BaseEntityAbstract
 {
-	const TYPE_ASSET_ROOT_DIR = 'asset_root';
 	/**
 	 * The value of the setting
 	 * 

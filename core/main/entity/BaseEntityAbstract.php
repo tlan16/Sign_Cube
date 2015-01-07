@@ -362,6 +362,108 @@ abstract class BaseEntityAbstract
     	return (is_array($this->_jsonArray) && count($this->_jsonArray) > 0 );
     }
     /**
+     * Getting all EntityTag
+     *
+     * @param string $type
+     * @param int    $pageNo
+     * @param int    $pageSize
+     * @param array  $orderBy
+     * @param array  $stats
+     *
+     * @return multiple:EntityTag
+     */
+    public function getAllEntityTags($type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+    {
+    	return EntityTag::getAllForEntity($this, $type, $pageNo, $pageSize, $orderBy, $stats);
+    }
+    /**
+     * Tagging an entity
+     * 
+     * @param string $tagName The tag's name
+     * @param string $type    The type of the tag
+     * @param mixed  $newTag  The new generated EntityTag
+     * 
+     * @return BaseEntityAbstract 
+     */
+    public function addTag($tagName, $type = EntityTag::TYPE_SYS, &$newEntityTag = null)
+    {
+    	if($tagName instanceof Tag)
+    		$tagName = $tagName->getName();
+    	$newEntityTag = EntityTag::tagEntity($this, $tagName, $type);
+    	return $this;
+    }
+    /**
+     * removing an tag
+     * 
+     * @param string $tagName
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function removeTags($type, $tagName)
+    {
+    	EntityTag::rmTags($this, $type, $tagName);
+    	return $this;
+    }
+    /**
+     * Clearing all tags for an entity
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function clearTags()
+    {
+    	EntityTag::rmTags($this, null, null);
+    	return $this;
+    }
+    /**
+     * Getting all attachments
+     * 
+     * @param int   $pageNo
+	 * @param int   $pageSize
+	 * @param array $orderBy
+	 * @param array $stats
+	 * 
+	 * @return multiple:Attachment
+     */
+    public function getAttachments($pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+    {
+    	return Attachment::getAllForEntity($this, $pageNo, $pageSize, $orderBy, $stats);
+    }
+    /**
+     * Attach an asset to an entity
+     * 
+     * @param mixed $assetOrAssetId
+     * @param mixed $newAttachment
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function addAttachment($assetOrAssetId, &$newAttachment = null)
+    {
+    	$newAttachment = Attachment::attachToEntity($this, $assetOrAssetId);
+    	return $this;
+    }
+    /**
+     * removing an asset from Attachment
+     * 
+     * @param mixed $assetOrAssetId When null, it will clear all attachments
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function rmAttachment($assetOrAssetId)
+    {
+    	Attachment::rmFromEntity($this, $assetOrAssetId);
+    	return $this;
+    }
+    /**
+     * Clearing all attachments
+     * 
+     * @return BaseEntityAbstract
+     */
+    public function clearAttachments()
+    {
+    	Attachment::rmFromEntity($this, null);
+    	return $this;
+    }
+    /**
      * Default toString implementation
      *
      * @return string
