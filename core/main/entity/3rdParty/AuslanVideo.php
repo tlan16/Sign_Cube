@@ -141,7 +141,7 @@ class AuslanVideo extends BaseEntityAbstract
 	 *
 	 * @return AuslanVideo
 	 */
-	public static function create($media, $assetId, $poster = '')
+	public static function create($media, $assetId = '', $poster = '')
 	{
 		if(!($newVideo = self::getByMedia($media)) instanceof AuslanVideo)
 			$newVideo = new AuslanVideo();

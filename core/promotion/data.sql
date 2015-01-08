@@ -14,3 +14,5 @@ INSERT INTO `role` (`id`, `name`, `active`, `created`, `createdById`, `updated`,
 	(42,'owner', 1, '2014-03-06 19:47:35', 42, '2014-03-25 06:45:56', 42);
 	
 UPDATE `signcube`.`useraccount` SET `active` = '1' WHERE `useraccount`.`id` = 10;
+
+INSERT INTO `signcube`.`systemsettings` (`id`, `type`, `value`, `description`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES (NULL, 'asset_root', 'C:\\Users\\Frank-Desktop\\git\\Sign_Cube\\web\\assets\\video', '', '1', '0001-01-01 00:00:00', '0', CURRENT_TIMESTAMP, '0');
