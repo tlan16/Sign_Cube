@@ -17,7 +17,7 @@
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
 		
 			<!-- FrontEnd:: 3rdPartt Auslan page -->
-			<url ServiceParameter="FrontEnd.3rdParty.Auslan.AuslanController" pattern="3rdparty/auslan.html" />
+			<url ServiceParameter="BackEnd.3rdParty.Auslan.AuslanController" pattern="3rdparty/auslan.html" />
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
