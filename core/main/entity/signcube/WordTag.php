@@ -82,3 +82,4 @@ class WordTag extends BaseEntityAbstract
 	}
 	// TODO: relationship
 }
+?>

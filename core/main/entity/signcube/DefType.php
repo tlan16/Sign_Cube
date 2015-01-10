@@ -82,3 +82,4 @@ class DefType extends BaseEntityAbstract
 	}
 	// TODO: relationship
 }
+?>

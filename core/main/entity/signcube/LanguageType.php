@@ -72,3 +72,4 @@ class LanguageType extends BaseEntityAbstract
 	}
 	// TODO: relationship
 }
+?>

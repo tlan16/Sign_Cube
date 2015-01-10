@@ -152,3 +152,4 @@ class AuslanVideo extends BaseEntityAbstract
 		return $newVideo;
 	}
 }
+?>

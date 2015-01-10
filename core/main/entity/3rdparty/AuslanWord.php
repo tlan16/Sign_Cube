@@ -184,3 +184,4 @@ class AuslanWord extends BaseEntityAbstract
 		->save();
 	}
 }
+?>

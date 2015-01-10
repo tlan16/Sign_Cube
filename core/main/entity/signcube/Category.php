@@ -82,3 +82,4 @@ class Category extends BaseEntityAbstract
 	}
 	// TODO: relationship
 }
+?>

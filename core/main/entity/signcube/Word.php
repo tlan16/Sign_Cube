@@ -58,3 +58,4 @@ class Word extends BaseEntityAbstract
 	}
 	
 }
+?>

@@ -227,3 +227,4 @@ class Video extends BaseEntityAbstract
 	}
 	// TODO: getrelationship	
 }
+?>

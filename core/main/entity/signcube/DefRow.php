@@ -112,3 +112,4 @@ class DefRow extends BaseEntityAbstract
 	}
 	// TODO: relationship
 }
+?>

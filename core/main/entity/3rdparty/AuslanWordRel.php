@@ -141,3 +141,4 @@ class AuslanWordRel extends BaseEntityAbstract
     	self::updateByCriteria('active = 0', $where, $params);
     }
 }
+?>
