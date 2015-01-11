@@ -7,10 +7,10 @@
  * @subpackage Entity
  * @author tlan<tlan16@sina.com>
  */
-class LanguageType extends BaseEntityAbstract
+class Language extends BaseEntityAbstract
 {
 	/**
-	 * The name of LanguageType
+	 * The name of Language
 	 */
 	private $name;
 	/**
@@ -27,7 +27,7 @@ class LanguageType extends BaseEntityAbstract
 	 * 
 	 * @param string $value The name
 	 * 
-	 * @return LanguageType
+	 * @return Language
 	 */
 	public function setName($value)
 	{

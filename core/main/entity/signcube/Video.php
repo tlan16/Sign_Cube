@@ -116,16 +116,6 @@ class Video extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for Video
-	 * 
-	 * @return Video
-	 */
-	public function getVideo()
-	{
-		$this->loadManyToOne("video");
-		return $this->video;
-	}
-	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */

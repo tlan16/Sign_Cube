@@ -183,7 +183,7 @@ class WordRel extends ConfirmEntityAbstract
 	 */
 	public static function getRelationships(Word $word = null, Video $video = null, Category $category = null, DefType $defType = null, WordTag $wordTag = null, $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
 	{
-		if(!$word instanceof Word && !$person instanceof Person)
+		if(!$word instanceof Word && !$video instanceof Video)
 			throw new CoreException('At least one of the search criterial should be provided: property or user');
 		$where = array();
 		$param = array();

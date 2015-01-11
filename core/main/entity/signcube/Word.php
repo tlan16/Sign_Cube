@@ -18,11 +18,11 @@ class Word extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
-	 * The Word relationship
+	 * The Word language
 	 * 
-	 * @var array()
+	 * @var Language
 	 */
-	protected $rels = array();
+	protected $language;
 	/**
 	 * Getter for name
 	 * 
@@ -45,6 +45,37 @@ class Word extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * Getter for language
+	 *
+	 * @return Language
+	 */
+	public function getLanguage() 
+	{
+		$this->loadManyToOne('language');
+	    return $this->language;
+	}
+	/**
+	 * Setter for language
+	 *
+	 * @param Language $value The language
+	 *
+	 * @return Word
+	 */
+	public function setLanguage(Language $value) 
+	{
+	    $this->language = $value;
+	    return $this;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::preSave()
+	 */
+	public function preSave()
+	{
+		if(trim($this->getName()) === '')
+			throw new EntityException('Name can NOT be empty', 'exception_entity_word_name_empty');
+	}
+	/**
 	 * Getting the relationships for a Word
 	 * 
 	 * @param 
@@ -56,6 +87,35 @@ class Word extends BaseEntityAbstract
 	{
 		// TODO
 	}
-	
+	/**
+     * (non-PHPdoc)
+     * @see BaseEntity::__loadDaoMap()
+     */
+    public function __loadDaoMap()
+    {
+        DaoMap::begin($this, 'word');
+        DaoMap::setStringType('name', 'varchar', 32);
+        DaoMap::setManyToOne('language', 'Language', 'word_lang', false);
+        parent::__loadDaoMap();
+        
+        DaoMap::createIndex('name');
+        DaoMap::commit();
+    }
+    /**
+     * creating a property
+     *
+     * @param Language		$language
+     * @param string		$name
+     *
+     * @return Word
+     */
+    public static function create(Language $language, $name)
+    {
+    	$word = new Word();
+    	return $word->setLanguage($language)
+	    	->setName($name)
+	    	->save()
+	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ')', __CLASS__ . '::' . __FUNCTION__);
+    }
 }
 ?>

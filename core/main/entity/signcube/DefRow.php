@@ -14,9 +14,15 @@ class DefRow extends BaseEntityAbstract
 	 */
 	private $content;
 	/**
-	 * The index of DefRow
+	 * The sequence of DefRow
 	 */
-	private $index;
+	private $sequence;
+	/**
+	 * The DefType of DefRow
+	 *
+	 * @var DefType
+	 */
+	protected $defType;
 	/**
 	 * Getter for content
 	 * 
@@ -39,35 +45,47 @@ class DefRow extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for index
+	 * Getter for sequence
 	 * 
-	 * @return index
+	 * @return sequence
 	 */
-	public function getIndex()
+	public function getSequence()
 	{
-		return $this->index;
+		return $this->sequence;
 	}
 	/**
-	 * Setter for index
+	 * Setter for sequence
 	 * 
-	 * @param string $value The index
+	 * @param string $value The sequence
 	 * 
 	 * @return DefRow
 	 */
-	public function setIndex($value)
+	public function setSequence($value)
 	{
-		$this->index = $value;
+		$this->sequence = $value;
 		return $this;
 	}
 	/**
-	 * Getter for DefRow
-	 * 
+	 * Getter for DefType
+	 *
+	 * @return DefType
+	 */
+	public function getDefType() 
+	{
+		$this->loadManyToOne('defType');
+	    return $this->defType;
+	}
+	/**
+	 * Setter for DefType
+	 *
+	 * @param DefType $value The defType
+	 *
 	 * @return DefRow
 	 */
-	public function getDefRow()
+	public function setDefType(DefType $value) 
 	{
-		$this->loadManyToOne("defRow");
-		return $this->defRow;
+	    $this->defType = $value;
+	    return $this;
 	}
 	/**
 	 * (non-PHPdoc)
@@ -87,26 +105,28 @@ class DefRow extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'defr');
-		DaoMap::setStringType('content', 'text', 1000);
-		DaoMap::setIntType('index');
+		DaoMap::setStringType('content', 'TEXT', 1000);
+		DaoMap::setIntType('sequence');
+		DaoMap::setManyToOne('defType', 'DefType', 'defr_deftp', false);
 		parent::__loadDaoMap();
 		
-		DaoMap::createIndex('name');
 		DaoMap::commit();
 	}
 	/**
 	 * creating a DefRow
 	 *
 	 * @param unknown $content
-	 * @param unknown $index
+	 * @param DefType $defType
+	 * @param unknown $sequence
 	 *
 	 * @return DefRow
 	 */
-	public static function create($content, $index = 0)
+	public static function create($content, DefType $defType,$sequence = 0)
 	{
 		$entity = new DefRow();
 		return $entity->setContent($content)
-			->setIndex($index)
+			->setSequence($sequence)
+			->setDefType($defType)
 			->save()
 			->addLog(Log::TYPE_SYS, 'DefRow (' . $content . ') created now with an index: ' . $index);
 	}

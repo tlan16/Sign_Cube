@@ -35,16 +35,6 @@ class Category extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for Category
-	 * 
-	 * @return Category
-	 */
-	public function getCategory()
-	{
-		$this->loadManyToOne("category");
-		return $this->category;
-	}
-	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::preSave()
 	 */

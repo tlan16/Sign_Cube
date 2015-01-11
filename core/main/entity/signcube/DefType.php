@@ -35,16 +35,6 @@ class DefType extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for DefType
-	 * 
-	 * @return DefType
-	 */
-	public function getDefType()
-	{
-		$this->loadManyToOne("defType");
-		return $this->defType;
-	}
-	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::preSave()
 	 */
