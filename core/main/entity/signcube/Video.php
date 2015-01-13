@@ -27,11 +27,17 @@ class Video extends BaseEntityAbstract
 	 */
 	protected $asset;
 	/**
-	 * The thirdparty ref(link) of the video
+	 * The thirdparty name of imported Video
 	 * 
 	 * @var string
 	 */
-	private $thirdpartyRef;
+	private $thirdpartyName;
+	/**
+	 * The thirdparty link of imported Video
+	 * 
+	 * @var string
+	 */
+	private $thirdpartyLink;
 	/**
 	 * Getter for entityId
 	 */
@@ -95,24 +101,45 @@ class Video extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for thirdpartyRef
+	 * Getter for thirdpartyName
 	 * 
 	 * @return string
 	 */
-	public function getThirdpartyRef()
+	public function getThirdpartyName()
 	{
-		return $this->thirdpartyRef;
+		return $this->thirdpartyName;
 	}
 	/**
-	 * Setter for the thirdpartyRef
+	 * Setter for the thirdpartyName
 	 * 
 	 * @param string $value
 	 * 
 	 * @return Video
 	 */
-	public function setThirdpartyRef()
+	public function setThirdpartyName()
 	{
-		$this->thirdpartyRef = trim($value);
+		$this->thirdpartyName = trim($value);
+		return $this;
+	}
+	/**
+	 * Getter for thirdpartyLink
+	 * 
+	 * @return string
+	 */
+	public function getThirdpartyLink()
+	{
+		return $this->thirdpartyLink;
+	}
+	/**
+	 * Setter for the thirdpartyLink
+	 * 
+	 * @param string $value
+	 * 
+	 * @return Video
+	 */
+	public function setThirdpartyLink()
+	{
+		$this->thirdpartyLink = trim($value);
 		return $this;
 	}
 	/**
@@ -121,12 +148,13 @@ class Video extends BaseEntityAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'video');
+		DaoMap::begin($this, 'vid');
 	
 		DaoMap::setIntType('entityId');
 		DaoMap::setStringType('EntityName','varchar', 100);
 		DaoMap::setManyToOne('asset','Asset', 'attachment_ass');
-		DaoMap::setStringType('thirdpartyRef', 'varchar', '200');
+		DaoMap::setStringType('thirdpartyName', 'varchar', '32');
+		DaoMap::setStringType('thirdpartyLink', 'varchar', '255');
 	
 		parent::__loadDaoMap();
 	
@@ -140,19 +168,21 @@ class Video extends BaseEntityAbstract
 	 * @param int 		$entityId
 	 * @param string 	$EntityName
 	 * @param Asset		$asset
-	 * @param string	$thirdpartyRef
+	 * @param string	$thirdpartyName
+	 * @param string	$thirdpartyLink
 	 * 
 	 * @return EntityTag
 	 */
-	public static function create($entityId, $entityName, Asset $asset, $thirdpartyRef = '')
+	public static function create($entityId, $entityName, Asset $asset, $thirdpartyName = '', $thirdpartyLink = '')
 	{
-		$vid = new Video();
-		$vid->setEntityId($entityId)
+		$video = new Video();
+		$video->setEntityId($entityId)
 			->setEntityName($entityName)
 			->setAsset($asset)
-			->setThirdpartyRef($thirdpartyRef)
+			->setThirdpartyName($thirdpartyName)
+			->setThirdpartyLink($thirdpartyLink)
 			->save();
-		return $vid;
+		return $video;
 	}
 	/**
 	 * Getting the asset from asset or assetId

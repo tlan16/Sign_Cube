@@ -1,13 +1,13 @@
 <?php
 /**
- * DefType Entity
+ * DefinitionType Entity
  *  - the type of defination, eg. varb, noun, verb & noun
  * 
  * @package Core
  * @subpackage Entity
  * @author tlan<tlan16@sina.com>
  */
-class DefType extends BaseEntityAbstract
+class DefinitionType extends BaseEntityAbstract
 {
 	/**
 	 * The name of DefType
@@ -50,7 +50,7 @@ class DefType extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'deftp');
-		DaoMap::setStringType('name', 'varchar', 50);
+		DaoMap::setStringType('name', 'varchar', 64);
 		parent::__loadDaoMap();
 	
 		DaoMap::createIndex('name');
@@ -68,8 +68,7 @@ class DefType extends BaseEntityAbstract
 		$entity = new DefType();
 		return $entity->setName($name)
 		->save()
-		->addLog(Log::TYPE_SYS, 'DefType (' . $name . ') created now');
+		->addLog(Log::TYPE_SYS, 'DefType (' . $name . ') created now', __CLASS__ . '::' . __FUNCTION__);
 	}
-	// TODO: relationship
 }
 ?>

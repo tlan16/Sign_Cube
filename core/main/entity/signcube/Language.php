@@ -14,6 +14,11 @@ class Language extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
+	 * The code of Language
+	 * 	the language code used for google translate api
+	 */
+	private $code;
+	/**
 	 * Getter for name
 	 * 
 	 * @return name
@@ -35,6 +40,27 @@ class Language extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * Getter for code
+	 * 
+	 * @return code
+	 */
+	public function getCode()
+	{
+		return $this->code;
+	}
+	/**
+	 * Setter for code
+	 * 
+	 * @param string $value The code
+	 * 
+	 * @return Language
+	 */
+	public function setCode($value)
+	{
+		$this->code = trim($value);
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::preSave()
 	 */
@@ -50,10 +76,12 @@ class Language extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'lang');
-		DaoMap::setStringType('name', 'varchar', 50);
+		DaoMap::setStringType('name', 'varchar', 32);
+		DaoMap::setStringType('code', 'varchar', 16);
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('name');
+		DaoMap::createIndex('code');
 		DaoMap::commit();
 	}
 	/**
@@ -63,13 +91,13 @@ class Language extends BaseEntityAbstract
 	 *
 	 * @return LanguageType
 	 */
-	public static function create($name)
+	public static function create($name, $code = '')
 	{
-		$entity = new LanguageType();
+		$entity = new Language();
 		return $entity->setName($name)
+			->setCode($code)
 			->save()
-			->addLog(Log::TYPE_SYS, 'LanguageType (' . $name . ') created now');
+			->addLog(Log::TYPE_SYS, 'Language (' . $name . ') with code(' . $code . ') created now', __CLASS__ . '::' . __FUNCTION__);
 	}
-	// TODO: relationship
 }
 ?>

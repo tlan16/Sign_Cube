@@ -18,6 +18,12 @@ class Word extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
+	 *  The tag of the Word
+	 *  
+	 *  @var string
+	 */
+	private $tag;
+	/**
 	 * The Word language
 	 * 
 	 * @var Language
@@ -42,6 +48,27 @@ class Word extends BaseEntityAbstract
 	public function setName($value)
 	{
 		$this->name = trim($value);
+		return $this;
+	}
+	/**
+	 * Getter for tag
+	 * 
+	 * @return $this->tag;
+	 */
+	public function getTag()
+	{
+		return $this->tag;
+	}
+	/**
+	 * Setter for tag
+	 * 
+	 * @param string $value The tag
+	 * 
+	 * @return Word
+	 */
+	public function setTag($value)
+	{
+		$this->tag = trim($value);
 		return $this;
 	}
 	/**
@@ -74,18 +101,8 @@ class Word extends BaseEntityAbstract
 	{
 		if(trim($this->getName()) === '')
 			throw new EntityException('Name can NOT be empty', 'exception_entity_word_name_empty');
-	}
-	/**
-	 * Getting the relationships for a Word
-	 * 
-	 * @param 
-	 * 
-	 * @throws CoreException
-	 * @return Ambigous <Ambigous, multitype:, multitype:BaseEntityAbstract >
-	 */
-	public function getRelationships()
-	{
-		// TODO
+		if(trim($this->getTag()) === '')
+			throw new EntityException('Tag can NOT be empty', 'exception_entity_word_tag_empty');
 	}
 	/**
      * (non-PHPdoc)
@@ -93,12 +110,14 @@ class Word extends BaseEntityAbstract
      */
     public function __loadDaoMap()
     {
-        DaoMap::begin($this, 'word');
-        DaoMap::setStringType('name', 'varchar', 32);
-        DaoMap::setManyToOne('language', 'Language', 'word_lang', false);
+        DaoMap::begin($this, 'wd');
+        DaoMap::setStringType('name', 'varchar', 64);
+        DaoMap::setStringType('tag', 'varchar', 32);
+        DaoMap::setManyToOne('language', 'Language', 'wd_lang', false);
         parent::__loadDaoMap();
         
         DaoMap::createIndex('name');
+        DaoMap::createIndex('tag');
         DaoMap::commit();
     }
     /**
@@ -106,16 +125,18 @@ class Word extends BaseEntityAbstract
      *
      * @param Language		$language
      * @param string		$name
+     * @param string		$tag
      *
      * @return Word
      */
-    public static function create(Language $language, $name)
+    public static function create(Language $language, $name, $tag = '')
     {
     	$word = new Word();
     	return $word->setLanguage($language)
 	    	->setName($name)
+	    	->setTag($tag)
 	    	->save()
-	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ')', __CLASS__ . '::' . __FUNCTION__);
+	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ') with tag(' . $tag . ')', __CLASS__ . '::' . __FUNCTION__);
     }
 }
 ?>

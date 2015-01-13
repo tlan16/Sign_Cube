@@ -14,6 +14,12 @@ class Category extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
+	 * The Word language
+	 *
+	 * @var Language
+	 */
+	protected $language;
+	/**
 	 * Getter for name
 	 * 
 	 * @return name
@@ -35,6 +41,28 @@ class Category extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * Getter for language
+	 *
+	 * @return Language
+	 */
+	public function getLanguage()
+	{
+		$this->loadManyToOne('language');
+		return $this->language;
+	}
+	/**
+	 * Setter for language
+	 *
+	 * @param Language $value The language
+	 *
+	 * @return Word
+	 */
+	public function setLanguage(Language $value)
+	{
+		$this->language = $value;
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::preSave()
 	 */
@@ -51,6 +79,7 @@ class Category extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'cat');
 		DaoMap::setStringType('name', 'varchar', 50);
+		DaoMap::setManyToOne('language', 'Language', 'cat_lang', false);
 		parent::__loadDaoMap();
 	
 		DaoMap::createIndex('name');
@@ -59,17 +88,18 @@ class Category extends BaseEntityAbstract
 	/**
 	 * creating a category
 	 *
-	 * @param unknown $name
+	 * @param Language	$language
+	 * @param unknown 	$name
 	 *
 	 * @return Category
 	 */
-	public static function create($name)
+	public static function create(Language $language, $name)
 	{
 		$entity = new Category();
-		return $entity->setName($name)
+		return $entity->setLanguage($language)
+		->setName($name)
 		->save()
-		->addLog(Log::TYPE_SYS, 'Category (' . $name . ') created now');
+		->addLog(Log::TYPE_SYS, 'Category (' . $name . ') with Language' . $language->getName() . ') created now', __CLASS__ . '::' . __FUNCTION__);
 	}
-	// TODO: relationship
 }
 ?>
