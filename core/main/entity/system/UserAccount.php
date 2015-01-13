@@ -38,6 +38,12 @@ class UserAccount extends ConfirmEntityAbstract
      * @var Person
      */
     protected $person;
+    /**
+     * the expiry of the user account
+     *
+     * @var string
+     */
+    private $expiry;
    	/**
    	 * Getter for username
    	 *
@@ -78,6 +84,27 @@ class UserAccount extends ConfirmEntityAbstract
     public function setPassword($password, $encryptPass = false)
     {
         $this->password = ($encryptPass === true ? self::encryptPass($password) : $password);
+        return $this;
+    }
+    /**
+     * getter expiry
+     *
+     * @return string
+     */
+    public function getExpiry()
+    {
+        return $this->expiry;
+    }
+    /**
+     * Setter expiry
+     *
+     * @param string $value The expiry
+     *
+     * @return UserAccount
+     */
+    public function setExpiry($value)
+    {
+        $this->expiry = $value;
         return $this;
     }
     /**
@@ -172,7 +199,7 @@ class UserAccount extends ConfirmEntityAbstract
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
     	$query = self::getQuery();
-    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password))), true, 1, 1);
+    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password ANd expriry <= NOW()", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password))), true, 1, 1);
     	if(count($userAccounts) > 0)
     		return $userAccounts[0];
     	return null;
@@ -197,12 +224,13 @@ class UserAccount extends ConfirmEntityAbstract
      * 
      * @return UserAccount
      */
-    public static function create($username, $password, Person $person, $encryptPass = true)
+    public static function create($username, $password, Person $person, $encryptPass = true, $expiry = '')
     {
     	$userAccount = new UserAccount();
     	return $userAccount->setUserName($username)
     		->setPassword($password, !$encryptPass)
     		->setPerson($person)
+    		->setExpiry($expiry)
     		->save()
     		->needToConfirm('UserAccount Created')
     		->addLog(Log::TYPE_SYS, 'UserAccount created with (username=' . $username . ') with person(id=' . $person->getId() . ')');
