@@ -95,11 +95,12 @@ class Category extends BaseEntityAbstract
 	 */
 	public static function create(Language $language, $name)
 	{
-		$entity = new Category();
+		$existingEntity = self::getAllByCriteria('name = ?', array(trim($name)));
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Category();
 		return $entity->setLanguage($language)
-		->setName($name)
-		->save()
-		->addLog(Log::TYPE_SYS, 'Category (' . $name . ') with Language' . $language->getName() . ') created now', __CLASS__ . '::' . __FUNCTION__);
+			->setName($name)
+			->save()
+			->addLog(Log::TYPE_SYS, 'Category (' . $name . ') with Language(' . $language->getName() . ')' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>

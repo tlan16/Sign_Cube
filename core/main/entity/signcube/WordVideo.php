@@ -87,11 +87,12 @@ class WordVideo extends BaseEntityAbstract
 	 */
 	public static function create(Word $word, Video $video)
 	{
-		$wordVideo = new WordVideo();
-		return $wordVideo->setWord($word)
+		$existingEntity = self::getAllByCriteria('wordId = ? AND videoId = ?', array($word->getId(), $video->getId()));
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new WordVideo();
+		return $entity->setWord($word)
 		->setVideo($video)
 		->save()
-		->addLog(Log::TYPE_SYS, 'WordVideo Created with word(' . $word->getName() . ') and Video(ID=' . $video->getId() . ')', __CLASS__ . '::' . __FUNCTION__);
+		->addLog(Log::TYPE_SYS, 'WordVideo ' . (count($existingEntity) > 0 ? 'updated' : 'created') . ' with word(' . $word->getName() . ') and Video(ID=' . $video->getId() . ')', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 

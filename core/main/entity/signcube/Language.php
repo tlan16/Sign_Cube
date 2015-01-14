@@ -94,19 +94,11 @@ class Language extends BaseEntityAbstract
 	public static function create($name, $code = '')
 	{
 		$existingEntity = self::getAllByCriteria('name = ? OR code = ?', array(trim($name), trim($code)));
-		if(count($existingEntity) > 0)
-			return $existingEntity[0]->setName($name)
-				->setCode($code)
-				->save()
-				->addLog(Log::TYPE_SYS, 'Language (' . $name . ') with code(' . $code . ') updated now', __CLASS__ . '::' . __FUNCTION__);
-		else
-		{
-			$entity = new Language();
-			return $entity->setName($name)
-				->setCode($code)
-				->save()
-				->addLog(Log::TYPE_SYS, 'Language (' . $name . ') with code(' . $code . ') created now', __CLASS__ . '::' . __FUNCTION__);
-		}
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Language();
+		return $entity->setName($name)
+			->setCode($code)
+			->save()
+			->addLog(Log::TYPE_SYS, 'Language (' . $name . ') with code(' . $code . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>

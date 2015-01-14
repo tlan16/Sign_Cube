@@ -65,10 +65,11 @@ class DefinitionType extends BaseEntityAbstract
 	 */
 	public static function create($name)
 	{
-		$entity = new DefinitionType();
+		$existingEntity = self::getAllByCriteria('name = ?', array(trim($name)));
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new DefinitionType();
 		return $entity->setName($name)
 			->save()
-			->addLog(Log::TYPE_SYS, 'DefinitionType (' . $name . ') created now', __CLASS__ . '::' . __FUNCTION__);
+			->addLog(Log::TYPE_SYS, 'DefinitionType (' . $name . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>

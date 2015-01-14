@@ -175,13 +175,15 @@ class Video extends BaseEntityAbstract
 	 */
 	public static function create($entityId, $entityName, Asset $asset, $thirdpartyName = '', $thirdpartyLink = '')
 	{
-		$video = new Video();
-		$video->setEntityId($entityId)
+		$existingEntity = self::getAllByCriteria('entityId = ? AND assetId = ?', array($entityId, $asset->getId()));
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Video();
+		$entity->setEntityId($entityId)
 			->setEntityName($entityName)
 			->setAsset($asset)
 			->setThirdpartyName($thirdpartyName)
 			->setThirdpartyLink($thirdpartyLink)
-			->save();
+			->save()
+			->addLog(Log::TYPE_SYS, 'Video (' . $name . ') with entityId(' . $entityId . ') with entityName(' . $entityName . ') with Asset(ID=' . $asset->getId() . ') with 3rdPartyName(' . $thirdpartyName . ') with 3rdPartyLink(' . $thirdpartyLink . ')' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
 		return $video;
 	}
 	/**

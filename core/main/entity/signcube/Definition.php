@@ -144,18 +144,21 @@ class Definition extends BaseEntityAbstract
 	 *
 	 * @param unknown 			$content
 	 * @param DefinitionType 	$definitionType
+	 * @param Word 				$word
 	 * @param unknown 			$sequence
 	 *
 	 * @return Definition
 	 */
-	public static function create($content, DefinitionType $definitionType,$sequence = 0)
+	public static function create($content, DefinitionType $definitionType, Word $word, $sequence = 0)
 	{
-		$entity = new Definition();
+		$existingEntity = self::getAllByCriteria('content = ? AND wordId = ? AND definitionTypeId = ?', array(trim($content),$word->getId(), $definitionType->getId()));
+		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Definition();
 		return $entity->setContent($content)
 			->setSequence($sequence)
 			->setDefinitionType($definitionType)
+			->setWord($word)
 			->save()
-			->addLog(Log::TYPE_SYS, 'Definition (' . $content . ') with DefinitionType(' . $definitionType->getName() . ') created now with an sequence: ' . $sequence . ')', __CLASS__ . '::' . __FUNCTION__);
+			->addLog(Log::TYPE_SYS, 'Definition (' . $content . ') with Word (' . $word->getName() . ') with DefinitionType(' . $definitionType->getName() . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now with an sequence: ' . $sequence . ')', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>

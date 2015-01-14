@@ -160,13 +160,14 @@ class Word extends BaseEntityAbstract
      */
     public static function create(Language $language, Category $category, $name, $tag = '')
     {
-    	$word = new Word();
-    	return $word->setLanguage($language)
+    	$existingEntity = self::getAllByCriteria('languageId = ? AND categoryId = ? AND name = ?', array($language->getId(), $category->getId(), trim($name)));
+    	$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Word();
+    	return $entity->setLanguage($language)
     		->setCategory($category)
 	    	->setName($name)
 	    	->setTag($tag)
 	    	->save()
-	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ') with Category(' . $category->getName() . ') with tag(' . $tag . ')', __CLASS__ . '::' . __FUNCTION__);
+	    	->addLog(Log::TYPE_SYS, 'Word ' . (count($existingEntity) > 0 ? 'updated' : 'created') . ' with name(' . $name . ') and language(' . $language->getName() . ') with Category(' . $category->getName() . ') with tag(' . $tag . ')', __CLASS__ . '::' . __FUNCTION__);
     }
 }
 ?>
