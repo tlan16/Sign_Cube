@@ -10,7 +10,7 @@
 class DefinitionType extends BaseEntityAbstract
 {
 	/**
-	 * The name of DefType
+	 * The name of DefinitionType
 	 */
 	private $name;
 	/**
@@ -65,10 +65,10 @@ class DefinitionType extends BaseEntityAbstract
 	 */
 	public static function create($name)
 	{
-		$entity = new DefType();
+		$entity = new DefinitionType();
 		return $entity->setName($name)
-		->save()
-		->addLog(Log::TYPE_SYS, 'DefType (' . $name . ') created now', __CLASS__ . '::' . __FUNCTION__);
+			->save()
+			->addLog(Log::TYPE_SYS, 'DefinitionType (' . $name . ') created now', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>
