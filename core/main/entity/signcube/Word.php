@@ -30,6 +30,12 @@ class Word extends BaseEntityAbstract
 	 */
 	protected $language;
 	/**
+	 * The Category of the WordCategory
+	 *
+	 * @var Category
+	 */
+	protected $category;
+	/**
 	 * Getter for name
 	 * 
 	 * @return $this->name;
@@ -94,6 +100,28 @@ class Word extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
+	 * Getter for category
+	 *
+	 * @return Category
+	 */
+	public function getCategory()
+	{
+		$this->loadManyToOne('category');
+		return $this->category;
+	}
+	/**
+	 * Setter for category
+	 *
+	 * @param Category $value The category
+	 *
+	 * @return WordCategory
+	 */
+	public function setCategory(Category $value)
+	{
+		$this->category = $value;
+		return $this;
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::preSave()
 	 */
@@ -114,6 +142,7 @@ class Word extends BaseEntityAbstract
         DaoMap::setStringType('name', 'varchar', 64);
         DaoMap::setStringType('tag', 'varchar', 32);
         DaoMap::setManyToOne('language', 'Language', 'wd_lang', false);
+        DaoMap::setManyToOne('category', 'Category', 'wdcat_cat', false);
         parent::__loadDaoMap();
         
         DaoMap::createIndex('name');
@@ -129,14 +158,15 @@ class Word extends BaseEntityAbstract
      *
      * @return Word
      */
-    public static function create(Language $language, $name, $tag = '')
+    public static function create(Language $language, Category $category, $name, $tag = '')
     {
     	$word = new Word();
     	return $word->setLanguage($language)
+    		->setCategory($category)
 	    	->setName($name)
 	    	->setTag($tag)
 	    	->save()
-	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ') with tag(' . $tag . ')', __CLASS__ . '::' . __FUNCTION__);
+	    	->addLog(Log::TYPE_SYS, 'Word Created with name(' . $name . ') and language(' . $language->getName() . ') with Category(' . $category->getName() . ') with tag(' . $tag . ')', __CLASS__ . '::' . __FUNCTION__);
     }
 }
 ?>
