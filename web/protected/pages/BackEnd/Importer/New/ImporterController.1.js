@@ -5,21 +5,21 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	id_wrapper: '' //the html id of the wrapper
 	,_acceptableTypes: ['csv']
-	,csvFileLineFormat: ['sku', 'myobItemNo', 'assetAccNo', 'revenueAccNo', 'costAccNo']
+	,csvFileLineFormat: []
 	,_fileReader: null
 	,_uploadedData: {}
 	,_htmlIds: {}
 	,_importDataTypes: {}
 	,_rowNo: null
 
-	,setHTMLIDs: function(skuMatchDivId, productCodeTypeDropdownId) {
+	,setHTMLIDs: function(importerDivId, importDataTypesDropdownId) {
 		var tmp = {};
 		tmp.me = this;
 		
-		tmp.me._htmlIds.skuMatchDiv = skuMatchDivId;
-		tmp.me._htmlIds.productCodeTypeDropdown = productCodeTypeDropdownId;
+		tmp.me._htmlIds.importerDiv = importerDivId;
+		tmp.me._htmlIds.importDataTypesDropdown = importDataTypesDropdownId;
 		
-		tmp.me.id_wrapper = tmp.me._htmlIds.skuMatchDiv;
+		tmp.me.id_wrapper = tmp.me._htmlIds.importerDiv;
 		
 		return this;
 	}
@@ -30,11 +30,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me._rowNo = 1;
 		tmp.me._importDataTypes = importDataTypes;
 		
-		$(tmp.me._htmlIds.skuMatchDiv).update('test');
+		$(tmp.me._htmlIds.importerDiv).update('test');
 		
 		if (window.File && window.FileReader && window.FileList && window.Blob) { //the browser supports file reading api
 			tmp.me._fileReader = new FileReader();
-			$(tmp.me._htmlIds.skuMatchDiv).update( tmp.me._getFileUploadDiv() );
+			$(tmp.me._htmlIds.importerDiv).update( tmp.me._getFileUploadDiv() );
 			tmp.me._loadChosen();
 		} else {
 			$(tmp.me.id_wrapper).update(tmp.me.getAlertBox('Warning:', 'Your browser does NOT support this feature. pls change and try again').addClassName('alert-warning') );
@@ -45,12 +45,14 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_genTemplate: function() {
 		var tmp = {};
 		tmp.me = this;
-		tmp.data = [];
-		tmp.data.push(tmp.me.csvFileLineFormat.join(', ') + "\n");
-		tmp.now = new Date();
-		tmp.fileName = 'skumatch_template_' + tmp.now.getFullYear() + '_' + tmp.now.getMonth() + '_' + tmp.now.getDate() + '_' + tmp.now.getHours() + '_' + tmp.now.getMinutes() + '_' + tmp.now.getSeconds() + '.csv';
-		tmp.blob = new Blob(tmp.data, {type: "text/csv;charset=utf-8"});
-		saveAs(tmp.blob, tmp.fileName);
+		if(tmp.me.type = tmp.me._getUploadType()) {
+			tmp.data = [];
+			tmp.data.push(tmp.me.csvFileLineFormat.join(', ') + "\n");
+			tmp.now = new Date();
+			tmp.fileName = tmp.me.type + '_' + tmp.now.getFullYear() + '_' + tmp.now.getMonth() + '_' + tmp.now.getDate() + '_' + tmp.now.getHours() + '_' + tmp.now.getMinutes() + '_' + tmp.now.getSeconds() + '.csv';
+			tmp.blob = new Blob(tmp.data, {type: "text/csv;charset=utf-8"});
+			saveAs(tmp.blob, tmp.fileName);
+		}
 		return tmp.me;
 	}
 	/**
@@ -61,7 +63,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				search_contains: true,
 				inherit_select_classes: true,
 				no_results_text: "No code type found!",
-				width: "150px",
+				width: "250px",
 		});
 		return this;
 	}
@@ -71,7 +73,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv =  new Element('div',  {'class': 'panel panel-default drop_file_div', 'title': 'You can drag multiple files here!'})
 			.insert({'bottom': new Element('div', {'class': 'panel-body'})
 				.insert({'bottom': new Element('div', {'class': 'pull-right'})
-					.insert({'bottom': tmp.dropdown = new Element('select', {'class': 'chosen', 'data-placeholder': 'Code Type: ' ,'id': tmp.me._htmlIds.productCodeTypeDropdown}) 
+					.insert({'bottom': tmp.dropdown = new Element('select', {'class': 'chosen', 'data-placeholder': 'Code Type: ' ,'id': tmp.me._htmlIds.importDataTypesDropdown}) 
 					})
 					.insert({'bottom': new Element('span', {'class': 'btn btn-default btn-xs', 'title': 'Download Template'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-download-alt'}) })
@@ -91,8 +93,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('span', {'class': 'btn btn-success clearfix'})
 						.update('Click to select your file')
 						.observe('click', function(event) {
-							tmp.me._getProductCodeType();
-							tmp.inputFile.click();
+							if(tmp.me._getUploadType())
+								tmp.inputFile.click();
 						})
 					})
 					.insert({'bottom': new Element('div', {'class': 'clearfix'}) })
@@ -105,26 +107,44 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				evt.dataTransfer.dropEffect = 'copy';
 			})
 			.observe('drop', function(evt) {
-				tmp.me._getProductCodeType();
-				evt.stopPropagation();
-				evt.preventDefault();
-				tmp.me._readFiles(evt.dataTransfer.files);
+				if(tmp.me._getUploadType()) {
+					evt.stopPropagation();
+					evt.preventDefault();
+					tmp.me._readFiles(evt.dataTransfer.files);
+				}
 			})
 		;
-		console.debug(tmp.me._importDataTypes);
+//		tmp.dropdown.insert({'bottom': new Element('option', {'value': 'Select a Import Type'})
+//			.update('Select a Import Type')
+//		});
 		$H(tmp.me._importDataTypes).each(function(item){
-			tmp.dropdown.insert({'bottom': new Element('option', {'value': item.name}).update(item.name).store('data', item) 
-			})
+			tmp.dropdown.insert({'bottom': new Element('option', {'value': item.key})
+				.store('data', item.key)
+				.update(item.value)
+			});
 		});
 		
 		return tmp.newDiv;
 	}
 	
-	,_getProductCodeType: function() {
+	,_getUploadType: function() {
 		var tmp = {};
 		tmp.me = this;
-		tmp.me._productCodeTypes = $(tmp.me._htmlIds.productCodeTypeDropdown) ? $F($(tmp.me._htmlIds.productCodeTypeDropdown)) : 'EAN';
-		return tmp.me;
+		tmp.me.dropdown = $(tmp.me._htmlIds.importDataTypesDropdown);
+		tmp.me._importDataTypes = $F(tmp.me.dropdown);
+		
+		if(tmp.me._importDataTypes === 'Select a Import Type') {
+			tmp.me.showModalBox('Please select a import type first', 'Invalid inport type'); 
+			return false;
+		}
+		switch(tmp.me._importDataTypes) {
+			case 'language':
+				tmp.me.csvFileLineFormat = ['name', 'code'];
+				break;
+			default:
+				tmp.me.csvFileLineFormat = [];
+		}
+		return tmp.me._importDataTypes;
 	}
 	
 	,_readFiles: function(files) {
@@ -223,16 +243,33 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		return tmp.me;
 	}
 	/**
+	 * Open detail page
+	 */
+	,_openDetailPage: function(path, id) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newWindow = window.open('/' + path + '/' + id + '.html', path + ' details', 'location=no, menubar=no, status=no, titlebar=no, fullscreen=yes, toolbar=no');
+		tmp.newWindow.focus();
+		return tmp.me;
+	}
+	/**
 	 * Getting a single row of the result table
 	 */
 	,_getProductLineItem: function(listGroupDiv, dataKeyIndex, dataKeys) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.data = tmp.me._uploadedData[dataKeys[dataKeyIndex]];
-		tmp.data.productCodeType = tmp.me._productCodeTypes;
-		tmp.newRow = new Element('tr', {'class': 'result_row info'})
-			.insert({'bottom': new Element('td').update(tmp.data.sku ? tmp.data.sku : 'Blank SKU!') })
-			.insert({'bottom': new Element('td').update(tmp.data.code ? tmp.data.code : 'Blank code!') });
+		
+		tmp.newRow = new Element('tr', {'class': 'result_row info'});
+		tmp.me.csvFileLineFormat.each(function(name){
+			$H(tmp.data).each(function(item){
+				if(item.key === name) {
+					tmp.newRow.insert({'bottom': new Element('th', {'style': item.value ? '' : 'color:red;'}).update(item.value ? item.value : 'Blank ' + name) })
+				}
+			});
+		});
+		tmp.data.importDataTypes = tmp.me._importDataTypes;
+		
 		tmp.me.postAjax(tmp.me.getCallbackId('getAllCodeForProduct'), tmp.data, {
 			'onLoading': function(sender, param) {
 				listGroupDiv.insert({'bottom': tmp.newRow });
@@ -240,23 +277,20 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			,'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result || !tmp.result.item || !tmp.result.item.product) {
+					if(!tmp.result.item.id || !tmp.result.path) {
 						tmp.newRow.update('');
 						return;
 					}
-					tmp.newRow.update('').removeClassName('info').addClassName('result-done').store('data', tmp.result.item)
-						.insert({'bottom': new Element('td')
-							.insert({'bottom': new Element('a', {'href': ('/product/' + tmp.result.item.product.id + '.html'), 'target': '_blank' }).update(tmp.result.item.product.sku) })
+					tmp.newRow.removeClassName('info').addClassName('result-done').store('data', tmp.result.item).down('th')
+						.setStyle({
+							'cursor': 'pointer',
+					    	'text-decoration': 'underline'
 						})
-						.insert({'bottom': new Element('td', {'class': tmp.result.item.MYOBcode ? '' : 'warning'}).update(tmp.result.item.MYOBcode ? tmp.result.item.MYOBcode : 'Blank') })
-						.insert({'bottom': new Element('td', {'class': tmp.result.item.code ? '' : 'warning'}).update(tmp.result.item.code ? tmp.result.item.code : 'No barcode updated') })
-						.insert({'bottom': new Element('td', {'class': tmp.result.item.assetAccNo ? '' : 'warning'}).update(tmp.result.item.assetAccNo ? tmp.result.item.assetAccNo : 'No assetAccNo updated') })
-						.insert({'bottom': new Element('td', {'class': tmp.result.item.revenueAccNo ? '' : 'warning'}).update(tmp.result.item.revenueAccNo ? tmp.result.item.revenueAccNo : 'No revenueAccNo updated') })
-						.insert({'bottom': new Element('td', {'class': tmp.result.item.costAccNo ? '' : 'warning'}).update(tmp.result.item.costAccNo ? tmp.result.item.costAccNo : 'No costAccNo updated') });
+						.observe('click',function(){
+							tmp.me._openDetailPage(tmp.result.path, tmp.result.item.id);
+						});
 				}  catch (e) {
-					tmp.newRow.update('').removeClassName('info').addClassName('danger').store('data', tmp.data)
-						.insert({'bottom': new Element('td').update(tmp.data.sku ? tmp.data.sku : 'Blank SKU!') })
-						.insert({'bottom': new Element('td').update(tmp.data.code ? tmp.data.code : 'Blank code!') })
+					tmp.newRow.removeClassName('info').addClassName('danger').store('data', tmp.data)
 						.insert({'bottom': new Element('td',{'colspan': 2}).update('<strong>ERROR:</strong>' + e) });
 					listGroupDiv.insert({'top': tmp.newRow });
 				}
@@ -308,13 +342,10 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		});
 		
 		//get header row
-		tmp.theadRow = new Element('tr')
-			.insert({'bottom': new Element('th').update('SKU') })
-			.insert({'bottom': new Element('th').update('MYOB Item #') })
-			.insert({'bottom': new Element('th').update('Barcode') })
-			.insert({'bottom': new Element('th').update('Asset Acc #') })
-			.insert({'bottom': new Element('th').update('Revenue Acc #') })
-			.insert({'bottom': new Element('th').update('Cost Acc #') });
+		tmp.theadRow = new Element('tr');
+		tmp.me.csvFileLineFormat.each(function(item){
+			tmp.theadRow.insert({'bottom': new Element('th').update(item) })
+		});
 		
 		$(tmp.me.id_wrapper).update(
 			new Element('div', {'class': 'price_search_result panel panel-danger table-responsive'})

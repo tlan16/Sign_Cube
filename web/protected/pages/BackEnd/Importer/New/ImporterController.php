@@ -21,7 +21,7 @@ class ImporterController extends BackEndPageAbstract
 		$js = parent::_getEndJs();
 		// Setup the dnd listeners.
 		$js .= 'pageJs';
-		$js .= ".setHTMLIDs('sku_match_div', 'product_code_type_dropdown')";
+		$js .= ".setHTMLIDs('importer_div', 'product_code_type_dropdown')";
 		$js .= '.setCallbackId("getAllCodeForProduct", "' . $this->getAllCodeForProductBtn->getUniqueID() . '")';
 		$js .= '.load(' . json_encode($importDataTypes) . ');';
 		return $js;
@@ -30,38 +30,30 @@ class ImporterController extends BackEndPageAbstract
 
 	public function getAllCodeForProduct($sender, $param)
 	{
-		$result = $errors = $items = array();
+		$result = $errors = $item = array();
 		try
 		{
-			var_dump($param->CallbackParameter);
+// 			var_dump($param->CallbackParameter);
 			
-			$index = $param->CallbackParameter->index;
-			$sku = trim($param->CallbackParameter->sku);
-			$code = isset($param->CallbackParameter->myobItemNo) ? trim($param->CallbackParameter->myobItemNo) : '';
-			$assetAccNo = isset($param->CallbackParameter->assetAccNo) ? trim($param->CallbackParameter->assetAccNo) : '';
-			$revenueAccNo = isset($param->CallbackParameter->revenueAccNo) ? trim($param->CallbackParameter->revenueAccNo) : '';
-			$costAccNo = isset($param->CallbackParameter->costAccNo) ? trim($param->CallbackParameter->costAccNo) : '';
-			
-			
-			if(empty($sku))
-				throw new Exception('Invalid SKU passed in! Line: ' . $index);
-// 			if(empty($code))
-// 				throw new Exception('Invalid MYOB code passed in! Line: ' . $index);
-			if(!($productCodeType = ProductCodeType::getAllByCriteria('pro_code_type.name = ?', array(trim($param->CallbackParameter->productCodeType)), true, 1, 1)[0]) instanceof ProductCodeType) 
-				throw new Exception('Invalid Product Code Type passed in!');
-			
-			//assume a non-title row contains at lease a number
-			if(($this->checkContainNumber($sku) || $this->checkContainNumber($code))) // is not a title row
+			if(!isset($param->CallbackParameter->importDataTypes) || ($type = trim($param->CallbackParameter->importDataTypes)) === '' || ($type = trim($param->CallbackParameter->importDataTypes)) === 'Select a Import Type')
+				throw new Exception('Invalid upload type passed in!');
+
+			switch ($type)
 			{
-				$product = Product::getBySku($sku);
-				
-				if(!($product instanceof Product))
-					throw new Exception('Invalid SKU passed in! Line: ' . $index);
-				
-				$items = $this->updateProductCode($product, $code, $productCodeType, $assetAccNo, $revenueAccNo, $costAccNo);
+				case 'language':
+					$index = $param->CallbackParameter->index;
+					if(!isset($param->CallbackParameter->name) || ($name = trim($param->CallbackParameter->name)) === '')
+						throw new Exception('Invalid language name passed in! (line ' . $index .')');
+					if(!isset($param->CallbackParameter->code) || ($code = trim($param->CallbackParameter->code)) === '')
+						throw new Exception('Invalid language code passed in! (line ' . $index .')');
+					$result['path'] = 'language';
+					$item = Language::create($name,$code);
+					break;
+				default:
+					throw new Exception('Invalid upload type passed in!');
 			}
 			
-			$result['item'] = $items;
+			$result['item'] = $item->getJson();
 		}
 		catch(Exception $ex)
 		{
