@@ -1,18 +1,18 @@
 <?php
-
-require_once '../bootstrap.php';
-
-echoLog ('<pre>START' . "\n");
+require_once ('../bootstrap.php');
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
-///////////////////////////////////////////////////////////////////
 
-// $url = 'http://www.auslan.org.au/dictionary/words/blaze-1.html';
+echoLog ('START ' . new UDate() . "\n");
+// /////////////////////////////////////////////////////////////////
 
-// var_dump(getVideos($url));
+// $url = "http://www.auslan.org.au/dictionary/words/alzheimer's-1.html";
+// print_r(getVideos($url));
 
 // die;
 
-/////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////
+
+const MAX_PAGE_NO = 99;
 
 try {
 	$dictionaryURL = 'http://www.auslan.org.au/dictionary/';
@@ -21,7 +21,7 @@ try {
 		echoLog( ($AZLink . "\n"));
 		
 		$pageWords = array();
-		for($pageNo=1; $pageNo<99; $pageNo++)
+		for($pageNo=1; $pageNo<MAX_PAGE_NO; $pageNo++)
 		{
 			echoLog( ('Page ' . $pageNo . ':' . "\n"));
 			echoLog( ('Sleep for 5 seconds' . "\n"));
@@ -33,7 +33,7 @@ try {
 			{
 				foreach ($pageWordsThis as $item)
 				{
-					$item['word'] = htmlspecialchars_decode($item['word']);
+					$item['word'] = $item['word'];
 					$item['videos'] = getVideos($item['href']);
 					$pageWords[] = $item;
 					
@@ -41,8 +41,8 @@ try {
 					echoLog( ($auslanWord->getName() . '('));
 					foreach ($item['videos'] as $video)
 					{
-	// 					$newAsset = bindAsset($video['video']);
-						$newVideo = AuslanVideo::create($video['video'], '', $video['poster']);
+						$newAsset = bindAsset($video['video']);
+						$newVideo = AuslanVideo::create($video['video'], '', $video['poster'], $newAsset->getId());
 						$auslanWord->addVideo($newVideo);
 						echoLog( ($newVideo->getAssetId()));
 					}
@@ -54,7 +54,7 @@ try {
 			{
 				foreach ($pageWordsNext as $item)
 				{
-					$item['word'] = htmlspecialchars_decode($item['word']);
+					$item['word'] = $item['word'];
 					$item['videos'] = getVideos($item['href']);
 					$pageWords[] = $item;
 					
@@ -62,10 +62,10 @@ try {
 					echoLog( ($auslanWord->getName() . '('));
 					foreach ($item['videos'] as $video)
 					{
-	// 					$newAsset = bindAsset($video['video']);
-						$newVideo = AuslanVideo::create($video['video'], '', $video['poster']);
+						$newAsset = bindAsset($video['video']);
+						$newVideo = AuslanVideo::create($video['video'], '', $video['poster'], $newAsset->getId());
 						$auslanWord->addVideo($newVideo);
-// 						echo $newVideo->getAssetId();
+						echoLog( $newVideo->getAssetId());
 					}
 					echoLog( (count($item['videos'])));
 					echoLog( (')' . "\n"));
@@ -74,26 +74,33 @@ try {
 				break;
 			}
 		}
-		echo "\n";
+		echoLog( ("\n"));
 	// 	break; // remove this to run entire A-Z
 	}
 
 } catch (Exception $ex) {
+	echo '<pre>';
 	echoLog( $ex->getMessage());
 }
 function bindAsset($url)
 {
 	try{
-		$videoTempFile = __DIR__ . '\runtime\tmp.video.mp4';
-		$videoTempFile = ComScriptCURL::downloadFile($url, $videoTempFile);
-		$asset = Asset::registerAsset(basename($url), $videoTempFile);
+		$extraOpts = array(
+				CURLOPT_BINARYTRANSFER => true,
+				CURLOPT_FOLLOWLOCATION     => true
+		);
+		
+		$tmpFile = '..\runtime\tmp.mp4';
+		$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
+		$asset = Asset::registerAsset(basename($url), $tmpFile);
+		return $asset;
 	}
 	catch(Exception $ex)
 	{
+		echo '<pre>';
+		echoLog( ("\n"));
 		echoLog( $ex->getMessage());
 	}
-	
-	return $asset;
 }
 function changeUrlTail($url,$string)
 {
@@ -120,6 +127,7 @@ function getVideos($url)
 		}
 	}catch(Exception $ex)
 	{
+		echo '<pre>';
 		echoLog( $ex->getMessage());
 	}
 	return $result;
@@ -137,6 +145,7 @@ function getAZLinks($url)
 	}
 	catch(Exception $ex)
 	{
+		echo '<pre>';
 		echoLog( $ex->getMessage());
 	}
 	return $results;
@@ -158,6 +167,7 @@ function getPageWords($pageURL)
 	}
 	catch(Exception $ex)
 	{
+		echo '<pre>';
 		echoLog( $ex->getMessage());
 	}
 	return $pageWords;
@@ -175,6 +185,7 @@ function getPageLinks($url, $pageNo)
 	}
 	catch(Exception $ex) 
 	{
+		echo '<pre>';
 		echoLog( $ex->getMessage());
 	}
 	return $results;
@@ -187,7 +198,7 @@ function getHostUrl($url)
 function echoLog($message)
 {
 	echo $message;
-	$logFile = __DIR__ . '\runtime\auslan.txt';
+	$logFile = '..\logs\auslan.txt';
 	$current = file_get_contents($logFile);
 	$current .=  $message;
 	file_put_contents($logFile, $current);

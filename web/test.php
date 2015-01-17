@@ -6,17 +6,17 @@ Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 try
 {
-	$extraOpts = array(
-			CURLOPT_BINARYTRANSFER => true,
-			CURLOPT_FOLLOWLOCATION     => true
-	);
+// 	$extraOpts = array(
+// 			CURLOPT_BINARYTRANSFER => true,
+// 			CURLOPT_FOLLOWLOCATION     => true
+// 	);
 	
-	$url = 'http://media.auslan.org.au/mp4video/65/65520_1.mp4';
-	$tmpFile = __DIR__ . '\runtime\tmp.mp4';
+// 	$url = 'http://media.auslan.org.au/mp4video/65/65520_1.mp4';
+// 	$tmpFile = __DIR__ . '\runtime\tmp.mp4';
 	
-	$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
-	$asset = Asset::registerAsset(basename($url), $tmpFile);
-	var_dump($asset->getUrl());
+// 	$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
+// 	$asset = Asset::registerAsset(basename($url), $tmpFile);
+	$asset = Asset::get(78);
 	echo '<video controls src="' . $asset->getUrl() . '">';
 }
 catch(Exception $e) {
