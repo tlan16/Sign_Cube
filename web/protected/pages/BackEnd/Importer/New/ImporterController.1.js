@@ -141,6 +141,9 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			case 'language':
 				tmp.me.csvFileLineFormat = ['name', 'code'];
 				break;
+			case 'category':
+				tmp.me.csvFileLineFormat = ['name' , 'language' , 'code'];
+				break;
 			default:
 				tmp.me.csvFileLineFormat = [];
 		}

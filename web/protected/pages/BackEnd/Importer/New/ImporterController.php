@@ -49,6 +49,19 @@ class ImporterController extends BackEndPageAbstract
 					$result['path'] = 'language';
 					$item = Language::create($name,$code);
 					break;
+				case 'category':
+					//frank I also want to add a country of origin for the sign language, could we add another column in the database? The catagory and country would have monay to one relationship
+					$index = $param->CallbackParameter->index;
+					if(!isset($param->CallbackParameter->name) || ($name = trim($param->CallbackParameter->name)) === '')
+						throw new Exception('Invalid category name passed in! (line ' . $index .')');
+					if(!isset($param->CallbackParameter->language) || ($langname = trim($param->CallbackParameter->language)) === '')
+						throw new Exception('Invalid category name passed in! (line ' . $index .')');
+					if(!isset($param->CallbackParameter->code) || ($code = trim($param->CallbackParameter->code)) === '')
+						throw new Exception('Invalid language code passed in! (line ' . $index .')');
+					$result['path'] = 'language';
+					$language = Language::create($langname,$code);
+					$item = Category::create($language,$name);
+					break;
 				default:
 					throw new Exception('Invalid upload type passed in!');
 			}
