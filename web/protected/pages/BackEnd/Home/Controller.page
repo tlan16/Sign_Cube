@@ -1,7 +1,9 @@
 <com:TContent ID="MainContent">
+<com:Application.controls.jQueryFileUploader.jQueryFileUploader />
 	<section class="backend-home" style="padding-top: 100px;">
 		<div class="overlay">
         	<div class="container" style="font-size: 20px;">
+        	<input id="fileupload" type="file" name="files[]" multiple>
         		<div class="btn-group-vertical" role="group">
 					<div class="btn btn-default" onclick="window.open('/importer.html', '_self')">
 						Data Importer

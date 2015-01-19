@@ -8,5 +8,16 @@
  */
 class Controller extends BackEndPageAbstract
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see CRUDPageAbstract::_getEndJs()
+	 */
+	protected function _getEndJs()
+	{
+		$js = parent::_getEndJs();
+		$js .= "pageJs";
+		$js .= ".load();";
+		return $js;
+	}
 }
 ?>
