@@ -116,7 +116,7 @@ class Video extends BaseEntityAbstract
 	 * 
 	 * @return Video
 	 */
-	public function setThirdpartyName()
+	public function setThirdpartyName($value)
 	{
 		$this->thirdpartyName = trim($value);
 		return $this;
@@ -137,7 +137,7 @@ class Video extends BaseEntityAbstract
 	 * 
 	 * @return Video
 	 */
-	public function setThirdpartyLink()
+	public function setThirdpartyLink($value)
 	{
 		$this->thirdpartyLink = trim($value);
 		return $this;
@@ -183,8 +183,8 @@ class Video extends BaseEntityAbstract
 			->setThirdpartyName($thirdpartyName)
 			->setThirdpartyLink($thirdpartyLink)
 			->save()
-			->addLog(Log::TYPE_SYS, 'Video (' . $name . ') with entityId(' . $entityId . ') with entityName(' . $entityName . ') with Asset(ID=' . $asset->getId() . ') with 3rdPartyName(' . $thirdpartyName . ') with 3rdPartyLink(' . $thirdpartyLink . ')' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
-		return $video;
+			->addLog(Log::TYPE_SYS, 'Video (ID=' . $entity->getId() . ') with entityId(' . $entityId . ') with entityName(' . $entityName . ') with Asset(ID=' . $asset->getId() . ') with 3rdPartyName(' . $thirdpartyName . ') with 3rdPartyLink(' . $thirdpartyLink . ')' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
+		return $entity;
 	}
 	/**
 	 * Getting the asset from asset or assetId
