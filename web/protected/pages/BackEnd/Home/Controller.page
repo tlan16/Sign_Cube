@@ -12,7 +12,10 @@
 						Language List/New
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/category.html', '_self')">
-						Category List/New
+						Category List
+					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/deftype.html', '_self')">
+						Definition Type List/New
 					</div>
 				</div>
             </div><!-- end container -->

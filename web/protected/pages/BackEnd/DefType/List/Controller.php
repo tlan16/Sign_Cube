@@ -8,62 +8,75 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see CRUDPageAbstract::_getEndJs()
-	 */
+	protected $_focusEntity = 'Language';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
-		$js .= "pageJs.setHTMLIDs(" . json_encode(array('resultDivId' => 'result-div', 'totalNoOfItemsId' => 'totalNoOfItemsId')) . ")";
+		$js .= "pageJs";
+		$js .= "._bindSearchKey()";
 		$js .= ".setCallbackId('getItems', '" . $this->getItemsBtn->getUniqueID() . "')";
-		$js .= ".setPropRelTypes(" . Role::ID_TENANT . ", " . Role::ID_AGENT .", " . Role::ID_OWNER . ")";
-		$js .= ".getResults(true, 10);";
+		$js .= ".setHTMLIds('item-list', 'searchPanel', 'total-found-count')";
+		$js .= ".getResults(true, " . DaoQuery::DEFAUTL_PAGE_SIZE . ");";
 		return $js;
 	}
 	/**
-	 * Getting the items list
-	 * 
-	 * @param TCallback          $sender
-	 * @param TCallbackParameter $param
-	 * 
-	 * @return Controller
+	 * Getting the items
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * @throws Exception
+	 *
 	 */
 	public function getItems($sender, $param)
 	{
 		$results = $errors = array();
-		try 
+		try
 		{
+			$class = trim($this->_focusEntity);
 			$pageNo = 1;
 			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
-			
 			if(isset($param->CallbackParameter->pagination))
 			{
 				$pageNo = $param->CallbackParameter->pagination->pageNo;
 				$pageSize = $param->CallbackParameter->pagination->pageSize;
 			}
+			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
+			var_dump($serachCriteria);
+				
 			$where = array(1);
 			$params = array();
+			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
+			{
+				$where[] = 'lang.name like ?';
+				$params[] = '%' . $name . '%';
+			}
+			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
+			{
+				$where[] = 'lang.code = ?';
+				$params[] = $code;
+			}
 			$stats = array();
-			Property::getQuery()->eagerLoad('Property.rels', 'inner join', 'pro_rels', 'pro_rels.propertyId = pro.id AND pro_rels.personId = ' . Core::getUser()->getPerson()->getId());
-			$objects = Property::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array(), $stats);
-			
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('lang.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-			{
-				$array = $obj->getJson();
-				$array['curRoleIds'] = array_map(create_function('$a', 'return intval($a->getId());'), Role::getPropertyRoles($obj, Core::getUser()->getPerson()));
-				$results['items'][] = $array;
-			}
+				$results['items'][] = $obj->getJson();
 		}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-		return $this;
+	}
+	/**
+	 * getting the focus entity
+	 *
+	 * @return string
+	 */
+	public function getFocusEntity()
+	{
+		return trim($this->_focusEntity);
 	}
 }
 ?>
