@@ -14,8 +14,17 @@
 					<div class="btn btn-default" onclick="window.open('/backend/category.html', '_self')">
 						Category List
 					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/definition.html', '_self')">
+						Definition List
+					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/deftype.html', '_self')">
 						Definition Type List/New
+					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/video.html', '_self')">
+						Video List
+					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/word.html', '_self')">
+						Word List
 					</div>
 				</div>
             </div><!-- end container -->

@@ -42,6 +42,15 @@
 			<!-- BackEnd:: Definition Type:: List/New page -->
 			<url ServiceParameter="BackEnd.DefType.List.Controller" pattern="backend/deftype.html" />
 			
+			<!-- BackEnd:: Definition:: List page -->
+			<url ServiceParameter="BackEnd.Definition.List.Controller" pattern="backend/definition.html" />
+			
+			<!-- BackEnd:: Video:: List page -->
+			<url ServiceParameter="BackEnd.Video.List.Controller" pattern="backend/video.html" />
+			
+			<!-- BackEnd:: Word:: List page -->
+			<url ServiceParameter="BackEnd.Word.List.Controller" pattern="backend/word.html" />
+			
 			<!-- BackEnd:: Message:: List page -->
 			<url ServiceParameter="BackEnd.Message.List.Controller" pattern="backend/messages.html" />
 			<!-- BackEnd:: Message:: New page -->
