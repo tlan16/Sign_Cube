@@ -33,8 +33,11 @@
 			<!-- BackEnd:: home page -->
 			<url ServiceParameter="BackEnd.Home.Controller" pattern="backend.html" />
 			
-			<!-- BackEnd:: Word:: New page -->
-			<url ServiceParameter="BackEnd.Word.New.NewWordController" pattern="backend/word/new.html" />
+			<!-- BackEnd:: Language:: List/New page -->
+			<url ServiceParameter="BackEnd.Language.List.Controller" pattern="backend/language.html" />
+			
+			<!-- BackEnd:: Language:: List/New page -->
+			<url ServiceParameter="BackEnd.Category.List.Controller" pattern="backend/category.html" />
 			
 			<!-- BackEnd:: Message:: List page -->
 			<url ServiceParameter="BackEnd.Message.List.Controller" pattern="backend/messages.html" />

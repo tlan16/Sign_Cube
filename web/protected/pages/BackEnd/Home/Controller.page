@@ -11,6 +11,9 @@
 					<div class="btn btn-default" onclick="window.open('/backend/language.html', '_self')">
 						Language List/New
 					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/category.html', '_self')">
+						Category List/New
+					</div>
 				</div>
             </div><!-- end container -->
     	</div>
