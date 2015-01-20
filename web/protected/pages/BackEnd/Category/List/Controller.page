@@ -1,5 +1,7 @@
 <com:TContent ID="MainContent">
 <com:TCallback ID="getItemsBtn" onCallback="Page.getItems" />
+<com:TCallback ID="deactivateItemsBtn" onCallback="Page.deactivateItems" />
+<com:TCallback ID="saveItemBtn" onCallback="Page.saveItem" />
 <div class="container"">
 	<div class="pagewrapper item-list-wrapper">
 		<div class="panel panel-default" id="searchPanel">
