@@ -21,7 +21,7 @@
 		</nav>
 	</div>
 </div>
-<div class="top-bar clearfix" <%= Core::getUser() instanceof UserAccount ? 'style="background: #eee;"' : '' %>>
+<div class="top-bar clearfix" <%= Core::getUser() instanceof UserAccount ? 'style="background: #eee; margin-bottom: 10px;"' : '' %>>
 	<div class="container">
        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
        </div><!-- end columns -->

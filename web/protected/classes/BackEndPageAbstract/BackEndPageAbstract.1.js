@@ -29,6 +29,14 @@ BackEndPageJs.prototype = Object.extend(new FrontPageJs(), {
 			tmp.me._searchCriteria = null;
 		return this;
 	}
+	/**
+	 * Getting the form group
+	 */
+	,_getFormGroup: function(title, content) {
+		return new Element('div', {'class': 'form-group'})
+			.insert({'bottom': title ? new Element('label', {'class': 'control-label'}).update(title) : '' })
+			.insert({'bottom': content.addClassName('form-control') });
+	}
 	,getResults: function(reset, pageSize) {
 		var tmp = {};
 		tmp.me = this;

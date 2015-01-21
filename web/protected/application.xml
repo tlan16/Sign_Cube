@@ -38,6 +38,8 @@
 			
 			<!-- BackEnd:: Category:: List page -->
 			<url ServiceParameter="BackEnd.Category.List.Controller" pattern="backend/category.html" />
+			<!-- BackEnd:: Category:: New page -->
+			<url ServiceParameter="BackEnd.Category.New.Controller" pattern="backend/category/new.html" />
 			
 			<!-- BackEnd:: Definition Type:: List/New page -->
 			<url ServiceParameter="BackEnd.DefType.List.Controller" pattern="backend/deftype.html" />
@@ -47,6 +49,8 @@
 			
 			<!-- BackEnd:: Video:: List page -->
 			<url ServiceParameter="BackEnd.Video.List.Controller" pattern="backend/video.html" />
+			<!-- BackEnd:: Video:: New page -->
+			<url ServiceParameter="BackEnd.Video.New.Controller" pattern="backend/video/new.html" />
 			
 			<!-- BackEnd:: Word:: List page -->
 			<url ServiceParameter="BackEnd.Word.List.Controller" pattern="backend/word.html" />
