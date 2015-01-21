@@ -9,6 +9,8 @@
 class Controller extends BackEndPageAbstract
 {
 	protected $_focusEntity = 'Category';
+	protected $_focusEntity2 = 'Language';
+	
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -53,10 +55,10 @@ class Controller extends BackEndPageAbstract
 				$where[] = 'cat.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['cat.languageId']) && ($langID = trim($serachCriteria['cat.languageId'])) !== '')
+			if(isset($serachCriteria['cat.languageId']) && ($languageId = trim($serachCriteria['cat.languageId'])) !== '')
 			{
 				$where[] = 'cat.languageId = ?';
-				$params[] = $langID;
+				$params[] = $languageId;
 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
