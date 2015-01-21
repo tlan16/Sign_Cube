@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'name': "Name", 'code': 'Code', 'active': 'Active?'};
+		return {'name': "Category", 'languageId': 'LanguageId', 'active': 'Active?'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
@@ -27,7 +27,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Language', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Code of the Language', 'save-item-panel': 'code', 'value': row.code ? row.code : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The parent Language', 'save-item-panel': 'languageId', 'value': row.languageId ? row.languageId : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.active}) })
@@ -61,7 +61,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.code) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'languageId col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.languageId) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
 				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
 			})

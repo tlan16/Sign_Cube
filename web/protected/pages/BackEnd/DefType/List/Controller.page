@@ -14,15 +14,10 @@
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm">
                            <label>Name:</label>
-                           <input type="text" search_field="lang.name" placeholder="The Name of the Language" class="form-control input-sm">
+                           <input type="text" search_field="deftp.name" placeholder="The Definition Type" class="form-control input-sm">
                        </div>
 					</div>
-					<div class="col-sm-4">
-						<div class="form-group form-group-sm">
-                           <label>Code:</label>
-                           <input type="text" search_field="lang.code" placeholder="The Code of the Language" class="form-control input-sm">
-                       </div>
-					</div>
+					
 					<div class="col-sm-2">
 						<div class="form-group form-group-sm">
                            <label>&nbsp;</label>

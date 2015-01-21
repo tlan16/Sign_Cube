@@ -8,7 +8,7 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	protected $_focusEntity = 'Language';
+	protected $_focusEntity = 'DefinitionType';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -48,18 +48,18 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
+			if(isset($serachCriteria['deftp.name']) && ($name = trim($serachCriteria['deftp.name'])) !== '')
 			{
-				$where[] = 'lang.name like ?';
+				$where[] = 'deftp.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
-			{
-				$where[] = 'lang.code = ?';
-				$params[] = $code;
-			}
+// 			if(isset($serachCriteria['deftp.code']) && ($code = trim($serachCriteria['deftp.code'])) !== '')
+// 			{
+// 				$where[] = 'deftp.code = ?';
+// 				$params[] = $code;
+// 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('lang.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
@@ -115,7 +115,7 @@ class Controller extends BackEndPageAbstract
      * @param unknown $param
      * @throws Exception
      *
-     */
+     */ //need to fix below
     public function saveItem($sender, $param)
     {
     	$results = $errors = array();
@@ -127,7 +127,7 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("System Error: no item information passed in!");
     		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
     		$name = trim($param->CallbackParameter->item->name);
-    		$code = trim($param->CallbackParameter->item->code);
+//     		$code = trim($param->CallbackParameter->item->code);
     		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
     			
     		if($item instanceof $class)
