@@ -59,7 +59,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.code) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
 				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
 			})

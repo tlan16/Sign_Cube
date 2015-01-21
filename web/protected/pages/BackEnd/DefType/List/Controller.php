@@ -133,13 +133,13 @@ class Controller extends BackEndPageAbstract
     		if($item instanceof $class)
     		{
     			$item->setName($name)
-    			->setCode($code)
+    		
     			->setActive($active)
     			->save();
     		}
     		else
     		{
-    			$item = $class::create($name, $code);
+    			$item = $class::create($name);
     		}
     		$results['item'] = $item->getJson();
     	}

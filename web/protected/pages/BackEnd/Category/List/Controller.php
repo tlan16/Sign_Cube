@@ -9,7 +9,7 @@
 class Controller extends BackEndPageAbstract
 {
 	protected $_focusEntity = 'Category';
-	protected $_focusEntity2 = 'Language';
+	
 	
 	protected function _getEndJs()
 	{
@@ -50,22 +50,22 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['cat.name']) && ($name = trim($serachCriteria['cat.name'])) !== '')
+			if(isset($serachCriteria['category.name']) && ($name = trim($serachCriteria['category.name'])) !== '')
 			{
-				$where[] = 'cat.name like ?';
+				$where[] = 'category.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['cat.languageId']) && ($languageId = trim($serachCriteria['cat.languageId'])) !== '')
+			if(isset($serachCriteria['language.name']) && ($language = trim($serachCriteria['language.name'])) !== '')
 			{
-				$where[] = 'cat.languageId = ?';
-				$params[] = $languageId;
+				$where[] = 'language.name = ?';
+				$params[] = $language;
 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
+				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
 		}
 		catch(Exception $ex)
 		{
@@ -128,20 +128,20 @@ class Controller extends BackEndPageAbstract
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
     		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->name);
-    		$langID = trim($param->CallbackParameter->item->languageId);
+    		$name = trim($param->CallbackParameter->item->category->name);
+    		$language = trim($param->CallbackParameter->item->language->name);
     		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
     			
     		if($item instanceof $class)
     		{
     			$item->setName($name)
-    			->setCode($code)
+    			->setLanguage($language)
     			->setActive($active)
     			->save();
     		}
     		else
     		{
-    			$item = $class::create($name, $code);
+    			$item = $class::create($language, $name);
     		}
     		$results['item'] = $item->getJson();
     	}
