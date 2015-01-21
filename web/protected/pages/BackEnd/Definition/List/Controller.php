@@ -8,7 +8,7 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	protected $_focusEntity = 'Language';
+	protected $_focusEntity = 'Definition';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -48,23 +48,23 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
+			if(isset($serachCriteria['def.content']) && ($name = trim($serachCriteria['def.content'])) !== '')
 			{
-				$where[] = 'lang.name like ?';
+				$where[] = 'def.content like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
+			if(isset($serachCriteria['def.definitionTypeId']) && ($code = trim($serachCriteria['def.definitionTypeId'])) !== '')
 			{
-				$where[] = 'lang.code = ?';
+				$where[] = 'def.definitionTypeId = ?';
 				$params[] = $code;
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('lang.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('def.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
-		}
+				$results['items'][] = array('definition'=> $obj->getJson(), 'definitionType'=>$obj->getDefinitionType()->getJson());
+						}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
