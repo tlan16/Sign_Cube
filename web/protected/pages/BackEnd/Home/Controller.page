@@ -1,9 +1,9 @@
 <com:TContent ID="MainContent">
 <com:Application.controls.jQueryFileUploader.jQueryFileUploader />
-	<section class="backend-home" style="padding-top: 100px;">
+	<section class="backend-home" style="padding-top: 5%;">
 		<div class="overlay">
-        	<div class="container" style="font-size: 20px;">
-        	<input id="fileupload" type="file" name="files[]" multiple>
+        	<div class="container" style="font-size: 20px; padding-left: 25%;">
+        		<h4>Backend Managment Home</h4>
         		<div class="btn-group-vertical" role="group">
 					<div class="btn btn-default" onclick="window.open('/importer.html', '_self')">
 						Data Importer
@@ -14,6 +14,9 @@
 					<div class="btn btn-default" onclick="window.open('/backend/category.html', '_self')">
 						Category List
 					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/category/new.html', '_self')">
+						Category New
+					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/definition.html', '_self')">
 						Definition List
 					</div>
@@ -22,6 +25,9 @@
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/video.html', '_self')">
 						Video List
+					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/video/new.html', '_self')">
+						Video New
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/word.html', '_self')">
 						Word List

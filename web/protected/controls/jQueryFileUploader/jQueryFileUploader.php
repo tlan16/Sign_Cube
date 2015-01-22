@@ -21,8 +21,10 @@ class jQueryFileUploader extends TClientScript
 			// Add jQuery library
 			// Add mousewheel plugin (this is optional)
 			$clientScript->registerHeadScriptFile('jQueryFileUploader.jquery.ui.widget.js', $folder . '/js/vendor/jquery.ui.widget.js');
-			$clientScript->registerHeadScriptFile('jQueryFileUploader.iframe-transport.js', $folder . '/js/jquery.iframe-transport.js');
 			$clientScript->registerHeadScriptFile('jQueryFileUploader.fileupload.js', $folder . '/js/jquery.fileupload.js');
+			$clientScript->registerHeadScriptFile('jQueryFileUploader.iframe-transport.js', $folder . '/js/jquery.iframe-transport.js');
+			$clientScript->registerStyleSheetFile('select2.css.bootstrap', $folder . '/css/jquery.fileupload-noscript.css', 'screen');
+			$clientScript->registerStyleSheetFile('select2.css.bootstrap', $folder . '/css/jquery.fileupload-ui-noscript.css', 'screen');
 		}
 	}
 }
