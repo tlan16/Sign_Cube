@@ -29,8 +29,7 @@ abstract class SystemCoreAbstract
 			$base . '/entity/tag/',
 			$base . '/exception/',
 			$base . '/util/',
-			$base . '/util/Connectors',
-			$base . '/util/Connectors/comms/',
+			$base . '/util/Connectors/',
 		);
 		foreach ($autoloadPaths as $path)
 		{
