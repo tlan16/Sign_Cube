@@ -4,8 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'definition': "Definition", 'definitionType': "DefinitionType", 'active': 'Active?'};
-	}
+		return {'definition': {'content' :"Definition", 'active': 'Active?'}, 'definitionType': {'name': 'Definition Type'}};	}
 	,_bindSearchKey: function() {
 		var tmp = {}
 		tmp.me = this;
@@ -25,10 +24,16 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Definition of the Word', 'save-item-panel': 'definition.content', 'value': row.definition.content ? row.definition.content : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Definition of the Word', 'save-item-panel': 'definitionContent', 'value': row.definition.content ? row.definition.content : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Definition Type of the Word', 'save-item-panel': 'definitionType.name', 'value': row.definitionType.name ? row.definitionType.name : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Definition Type of the Word', 'save-item-panel': 'definitionTypeName', 'value': row.definitionType.name ? row.definitionType.name : ''}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'definitionId', 'value': row.definition.id ? row.definition.id : ''}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'definitionTypeId', 'value': row.definitionType.id ? row.definitionType.id : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.definition.active}) })

@@ -116,35 +116,40 @@ class Controller extends BackEndPageAbstract
      * @throws Exception
      *
      */
-    public function saveItem($sender, $param)
+ public function saveItem($sender, $param)
     {
     	$results = $errors = array();
     	try
     	{
     		var_dump($param->CallbackParameter->item);
+    		
+    		Dao::beginTransaction();
+    		
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->name);
-    		$code = trim($param->CallbackParameter->item->code);
-    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
-    			
-    		if($item instanceof $class)
+    		if(!($definition = Definition::get(trim(($param->CallbackParameter->item->definitionId)))) instanceof Definition)
+    			throw new Exception("Invalid Definition passed in!");
+    		if(!($definitionType = DefinitionType::get(trim(($param->CallbackParameter->item->definitionTypeId)))) instanceof DefinitionType)
+    			throw new Exception("Invalid DefinitionType passed in!");
+    		
+//     		$active = trim($param->CallbackParameter->item->definitionActive);
+    		
+    		if($definition->getContent() != ($content = trim($param->CallbackParameter->item->definitionContent)) )
     		{
-    			$item->setName($name)
-    			->setCode($code)
-    			->setActive($active)
-    			->save();
+    			$definition->setContent($content)
+//     				->setActive($active)
+    				->save();
     		}
-    		else
-    		{
-    			$item = $class::create($name, $code);
-    		}
-    		$results['item'] = $item->getJson();
+    		
+    		
+    		Dao::commitTransaction();
+    		
+    		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
     	}
     	catch(Exception $ex)
     	{
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
