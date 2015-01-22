@@ -116,7 +116,7 @@ class Controller extends BackEndPageAbstract
      * @throws Exception
      *
      */ //need to fix below
-    public function saveItem($sender, $param)
+  public function saveItem($sender, $param)
     {
     	$results = $errors = array();
     	try
@@ -126,21 +126,18 @@ class Controller extends BackEndPageAbstract
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
     		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->name);
+    		$name = trim($param->CallbackParameter->item->definitionName);
 //     		$code = trim($param->CallbackParameter->item->code);
     		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
     			
     		if($item instanceof $class)
     		{
     			$item->setName($name)
-    		
+//     			->setCode($code)
     			->setActive($active)
     			->save();
     		}
-    		else
-    		{
-    			$item = $class::create($name);
-    		}
+    		
     		$results['item'] = $item->getJson();
     	}
     	catch(Exception $ex)
