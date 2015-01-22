@@ -179,6 +179,7 @@ class UserAccount extends ConfirmEntityAbstract
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
+        DaoMap::setDateType('expiry');
         DaoMap::setManyToOne('person', 'Person');
         parent::__loadDaoMap();
         
@@ -199,7 +200,7 @@ class UserAccount extends ConfirmEntityAbstract
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
     	$query = self::getQuery();
-    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password ANd expriry <= NOW()", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password))), true, 1, 1);
+    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password ANd expiry <= NOW()", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password))), true, 1, 1);
     	if(count($userAccounts) > 0)
     		return $userAccounts[0];
     	return null;

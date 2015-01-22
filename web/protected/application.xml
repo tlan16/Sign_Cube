@@ -18,6 +18,9 @@
 		
 			<!-- FrontEnd:: 3rdPartt Auslan page -->
 			<url ServiceParameter="BackEnd.3rdParty.Auslan.AuslanController" pattern="3rdparty/auslan.html" />
+		
+			<!-- FrontEnd:: Importer page -->
+			<url ServiceParameter="BackEnd.Importer.New.ImporterController" pattern="importer.html" />
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />

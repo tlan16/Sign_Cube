@@ -1,6 +1,6 @@
 <?php
 
-require_once 'bootstrap.php';
+require_once '../bootstrap.php';
 
 echoLog ('<pre>START' . "\n");
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));

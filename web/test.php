@@ -11,12 +11,13 @@ try
 			CURLOPT_FOLLOWLOCATION     => true
 	);
 	
-	$url = 'http://www.w3.org/html/logo/downloads/HTML5_Logo_256.png';
-	$tmpFile = __DIR__ . '\runtime\tmp.jpg';
+	$url = 'http://media.auslan.org.au/mp4video/65/65520_1.mp4';
+	$tmpFile = __DIR__ . '\runtime\tmp.mp4';
 	
 	$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
 	$asset = Asset::registerAsset(basename($url), $tmpFile);
-	var_dump($asset);
+	var_dump($asset->getUrl());
+	echo '<video controls src="' . $asset->getUrl() . '">';
 }
 catch(Exception $e) {
 	echo $e;

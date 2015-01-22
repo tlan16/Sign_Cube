@@ -18,7 +18,7 @@ class jsSaveAs extends TClientScript
 		if(!$this->getPage()->IsPostBack || !$this->getPage()->IsCallback)
 		{
 			$className = get_class($this);
-			$scriptArray = BPCPageAbstract::getLastestJS($className);
+			$scriptArray = BackEndPageAbstract::getLastestJS($className);
 			foreach($scriptArray as $key => $value)
 			{
 				if(($value = trim($value)) !== '')
