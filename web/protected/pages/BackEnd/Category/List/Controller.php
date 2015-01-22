@@ -124,29 +124,33 @@ class Controller extends BackEndPageAbstract
     	try
     	{
     		var_dump($param->CallbackParameter->item);
+    		
+    		Dao::beginTransaction();
+    		
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->category->name);
-    		$language = trim($param->CallbackParameter->item->language->name);
-    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
-    			
-    		if($item instanceof $class)
+    		if(!($category = Category::get(trim(($param->CallbackParameter->item->categoryId)))) instanceof Category)
+    			throw new Exception("Invalid category passed in!");
+    		if(!($language = Language::get(trim(($param->CallbackParameter->item->languageId)))) instanceof Language)
+    			throw new Exception("Invalid language passed in!");
+    		
+    		$active = trim($param->CallbackParameter->item->categoryActive);
+    		
+    		if($category->getName() != ($name = trim($param->CallbackParameter->item->categoryName)) || $category->getActive() != $active)
     		{
-    			$item->setName($name)
-    			->setLanguage($language)
-    			->setActive($active)
-    			->save();
+    			$category->setName($name)
+    				->setActive($active)
+    				->save();
     		}
-    		else
-    		{
-    			$item = $class::create($language, $name);
-    		}
-    		$results['item'] = $item->getJson();
+    		
+    		Dao::commitTransaction();
+    		
+    		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
     	}
     	catch(Exception $ex)
     	{
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);

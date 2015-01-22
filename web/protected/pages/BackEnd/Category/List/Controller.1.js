@@ -21,16 +21,23 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_getEditPanel: function(row) {
 		var tmp = {};
 		tmp.me = this;
+		console.debug(row);
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Category', 'save-item-panel': 'category.name', 'value': row.category.name ? row.category.name : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Category', 'save-item-panel': 'categoryName', 'value': row.category.name ? row.category.name : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The parent Language', 'save-item-panel': 'language.name', 'value': row.language.name ? row.language.name : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The parent Language', 'disabled': true, 'title': 'To change this, delete and create new one.', 'save-item-panel': 'languageName', 'value': row.language.name ? row.language.name : ''}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'categoryId', 'value': row.category.id ? row.category.id : ''}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'languageId', 'value': row.language.id ? row.language.id : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'category.active', 'checked': row.category.active}) })
+				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'categoryActive', 'checked': row.category.active}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'text-right'})
 				.insert({'bottom':  new Element('span', {'class': 'btn-group btn-group-sm'})
@@ -64,7 +71,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'category col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.category.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'language col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.language.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
-				.insert({'bottom': (tmp.isTitle === true ? row.category.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.category.active}) ) })
+				.insert({'bottom': (tmp.isTitle === true ? row.category.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'title': 'To change this, click edit buttom.', 'checked': row.category.active}) ) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
 				tmp.isTitle === true ?  
