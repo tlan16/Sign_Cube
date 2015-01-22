@@ -15,14 +15,11 @@ try
 	$tmpFile = __DIR__ . '\runtime\tmp.jpg';
 	
 	$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
-	echo '<img src="' . $tmpFile . '">';
-	die($tmpFile);
-	$asset = Asset::registerAsset('490_1.mp4', $videoTempFile);
+	$asset = Asset::registerAsset(basename($url), $tmpFile);
+	var_dump($asset);
 }
 catch(Exception $e) {
 	echo $e;
 }
-
-echo '<br/><br/><br/>DONE (Memory Usage: ' . (memory_get_usage() - $start)/1024 . ' KB)</br>';
 
 echo '</pre>';
