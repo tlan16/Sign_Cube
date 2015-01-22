@@ -114,6 +114,9 @@ class Controller extends BackEndPageAbstract
     	try
     	{
     		var_dump($param->CallbackParameter->item);
+    		
+    		Dao::beginTransaction();
+    			
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("No category information passed in!");
@@ -123,10 +126,14 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("Invalid Category Name passed in!");
     		
     		$item = $class::create($language, $name);
+    		
+    		Dao::commitTransaction();
+    		
     		$results['item'] = array('category'=> $item->getJson(), 'language'=> $language->getJson());
     	}
     	catch(Exception $ex)
     	{
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
