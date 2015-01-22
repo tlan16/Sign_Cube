@@ -291,12 +291,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				.insert({'bottom': new Element('strong').update('Creating a new category for language: ') })
 				.insert({'bottom': new Element('span', {'class': 'input-group col-sm-6'})
 					.insert({'bottom': new Element('input', {'class': 'form-control search-txt init-focus', 'placeholder': 'Language name or code'}) 
-						.observe('keyup', function(event){
-							if(!document.getElementsByClassName('loading-img').length) {
-								tmp.txtBox = this;
-								$(tmp.me._htmlIds.searchPanel).down('.search-btn').click();
-							}
-						})
 						.observe('keydown', function(event){
 							tmp.txtBox = this;
 							tmp.me.keydown(event, function() {
