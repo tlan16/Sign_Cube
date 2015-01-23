@@ -15,11 +15,13 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_loadUploader: function(){
 		var tmp = {};
 		tmp.me = this;
+		tmp.fileSizeLimit = 1000000/*1MB*/ * 500;
 		tmp.uploader = jQuery('#fileupload').fileupload({
 			url: '/fileUploader/'
 			,type: 'POST'
 			,dataType: 'JSON'
 			,formAcceptCharset: 'utf-8'
+			,maxFileSize: tmp.fileSizeLimit
 			,add: function(e, data) {
 	                tmp.uploadErrors = [];
 	                // Video Type Limit
@@ -32,7 +34,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	                	tmp.me.showModalBox('Invalid File Type', 'Not an accepted file type');
 	                }
 	                // Video Size Limit
-	                if(data.originalFiles[0]['size'] && data.originalFiles[0]['size'] > (1000000/*1MB*/ * 500)) {
+	                if(data.originalFiles[0]['size'] && data.originalFiles[0]['size'] > tmp.fileSizeLimit) {
 	                	tmp.me.showModalBox('Invalid File Size', 'Filesize is too big');
 	                }
 	                if(tmp.uploadErrors.length == 0) {
