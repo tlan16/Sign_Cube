@@ -22,6 +22,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			,formAcceptCharset: 'utf-8'
 			,add: function(e, data) {
 	                tmp.uploadErrors = [];
+	                // Video Type Limit
 	                tmp.acceptFileTypes = /^video\/(mp4)$/i; // only take mp4 so far since it's well browser supported
 	                console.debug(data);
 	                if(data.originalFiles && data.originalFiles.length != 1) {
@@ -30,6 +31,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	                if(data.originalFiles[0]['type'].length && !tmp.acceptFileTypes.test(data.originalFiles[0]['type'])) {
 	                	tmp.me.showModalBox('Invalid File Type', 'Not an accepted file type');
 	                }
+	                // Video Size Limit
 	                if(data.originalFiles[0]['size'] && data.originalFiles[0]['size'] > (1000000/*1MB*/ * 500)) {
 	                	tmp.me.showModalBox('Invalid File Size', 'Filesize is too big');
 	                }
