@@ -1,1 +1,1 @@
-UPDATE `signcube`.`systemsettings` SET `value` = '\\var\\www\\Sign_Cube\\web\\assets\\video' WHERE `systemsettings`.`id` = 1;
+UPDATE `signcube`.`systemsettings` SET `value` = '/var/www/Sign_Cube/web/assets/video' WHERE `systemsettings`.`id` = 1;
