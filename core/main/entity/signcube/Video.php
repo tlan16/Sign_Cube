@@ -91,6 +91,15 @@ class Video extends BaseEntityAbstract
 		return $this;
 	}
 	/**
+	 * Getter for asset url
+	 * 
+	 * @return string
+	 */
+	public function getUrl()
+	{
+		return $this->getAsset() instanceof Asset ? $this->getAsset()->getUrl() : $this->getThirdpartyLink();
+	}
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
