@@ -54,6 +54,18 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			});
 		return tmp.newDiv;
 	}
+	,_getVideoEl: function(src, mimeType, width, height) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.width = (width || 300);
+		tmp.height = (height || 200);
+		tmp.mimeType = (mimeType || "video/mp4");
+		
+		tmp.newDiv = new Element('video', {'width': tmp.width, 'height': tmp.height, 'controls': true})
+			.insert({'bottom': new Element('source', {'src': src, 'type': tmp.mimeType}) });
+		
+		return tmp.newDiv;
+	}
 	,_getResultRow: function(row, isTitle) {
 		console.debug(row);
 		var tmp = {};
@@ -61,7 +73,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'EntityName col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.EntityName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'videoView col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.url ? tmp.me._getVideoEl(row.url) : '') })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'thirdpartyName col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.thirdpartyName) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
 				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })

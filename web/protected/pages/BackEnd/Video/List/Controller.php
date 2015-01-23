@@ -44,7 +44,6 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
@@ -59,11 +58,11 @@ class Controller extends BackEndPageAbstract
 				$params[] = $code;
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('vid.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('vid.id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
+				$results['items'][] = $obj->getJson(array('asset'=> $obj->getAsset()->getJson(), 'url'=> $obj->getUrl()));
 		}
 		catch(Exception $ex)
 		{
@@ -121,7 +120,6 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
