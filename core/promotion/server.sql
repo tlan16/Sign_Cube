@@ -1,0 +1,1 @@
+INSERT INTO `signcube`.`systemsettings` (`id`, `type`, `value`, `description`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES (NULL, 'asset_root', '\tmp', '', '1', '0001-01-01 00:00:00', '0', CURRENT_TIMESTAMP, '0');
