@@ -13,7 +13,7 @@ class Controller extends BackEndPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= "pageJs";
-		$js .= ".setHTMLIds('uploader-container')";
+		$js .= ".setHTMLIds('uploader-container', 'uploader-div')";
 		$js .= ".setCallbackId('saveItem', '" . $this->saveItemBtn->getUniqueID() . "')";
 		$js .= ".init();";
 		return $js;

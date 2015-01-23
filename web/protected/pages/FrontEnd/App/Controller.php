@@ -36,6 +36,7 @@ class Controller extends TService
     {
     	$username = $params['username'];
     	$password = $params['password']; //sha1() encrypted
+//    	$skey = $params['key']; //hash($salt . $username . date); 
     	$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password, false);
     	if($userAccount instanceof UserAccount)
     		throw new Exception('Invalide user');
