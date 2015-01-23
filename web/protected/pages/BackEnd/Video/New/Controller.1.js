@@ -50,6 +50,13 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	            	tmp.me.showModalBox('Error', '<p style="color: red;">Upload file error: ' + error + '<i class="elusive-remove" style="padding-left:10px;"/></p>');
 	            });
 	        }
+			,progressall: function (e, data) {
+		        tmp.progress = parseInt(data.loaded / data.total * 100, 10);
+		        jQuery('#progress .bar').css(
+		            'width',
+		            tmp.progress + '%'
+		        );
+		    }
 		});
 		
 		return tmp.me;
