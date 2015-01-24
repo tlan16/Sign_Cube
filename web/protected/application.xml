@@ -54,6 +54,8 @@
 			
 			<!-- BackEnd:: Word:: List page -->
 			<url ServiceParameter="BackEnd.Word.List.Controller" pattern="backend/word.html" />
+			<!-- BackEnd:: Word:: New page -->
+			<url ServiceParameter="BackEnd.Word.New.Controller" pattern="backend/word/new.html" />
 			
 			<!-- BackEnd:: Message:: List page -->
 			<url ServiceParameter="BackEnd.Message.List.Controller" pattern="backend/messages.html" />

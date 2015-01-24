@@ -32,6 +32,9 @@
 					<div class="btn btn-default" onclick="window.open('/backend/word.html', '_self')">
 						Word List
 					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/word/new.html', '_self')">
+						Word New
+					</div>
 				</div>
             </div><!-- end container -->
     	</div>
