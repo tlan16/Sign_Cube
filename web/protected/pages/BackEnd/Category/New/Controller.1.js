@@ -79,8 +79,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						return;
 					tmp.newRow = tmp.me._getCategoryRow(tmp.result.item, false);
 					$(tmp.me._htmlIds.newOrderItemInput).insert({'after': tmp.newRow});
-					tmp.newDiv.down('[new-order-item=category]').focus();
-					tmp.newDiv.down('[new-order-item=category]').select();
+					$(tmp.me._htmlIds.itemDiv).down('[new-order-item=category]').focus();
+					$(tmp.me._htmlIds.itemDiv).down('[new-order-item=category]').select();
 				} catch (e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
 				}
