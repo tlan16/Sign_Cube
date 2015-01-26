@@ -294,9 +294,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						.observe('keydown', function(event){
 							tmp.txtBox = this;
 							tmp.me.keydown(event, function() {
-								if(tmp.txtBox.up('#'+pageJs._htmlIds.searchPanel).down('.item_row')!=undefined && tmp.txtBox.up('#'+pageJs._htmlIds.searchPanel).down('tbody').getElementsBySelector('.item_row').length===1) {
-									tmp.txtBox.up('#'+pageJs._htmlIds.searchPanel).down('tbody .item_row .btn').click();
-								};
+								tmp.txtBox.up('#'+pageJs._htmlIds.searchPanel).down('.search-btn').click();
 							});
 							return false;
 						})
