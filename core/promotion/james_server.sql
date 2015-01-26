@@ -1,0 +1,1 @@
+UPDATE `signcube`.`systemsettings` SET `value` = '/Users/sammut/git/Sign_Cube/web/assets/video' WHERE `systemsettings`.`id` = 1 
