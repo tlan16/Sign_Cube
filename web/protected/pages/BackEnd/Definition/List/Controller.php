@@ -53,10 +53,15 @@ class Controller extends BackEndPageAbstract
 				$where[] = 'content like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['def.definitionTypeId']) && ($code = trim($serachCriteria['def.definitionTypeId'])) !== '')
+			if(isset($serachCriteria['word.name']) && ($word = trim($serachCriteria['word.name'])) !== '')
 			{
-				$where[] = 'def.definitionTypeId = ?';
-				$params[] = $code;
+				$where[] = 'word.name = ?';
+				$params[] = $word;
+			}
+			if(isset($serachCriteria['def.definitionTypeId']) && ($deftp = trim($serachCriteria['definitionType.name'])) !== '')
+			{
+				$where[] = 'definitionType.name = ?';
+				$params[] = $deftp;
 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('def.id' => 'asc'), $stats);
@@ -64,7 +69,7 @@ class Controller extends BackEndPageAbstract
 			$results['items'] = array();
 			foreach($objects as $obj)
 				
-				$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson()));
+				$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson(), 'word'=> $obj->getWord()->getJson()));
 // 				$results['items'][] = array('definition'=> $obj->getJson(), 'definitionType'=>$obj->getDefinitionType()->getJson());
 			
 						}
@@ -133,23 +138,22 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("System Error: no item information passed in!");
     		if(!($definition = Definition::get(trim(($param->CallbackParameter->item->definitionId)))) instanceof Definition)
     			throw new Exception("Invalid Definition passed in!");
+    		if(!($word = Word::get(trim(($param->CallbackParameter->item->wordId)))) instanceof Word)
+    			throw new Exception("Invalid Word passed in!");
     		if(!($definitionType = DefinitionType::get(trim(($param->CallbackParameter->item->definitionTypeId)))) instanceof DefinitionType)
     			throw new Exception("Invalid DefinitionType passed in!");
     		
-//     		$active = trim($param->CallbackParameter->item->active);
     		
-    		if($definition->getContent() != ($content = trim($param->CallbackParameter->item->definitionContent)) )
+    		if($definition->getContent() != ($content = trim($param->CallbackParameter->item->content)) )
     		{
     			$definition->setContent($content)
-//     				->setActive($active)
     				->save();
     		}
-    		
-    		
+   		
     		Dao::commitTransaction();
     		
-    		$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson()));
-//     		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
+			$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson(), 'word'=> $obj->getWord()->getJson()));
+    //     		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
 
     	}
     	catch(Exception $ex)
