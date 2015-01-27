@@ -8,7 +8,7 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	protected $_focusEntity = 'Language';
+	protected $_focusEntity = 'Word';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -48,22 +48,28 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
+			if(isset($serachCriteria['wd.name']) && ($name = trim($serachCriteria['wd.name'])) !== '')
 			{
-				$where[] = 'lang.name like ?';
+				$where[] = 'wd.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
+			if(isset($serachCriteria['category.name']) && ($category = trim($serachCriteria['category.name'])) !== '')
 			{
-				$where[] = 'lang.code = ?';
-				$params[] = $code;
+				$where[] = 'category.name = ?';
+				$params[] = $category;
+			}
+			if(isset($serachCriteria['language.name']) && ($language = trim($serachCriteria['language.name'])) !== '')
+			{
+				$where[] = 'language.name = ?';
+				$params[] = $language;
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('lang.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('wd.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
+				$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson(), 'category'=>$obj->getCategory()->getJson()));
+// 				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
 		}
 		catch(Exception $ex)
 		{
@@ -116,35 +122,43 @@ class Controller extends BackEndPageAbstract
      * @throws Exception
      *
      */
-    public function saveItem($sender, $param)
+  public function saveItem($sender, $param)
     {
     	$results = $errors = array();
     	try
     	{
     		var_dump($param->CallbackParameter->item);
+    		
+    		Dao::beginTransaction();
+    		
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->name);
-    		$code = trim($param->CallbackParameter->item->code);
-    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
-    			
-    		if($item instanceof $class)
+    		if(!($word = Word::get(trim(($param->CallbackParameter->item->id)))) instanceof Word)
+    			throw new Exception("Invalid Word passed in!");
+    		if(!($category = Category::get(trim(($param->CallbackParameter->item->categoryId)))) instanceof Category)
+    			throw new Exception("Invalid category passed in!");
+    		if(!($language = Language::get(trim(($param->CallbackParameter->item->languageId)))) instanceof Language)
+    			throw new Exception("Invalid language passed in!");
+    		
+    		$active = trim($param->CallbackParameter->item->categoryActive);
+    		
+    		if($word->getName() != ($name = trim($param->CallbackParameter->item->name)) || $word->getActive() != $active)
     		{
-    			$item->setName($name)
-    			->setCode($code)
-    			->setActive($active)
-    			->save();
+    			$word->setName($name)
+    				->setActive($active)
+    				->save();
     		}
-    		else
-    		{
-    			$item = $class::create($name, $code);
-    		}
-    		$results['item'] = $item->getJson();
+    		
+    		Dao::commitTransaction();
+    		
+			$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson(), 'category'=>$obj->getCategory()->getJson()));
+      		
+//     		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
     	}
     	catch(Exception $ex)
     	{
+    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
