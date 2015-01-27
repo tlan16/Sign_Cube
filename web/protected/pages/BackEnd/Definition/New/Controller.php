@@ -8,99 +8,135 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see CRUDPageAbstract::_getEndJs()
-	 */
+	protected $_focusEntity = 'Category';
 	protected function _getEndJs()
 	{
-		$property = new Property();
+		$language = (isset($_REQUEST['languageid']) && ($language = Language::get(trim($_REQUEST['languageid']))) instanceof Language) ? $language->getJson() : null;
+		
 		$js = parent::_getEndJs();
-		$js .= "pageJs.setHTMLIDs(" . json_encode(array('itemDivId' => 'item-details-div')) . ")";
-		$js .= ".setPropRelTypes(" . Role::ID_TENANT . ", " . Role::ID_AGENT .", " . Role::ID_OWNER . ")";
-		$js .= ".setCallbackId('checkAddr', '" . $this->checkAddrBtn->getUniqueID() . "')";
-		$js .= ".setCallbackId('saveProperty', '" . $this->savePropertyBtn->getUniqueID() . "')";
-		$js .= ".load(" . json_encode($property->getJson()) . ");";
+		$js .= "pageJs";
+		$js .= ".setCallbackId('getItems', '" . $this->getItemsBtn->getUniqueID() . "')";
+		$js .= ".setCallbackId('saveItem', '" . $this->saveItemBtn->getUniqueID() . "')";
+		$js .= ".setCallbackId('searchLanguage', '" . $this->searchLanguageBtn->getUniqueID() . "')";
+		$js .= ".setHTMLIds('detailswrapper', 'search_panel')";
+		$js .= ".init(" . json_encode($language) . ");";
 		return $js;
 	}
 	/**
-	 * checking the address
+	 * Searching Customer
 	 *
-	 * @param TCallback          $sender
-	 * @param TCallbackParameter $param
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * 
+	 * @throws Exception
 	 *
-	 * @return Controller
 	 */
-	public function checkAddr($sender, $param)
+	public function searchLanguage($sender, $param)
 	{
 		$results = $errors = array();
 		try
 		{
-			$addressObj = isset($param->CallbackParameter->checkAddr) ? json_decode(json_encode($param->CallbackParameter->checkAddr), true) : array();
-			if(!is_array($addressObj) || count($addressObj) === 0)
-				throw new Exception('System Error: can NOT check on provided address, insuffient data provided.');
-			$address = Address::getByKey(Address::genKey($addressObj['street'], $addressObj['city'], $addressObj['region'], $addressObj['country'], $addressObj['postCode']));
-			$results['address'] = array();
-			$results['properties'] = array();
-			if($address instanceof Address)
+			$items = array();
+			$searchTxt = isset($param->CallbackParameter->searchTxt) ? trim($param->CallbackParameter->searchTxt) : '';
+			foreach(Language::getAllByCriteria('name like :searchTxt or code = :searchTxtExact', array('searchTxt' => $searchTxt . '%', 'searchTxtExact' => $searchTxt)) as $language)
 			{
-				$results['address'] = $address->getJson();
-				foreach(Property::getAllByCriteria('addressId = ?', array($address->getId())) as $property)
-				{
-					$propArray = $property->getJson();
-					$propArray['curRoleIds'] = array_map(create_function('$a', 'return intval($a->getId());'), Role::getPropertyRoles($property, Core::getUser()->getPerson()));
-					$results['properties'][] = $propArray;
-				}
+				$items[] = $language->getJson();
 			}
+			$results['items'] = $items;
 		}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-		return $this;
 	}
 	/**
-	 * creating the property
+	 * getting the focus entity
 	 *
-	 * @param TCallback          $sender
-	 * @param TCallbackParameter $param
-	 *
-	 * @return Controller
+	 * @return string
 	 */
-	public function saveProperty($sender, $param)
+	public function getFocusEntity()
+	{
+		return trim($this->_focusEntity);
+	}
+	/**
+	 * Getting the items
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * @throws Exception
+	 *
+	 */
+	public function getItems($sender, $param)
 	{
 		$results = $errors = array();
 		try
 		{
-			Dao::beginTransaction();
-			if(!isset($param->CallbackParameter->relTypeId) || !($role = Role::get($param->CallbackParameter->relTypeId)) instanceof Role)
-				throw new Exception('System Error: Invalid rel type provided.');
+			var_dump($param->CallbackParameter);
+			$class = trim($this->_focusEntity);
 			
-			$propertyObj = isset($param->CallbackParameter->newProperty) ? json_decode(json_encode($param->CallbackParameter->newProperty), true) : array();
-			if(!is_array($propertyObj) || count($propertyObj) === 0)
-				throw new Exception('System Error: can access provided information, insuffient data provided.');
-			
-			if(!isset($propertyObj['sKey']) || !($property = Property::getPropertyByKey(trim($propertyObj['sKey']))) instanceof Property)
+			$pageNo = 1;
+			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
+			if(isset($param->CallbackParameter->pagination))
 			{
-				$addressObj = $propertyObj['address'];
-				$addrKey = Address::genKey($addressObj['street'], $addressObj['city'], $addressObj['region'], $addressObj['country'], $addressObj['postCode']);
-				if(!($address = Address::getByKey($addrKey)) instanceof Address)
-					$address = Address::create($addressObj['street'], $addressObj['city'], $addressObj['region'], $addressObj['country'], $addressObj['postCode']);
-				$property = Property::create($address, trim($propertyObj['noOfRooms']), trim($propertyObj['noOfBaths']), trim($propertyObj['noOfCars']), trim($propertyObj['description']));
+				$pageNo = $param->CallbackParameter->pagination->pageNo;
+				$pageSize = $param->CallbackParameter->pagination->pageSize;
 			}
-			$property->addPerson(Core::getUser()->getPerson(), $role);
-			$results['url'] = '/backend/property/' . $property->getSKey() . '.html';
+			if(!($language = Language::get($param->CallbackParameter->language->id)) instanceof Language)
+    			throw new Exception("Invalid Language passed in!");
 			
-			Dao::commitTransaction();
+			$stats = array();
+			$objects = $class::getAllByCriteria('cat.languageId = ?', array($language->getId()), false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
+			
+			$results['pageStats'] = $stats;
+			$results['items'] = array();
+			
+			foreach($objects as $obj)
+				$results['items'][] = $obj->getJson();
 		}
 		catch(Exception $ex)
 		{
-			Dao::rollbackTransaction();
-			$errors[] = '<pre>' . $ex->getMessage(). "\n" . $ex->getTraceAsString() . '</pre>';
+			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-		return $this;
 	}
+    /**
+     * save the items
+     *
+     * @param unknown $sender
+     * @param unknown $param
+     * @throws Exception
+     *
+     */
+    public function saveItem($sender, $param)
+    {
+    	$results = $errors = array();
+    	try
+    	{
+    		var_dump($param->CallbackParameter->item);
+    		
+    		Dao::beginTransaction();
+    			
+    		$class = trim($this->_focusEntity);
+    		if(!isset($param->CallbackParameter->item))
+    			throw new Exception("No category information passed in!");
+    		if(!($language = Language::get($param->CallbackParameter->item->languageId)) instanceof Language)
+    			throw new Exception("Invalid Language passed in!");
+    		if(!isset($param->CallbackParameter->item) || ($name = trim($param->CallbackParameter->item->category)) == '')
+    			throw new Exception("Invalid Category Name passed in!");
+    		
+    		$item = $class::create($language, $name);
+    		
+    		Dao::commitTransaction();
+    		
+    		$results['item'] = array('category'=> $item->getJson(), 'language'=> $language->getJson());
+    	}
+    	catch(Exception $ex)
+    	{
+    		Dao::rollbackTransaction();
+    		$errors[] = $ex->getMessage();
+    	}
+    	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+    }
 }
 ?>

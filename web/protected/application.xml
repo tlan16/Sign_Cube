@@ -46,6 +46,8 @@
 			
 			<!-- BackEnd:: Definition:: List page -->
 			<url ServiceParameter="BackEnd.Definition.List.Controller" pattern="backend/definition.html" />
+			<!-- BackEnd:: Definition:: New page -->
+			<url ServiceParameter="BackEnd.Definition.New.Controller" pattern="backend/definition/new.html" />
 			
 			<!-- BackEnd:: Video:: List page -->
 			<url ServiceParameter="BackEnd.Video.List.Controller" pattern="backend/video.html" />

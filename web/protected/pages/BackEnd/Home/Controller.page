@@ -20,6 +20,9 @@
 					<div class="btn btn-default" onclick="window.open('/backend/definition.html', '_self')">
 						Definition List
 					</div>
+					<div class="btn btn-default" onclick="window.open('/backend/definition/new.html', '_self')">
+						Definition New
+					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/deftype.html', '_self')">
 						Definition Type List/New
 					</div>
