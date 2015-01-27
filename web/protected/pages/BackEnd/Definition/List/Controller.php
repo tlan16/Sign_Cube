@@ -48,9 +48,9 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['def.content']) && ($name = trim($serachCriteria['def.content'])) !== '')
+			if(isset($serachCriteria['content']) && ($name = trim($serachCriteria['content'])) !== '')
 			{
-				$where[] = 'def.content like ?';
+				$where[] = 'content like ?';
 				$params[] = '%' . $name . '%';
 			}
 			if(isset($serachCriteria['def.definitionTypeId']) && ($code = trim($serachCriteria['def.definitionTypeId'])) !== '')
@@ -63,7 +63,10 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = array('definition'=> $obj->getJson(), 'definitionType'=>$obj->getDefinitionType()->getJson());
+				
+				$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson()));
+// 				$results['items'][] = array('definition'=> $obj->getJson(), 'definitionType'=>$obj->getDefinitionType()->getJson());
+			
 						}
 		catch(Exception $ex)
 		{
@@ -133,7 +136,7 @@ class Controller extends BackEndPageAbstract
     		if(!($definitionType = DefinitionType::get(trim(($param->CallbackParameter->item->definitionTypeId)))) instanceof DefinitionType)
     			throw new Exception("Invalid DefinitionType passed in!");
     		
-//     		$active = trim($param->CallbackParameter->item->definitionActive);
+//     		$active = trim($param->CallbackParameter->item->active);
     		
     		if($definition->getContent() != ($content = trim($param->CallbackParameter->item->definitionContent)) )
     		{
@@ -145,7 +148,9 @@ class Controller extends BackEndPageAbstract
     		
     		Dao::commitTransaction();
     		
-    		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
+    		$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson()));
+//     		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
+
     	}
     	catch(Exception $ex)
     	{

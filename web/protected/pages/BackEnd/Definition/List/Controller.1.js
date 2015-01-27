@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'definition': {'content' :"Definition", 'active': 'Active?'}, 'definitionType': {'name': 'Definition Type'}};	}
+		return {'content' :"Definition", 'active': 'Active?', 'definitionType': {'name': 'Definition Type'}};	}
 	,_bindSearchKey: function() {
 		var tmp = {}
 		tmp.me = this;
@@ -24,19 +24,19 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Definition of the Word', 'save-item-panel': 'definitionContent', 'value': row.definition.content ? row.definition.content : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Definition of the Word', 'save-item-panel': 'definitionContent', 'value': row.content ? row.content : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Definition Type of the Word', 'save-item-panel': 'definitionTypeName', 'value': row.definitionType.name ? row.definitionType.name : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
-				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'definitionId', 'value': row.definition.id ? row.definition.id : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'definitionId', 'value': row.id ? row.id : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group hidden'})
 				.insert({'bottom': new Element('input', {'class': 'form-control', 'save-item-panel': 'definitionTypeId', 'value': row.definitionType.id ? row.definitionType.id : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.definition.active}) })
+				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.active}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'text-right'})
 				.insert({'bottom':  new Element('span', {'class': 'btn-group btn-group-sm'})
@@ -66,11 +66,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
-		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.definition.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.definition.content) })
+		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.definitionType.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
-				.insert({'bottom': (tmp.isTitle === true ? row.definition.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.definition.active}) ) })
+				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
 				tmp.isTitle === true ?  
@@ -91,7 +91,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						});
 					})
 				)
-				: (new Element('span', {'class': row.definition.active ? 'btn-group btn-group-xs' : ''})
+				: (new Element('span', {'class': row.active ? 'btn-group btn-group-xs' : ''})
 					.insert({'bottom': new Element('span', {'class': 'btn btn-xs btn-default', 'title': 'Edit'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
 						.observe('click', function(){
