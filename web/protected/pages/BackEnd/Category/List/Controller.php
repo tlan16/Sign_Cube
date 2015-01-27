@@ -50,9 +50,9 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['category.name']) && ($name = trim($serachCriteria['category.name'])) !== '')
+			if(isset($serachCriteria['name']) && ($name = trim($serachCriteria['name'])) !== '')
 			{
-				$where[] = 'category.name like ?';
+				$where[] = 'name like ?';
 				$params[] = '%' . $name . '%';
 			}
 			if(isset($serachCriteria['language.name']) && ($language = trim($serachCriteria['language.name'])) !== '')
@@ -65,7 +65,8 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
+				$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson()));
+// 				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
 		}
 		catch(Exception $ex)
 		{
@@ -146,7 +147,9 @@ class Controller extends BackEndPageAbstract
     		
     		Dao::commitTransaction();
     		
-    		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
+    		$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson()));
+    		
+//     		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
     	}
     	catch(Exception $ex)
     	{
