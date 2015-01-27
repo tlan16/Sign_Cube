@@ -190,4 +190,7 @@ BackEndPageJs.prototype = Object.extend(new FrontPageJs(), {
 			}
 		});
 	}
+	,getLoadingImg: function(){
+		return new Element('i', {'class': 'fa fa-refresh fa-spin fa-5x'});
+	}
 });
