@@ -44,7 +44,6 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
@@ -121,7 +120,6 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
