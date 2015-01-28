@@ -29,6 +29,27 @@ BackEndPageJs.prototype = Object.extend(new FrontPageJs(), {
 			tmp.me._searchCriteria = null;
 		return this;
 	}
+	,getBasicVideoEl: function(src, width, height, type){
+		var tmp = {};
+		tmp.me = this;
+		tmp.width = (width || 220);
+		tmp.height = (height || 180);
+		tmp.type = (type || "video/mp4");
+		tmp.newDiv = new Element('video', {'width': tmp.width, 'height': tmp.height, 'controls': ''})
+			.insert({'bottom': new Element('source', {'src': src, 'type': tmp.type}) })
+			.insert({'bottom': new Element('span').setStyle('font-weight:bold;').update('Your browser does not support the video tag.') })
+		return tmp.newDiv;
+	}
+	/**
+	 * Open a new window with given url
+	 */
+	,_openNewWindow: function(url) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newWindow = window.open(url, 'New Category','width=1300, location=no, scrollbars=yes, menubar=no, status=no, titlebar=no, fullscreen=no, toolbar=no');
+		tmp.newWindow.focus();
+		return tmp.me;
+	}
 	/**
 	 * Getting the form group
 	 */

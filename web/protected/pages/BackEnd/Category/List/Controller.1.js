@@ -57,16 +57,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			tmp.newDiv.down('input[save-item-panel="active"]').writeAttribute('disabled', true);
 		return tmp.newDiv;
 	}
-	/**
-	 * Open edit page in a fancybox
-	 */
-	,_openEditPage: function(url) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.newWindow = window.open(url, 'New Category','width=1300, location=no, scrollbars=yes, menubar=no, status=no, titlebar=no, fullscreen=no, toolbar=no');
-		tmp.newWindow.focus();
-		return tmp.me;
-	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
@@ -85,7 +75,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 					.insert({'bottom': ' NEW' })
 					.observe('click', function(){
-						tmp.me._openEditPage('/backend/definition/new.html');
+						tmp.me._openNewWindow('/backend/definition/new.html');
 					})
 				)
 				: (new Element('span', {'class': row.active ? 'btn-group btn-group-xs' : ''})

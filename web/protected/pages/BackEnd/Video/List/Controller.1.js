@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'EntityName': 'EntityName', 'thirdpartyName': 'thirdpartyName', 'active': 'Active?'};
+		return {'url': "URL", 'thirdPartyName': '3rd Party Name', 'thirdPartyLink': '3rd Party Link', 'active': 'Active?'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
@@ -24,13 +24,13 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The EntityName of the Video', 'save-item-panel': 'EntityName', 'value': row.EntityName ? row.EntityName : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Language', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The thirdpartyName of the Video', 'save-item-panel': 'thirdpartyName', 'value': row.thirdpartyName ? row.thirdpartyName : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Code of the Language', 'save-item-panel': 'code', 'value': row.code ? row.code : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.active}) })
+				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.id ? row.active : true}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'text-right'})
 				.insert({'bottom':  new Element('span', {'class': 'btn-group btn-group-sm'})
@@ -52,49 +52,32 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					})
 				})
 			});
-		return tmp.newDiv;
-	}
-	,_getVideoEl: function(src, mimeType, width, height) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.width = (width || 300);
-		tmp.height = (height || 200);
-		tmp.mimeType = (mimeType || "video/mp4");
-		
-		tmp.newDiv = new Element('video', {'width': tmp.width, 'height': tmp.height, 'controls': true})
-			.insert({'bottom': new Element('source', {'src': src, 'type': tmp.mimeType}) });
-		
+		if(!row.id)
+			tmp.newDiv.down('input[save-item-panel="active"]').writeAttribute('disabled', true);
 		return tmp.newDiv;
 	}
 	,_getResultRow: function(row, isTitle) {
-		console.debug(row);
 		var tmp = {};
 		tmp.me = this;
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
-		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'videoView col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.url ? tmp.me._getVideoEl(row.url) : '') })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'thirdpartyName col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.thirdpartyName) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
-				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
+		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
+			.setStyle(tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '')
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '')
+				.update(tmp.isTitle ? row.url : tmp.me.getBasicVideoEl(row.url)) 
 			})
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-2'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.thirdPartyName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-3'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.thirdPartyLink) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
+				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.id ? row.active : true}) ) })
+			})
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
 				tmp.isTitle === true ?  
 				(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 					.insert({'bottom': ' NEW' })
 					.observe('click', function(){
-						$(this).up('thead').insert({'bottom': tmp.newEditEl = tmp.me._getEditPanel({}) });
-						tmp.newEditEl.down('.form-control[save-item-panel]').focus();
-						tmp.newEditEl.down('.form-control[save-item-panel]').select();
-						tmp.newEditEl.getElementsBySelector('.form-control[save-item-panel]').each(function(item) {
-							item.observe('keydown', function(event){
-								tmp.me.keydown(event, function() {
-									tmp.newEditEl.down('.btn-success span').click();
-								});
-								return false;
-							})
-						});
+						tmp.me._openNewWindow('/backend/video/new.html');
 					})
 				)
 				: (new Element('span', {'class': row.active ? 'btn-group btn-group-xs' : ''})

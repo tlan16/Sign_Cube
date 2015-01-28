@@ -97,7 +97,7 @@ class Video extends BaseEntityAbstract
 	 */
 	public function getUrl()
 	{
-		return $this->getAsset() instanceof Asset ? $this->getAsset()->getUrl() : $this->getThirdpartyLink();
+		return $this->getAsset() instanceof Asset ? $this->getAsset()->getUrl() : '';
 	}
 	/**
 	 * (non-PHPdoc)

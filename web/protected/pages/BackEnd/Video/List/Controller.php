@@ -47,14 +47,14 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['vid.EntityName']) && ($name = trim($serachCriteria['vid.EntityName'])) !== '')
+			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
 			{
-				$where[] = 'vid.EntityName like ?';
+				$where[] = 'lang.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['vid.thirdpartyName']) && ($code = trim($serachCriteria['vid.thirdpartyName'])) !== '')
+			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
 			{
-				$where[] = 'vid.thirdpartyName = ?';
+				$where[] = 'lang.code = ?';
 				$params[] = $code;
 			}
 			$stats = array();
@@ -62,7 +62,9 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson(array('asset'=> $obj->getAsset()->getJson(), 'url'=> $obj->getUrl()));
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive()
+						, 'url'=> $obj->getUrl()
+						, 'thirdPartyName'=> $obj->getThirdpartyName(), 'thirdPartyLink'=> $obj->getThirdpartyLink());
 		}
 		catch(Exception $ex)
 		{
@@ -124,14 +126,14 @@ class Controller extends BackEndPageAbstract
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
     		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$EntityName = trim($param->CallbackParameter->item->EntityName);
-    		$thirdpartyName = trim($param->CallbackParameter->item->thirdpartyName);
+    		$name = trim($param->CallbackParameter->item->name);
+    		$code = trim($param->CallbackParameter->item->code);
     		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
     			
     		if($item instanceof $class)
     		{
-    			$item->setEntityName($EntityName)
-    			->setThirdpartyName($thirdpartyName)
+    			$item->setName($name)
+    			->setCode($code)
     			->setActive($active)
     			->save();
     		}
