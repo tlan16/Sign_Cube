@@ -9,8 +9,6 @@
 class Controller extends BackEndPageAbstract
 {
 	protected $_focusEntity = 'Category';
-	
-	
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -46,27 +44,40 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['name']) && ($name = trim($serachCriteria['name'])) !== '')
+			if(isset($serachCriteria['cat.name']) && ($name = trim($serachCriteria['cat.name'])) !== '')
 			{
-				$where[] = 'name like ?';
+				$where[] = 'cat.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['language.name']) && ($language = trim($serachCriteria['language.name'])) !== '')
-			{
-				$where[] = 'language.name = ?';
-				$params[] = $language;
-			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
+			$objects = Category::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
+			// TODO: serach by language, inner join
+// 			if(isset($serachCriteria['cat.lang']))
+// 			{
+// 				$searchTxt = trim($serachCriteria['cat.lang']);
+// 				$languages = Language::getAllByCriteria('lang.name like ? AND lang.code = ?', array('%' . $searchTxt . '%', $searchTxt));
+// 			}
+// 			else $languages = Language::getAll();
+// 			$objects = array();
+// 			foreach ($categories as $category)
+// 			{
+// 				foreach ($languages as $language)
+// 				{
+// 					if($category->getLanguage()->getId() === $language->getId())
+// 						$objects[] = $category;
+// 				}
+// 			}
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson()));
-// 				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
+			{
+				$language = $obj->getLanguage();
+				$results['items'][] = array('id'=> $obj->getId(), 'name'=> $obj->getName(), 'active'=> $obj->getActive()
+						, 'langId'=> $language->getId(), 'langName'=> $language->getName(), 'langCode'=> $language->getCode());
+			}
 		}
 		catch(Exception $ex)
 		{
@@ -124,36 +135,36 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
-    		
-    		Dao::beginTransaction();
-    		
     		$class = trim($this->_focusEntity);
+    		
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		if(!($category = Category::get(trim(($param->CallbackParameter->item->categoryId)))) instanceof Category)
-    			throw new Exception("Invalid category passed in!");
-    		if(!($language = Language::get(trim(($param->CallbackParameter->item->languageId)))) instanceof Language)
-    			throw new Exception("Invalid language passed in!");
+    		if(!isset($param->CallbackParameter->item->id))
+    			throw new Exception("System Error: Invalid Category passed in!");
+    		if(!isset($param->CallbackParameter->item->langId) || !($language = Language::get(trim($param->CallbackParameter->item->langId))) instanceof Language)
+    			throw new Exception("System Error: Invalid Language passed in!");
+    		$name = trim($param->CallbackParameter->item->name);
+    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
+    		// TODO: handle changable Language
     		
-    		$active = trim($param->CallbackParameter->item->categoryActive);
-    		
-    		if($category->getName() != ($name = trim($param->CallbackParameter->item->categoryName)) || $category->getActive() != $active)
+    		$category = Category::get(trim($param->CallbackParameter->item->id));
+    		if($category instanceof Category)
     		{
-    			$category->setName($name)
-    				->setActive($active)
-    				->save();
+    			$item = $category->setName($name)
+    			->setActive($active)
+    			->setLanguage($language)
+    			->save();
     		}
-    		
-    		Dao::commitTransaction();
-    		
-    		$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson()));
-    		
-//     		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
+    		else
+    		{
+    			$item = Category::create($language, $name);
+    		}
+    		$language = $item->getLanguage();
+    		$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive()
+    				, 'langId'=> $language->getId(), 'langName'=> $language->getName(), 'langCode'=> $language->getCode());
     	}
     	catch(Exception $ex)
     	{
-    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);

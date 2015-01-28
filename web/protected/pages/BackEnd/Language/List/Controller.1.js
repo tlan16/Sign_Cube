@@ -59,7 +59,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug(row);
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
