@@ -53,12 +53,12 @@ class Controller extends BackEndPageAbstract
 				$params[] = '%' . $name . '%';
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-    			$results['items'][] = array('id'=> $obj->getId(), 'name'=> $obj->getName(), 'active'=> $obj->getActive());
-			}
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'name'=> $obj->getName());
+		}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
@@ -94,8 +94,8 @@ class Controller extends BackEndPageAbstract
     			
     		$item->setActive(false)
     			->save();
-    			$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive());
-        	}
+    		$results['item'] = $item->getJson();
+    	}
     	catch(Exception $ex)
     	{
     		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
@@ -109,8 +109,8 @@ class Controller extends BackEndPageAbstract
      * @param unknown $param
      * @throws Exception
      *
-     */ //need to fix below
-  public function saveItem($sender, $param)
+     */
+    public function saveItem($sender, $param)
     {
     	$results = $errors = array();
     	try
@@ -129,10 +129,10 @@ class Controller extends BackEndPageAbstract
     			->save();
     		}
     		else
+    		{
     			$item = $class::create($name);
-    		
-    		$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive());
-    	
+    		}
+    		$results['item'] = $item->getJson();
     	}
     	catch(Exception $ex)
     	{

@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'name': "Definition Type",  'active': 'Active?'};
+		return {'name': "Name", 'active': 'Active?'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
@@ -24,9 +24,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Definition', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Definition Type', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
 			})
-			
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.id ? row.active : true}) })
 			})
@@ -51,18 +50,20 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				})
 			});
 		if(!row.id)
-			tmp.newDiv.down('input[type="checkbox"]').writeAttribute('disabled', true);
+			tmp.newDiv.down('input[save-item-panel="active"]').writeAttribute('disabled', true);
 		return tmp.newDiv;
 	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
+		console.debug();
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
-		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.name) })
+		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row item_row' : 'danger item_row'))}).store('data', row)
+			.setStyle(tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '')
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
-				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
+				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.id ? row.active : true}) ) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
 				tmp.isTitle === true ?  
