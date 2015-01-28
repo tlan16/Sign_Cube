@@ -61,7 +61,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
-		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
+		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row item_row' : 'danger item_row'))}).store('data', row)
 			.setStyle(tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-4'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.code) })
