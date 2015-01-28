@@ -114,7 +114,9 @@ class Controller extends BackEndPageAbstract
     			
     		$item->setActive(false)
     			->save();
-    		$results['item'] = $item->getJson();
+    		$language = $item->getLanguage();
+    		$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive()
+    				, 'langId'=> $language->getId(), 'langName'=> $language->getName(), 'langCode'=> $language->getCode());
     	}
     	catch(Exception $ex)
     	{

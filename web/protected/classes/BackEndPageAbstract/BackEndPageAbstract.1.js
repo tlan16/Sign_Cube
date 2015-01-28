@@ -203,7 +203,7 @@ BackEndPageJs.prototype = Object.extend(new FrontPageJs(), {
 					tmp.row.toggleClassName('danger');
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result.item)
-						throw 'errror';
+						throw 'errror deactivate item';
 					tmp.row.replace(tmp.me._getResultRow(tmp.result.item, false));
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
