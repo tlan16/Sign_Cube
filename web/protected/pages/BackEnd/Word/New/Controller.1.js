@@ -28,7 +28,47 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_saveWord: function() {
 		var tmp = {};
 		tmp.me = this;
-		$(tmp.me._htmlIds.itemDiv).update(tmp.me.getLoadingImg());
+		
+		tmp.data = tmp.data = [];
+		$(tmp.me._htmlIds.definitionsContainerInner).getElementsBySelector('.definitionGroup').each(function(group){
+			tmp.type = $F($(group).down('.panel-heading [save-def-item="type"]'));
+			if(!tmp.type.empty()) {
+				tmp.formType = tmp.type;
+				tmp.formRows = [];
+				$(group).getElementsBySelector('.panel-body .row.definitionRow').each(function(defRow){
+					tmp.row = $F($(defRow).down('[save-def-item="definitionRow"]'));
+					tmp.order = $F($(defRow).down('[save-def-item="definitionOrder"]'));
+					if(!tmp.row.empty())
+						tmp.formRows.push ({'def': tmp.row,'order': tmp.order});
+				});
+				tmp.data.push({'type': tmp.formType, 'rows': tmp.formRows});
+			}
+		});
+		
+		tmp.me.postAjax(tmp.me.getCallbackId('saveWord'), {'definitions': tmp.data, 'video': tmp.me._video, 'asset': tmp.me._asset, 'word': tmp.me._word}, {
+			'onLoading': function() {
+				$(tmp.me._htmlIds.itemDiv).insert({'top': tmp.loadingImg = tmp.me.getLoadingImg()});
+				$(tmp.me._htmlIds.definitionsContainer).hide();
+			}
+			,'onSuccess': function(sender, param){
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result.item || tmp.result.item.id.empty())
+						throw 'errror: php passback Error';
+					else {
+						tmp.me.showModalBox('<h4>Word Saved Successfully</h4>');
+						window.location.reload();
+					}
+				} catch(e) {
+					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
+				}
+			}
+			,'onComplete': function() {
+				tmp.loadingImg.remove();
+			}
+		});
+		
+		return tmp.me;
 	}
 	,_getNewDefinitionBodyRow: function() {
 		var tmp = {};
@@ -352,7 +392,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'th': 'td');
-		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'btn-hide-row item_row') + (word.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : category.id)}).store('data', word)
+		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'btn-hide-row item_row') + (word.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : word.id)}).store('data', word)
 			.insert({'bottom': new Element(tmp.tag, {'class': tmp.isTitle ? 'hidden' : ''})
 				.insert({'bottom': (tmp.isTitle === true ? '&nbsp;':
 					new Element('span', {'class': 'btn btn-primary btn-xs'}).update('select')	

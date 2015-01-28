@@ -6,6 +6,7 @@
 <com:TCallback ID="searchWordBtn" onCallback="searchWord" />
 <com:TCallback ID="saveItemBtn" onCallback="Page.saveItem" />
 <com:TCallback ID="getDefTypesBtn" onCallback="Page.getDefTypes" />
+<com:TCallback ID="saveWordBtn" onCallback="Page.saveWord" />
 <div class="container"">
 	<div class="pagewrapper categorydetails">
 		<div id="detailswrapper" class="contentDiv"></div>
