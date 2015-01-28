@@ -11,6 +11,7 @@
  */
 class Word extends BaseEntityAbstract
 {
+	const TYPE_DEFAULT = 'DEFAULT';
 	/**
 	 *  The name of the Word
 	 *  
@@ -22,7 +23,7 @@ class Word extends BaseEntityAbstract
 	 *  
 	 *  @var string
 	 */
-	private $tag;
+	private $tag = self::TYPE_DEFAULT;
 	/**
 	 * The Word language
 	 * 
@@ -128,9 +129,9 @@ class Word extends BaseEntityAbstract
 	public function preSave()
 	{
 		if(trim($this->getName()) === '')
-			throw new EntityException('Name can NOT be empty', 'exception_entity_word_name_empty');
+			throw new Exception('Name can NOT be empty', 'exception_entity_word_name_empty');
 		if(trim($this->getTag()) === '')
-			throw new EntityException('Tag can NOT be empty', 'exception_entity_word_tag_empty');
+			throw new Exception('Tag can NOT be empty');
 	}
 	/**
      * (non-PHPdoc)
@@ -158,7 +159,7 @@ class Word extends BaseEntityAbstract
      *
      * @return Word
      */
-    public static function create(Language $language, Category $category, $name, $tag = '')
+    public static function create(Language $language, Category $category, $name, $tag = self::TYPE_DEFAULT)
     {
     	$existingEntity = self::getAllByCriteria('languageId = ? AND categoryId = ? AND name = ?', array($language->getId(), $category->getId(), trim($name)));
     	$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Word();
