@@ -19,17 +19,17 @@
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group form-group-sm">
-                           <label>Name:</label>
-                           <input type="text" search_field="category.name" placeholder="The Category Id" class="form-control input-sm">
+                           <label>Category:</label>
+                           <input type="text" disabled = "disabled" search_field="category.name" placeholder="The Category Id" class="form-control input-sm">
                        </div>
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group form-group-sm">
-                           <label>Code:</label>
-                           <input type="text" search_field="language.name" placeholder="The Language Id" class="form-control input-sm">
+                           <label>Language:</label>
+                           <input type="text" disabled = "disabled" search_field="language.name" placeholder="The Language Id" class="form-control input-sm">
                        </div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm">
                            <label>&nbsp;</label>
 						   <span id="searchBtn" class="btn btn-primary form-control inpu-sm" data-loading-text="searching ..." onclick="pageJs.getSearchCriteria().getResults(true, <%= DaoQuery::DEFAUTL_PAGE_SIZE %>);" >Search</span>

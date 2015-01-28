@@ -57,8 +57,8 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
-		}
+    			$results['items'][] = array('id'=> $obj->getId(), 'name'=> $obj->getName(), 'active'=> $obj->getActive());
+			}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
@@ -94,8 +94,8 @@ class Controller extends BackEndPageAbstract
     			
     		$item->setActive(false)
     			->save();
-    		$results['item'] = $item->getJson();
-    	}
+    			$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive());
+        	}
     	catch(Exception $ex)
     	{
     		$errors[] = $ex->getMessage() . $ex->getTraceAsString();
@@ -131,7 +131,8 @@ class Controller extends BackEndPageAbstract
     		else
     			$item = $class::create($name);
     		
-    		$results['item'] = $item->getJson();
+    		$results['item'] = array('id'=> $item->getId(), 'name'=> $item->getName(), 'active'=> $item->getActive());
+    	
     	}
     	catch(Exception $ex)
     	{

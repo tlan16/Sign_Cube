@@ -47,15 +47,15 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['lang.name']) && ($name = trim($serachCriteria['lang.name'])) !== '')
+			if(isset($serachCriteria['vid.thirdpartyName']) && ($name = trim($serachCriteria['vid.thirdpartyName'])) !== '')
 			{
-				$where[] = 'lang.name like ?';
+				$where[] = 'vid.thirdpartyName like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['lang.code']) && ($code = trim($serachCriteria['lang.code'])) !== '')
+			if(isset($serachCriteria['vid.thirdpartyLink']) && ($link = trim($serachCriteria['vid.thirdpartyLink'])) !== '')
 			{
-				$where[] = 'lang.code = ?';
-				$params[] = $code;
+				$where[] = 'vid.thirdpartyLink = ?';
+				$params[] = $link;
 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('vid.id' => 'desc'), $stats);
@@ -141,7 +141,9 @@ class Controller extends BackEndPageAbstract
     		{
     			$item = $class::create($name, $code);
     		}
-    		$results['item'] = $item->getJson();
+    		$results['item'] =  array('id'=> $obj->getId(), 'active'=> $obj->getActive()
+						, 'url'=> $obj->getUrl()
+						, 'thirdPartyName'=> $obj->getThirdpartyName(), 'thirdPartyLink'=> $obj->getThirdpartyLink());
     	}
     	catch(Exception $ex)
     	{

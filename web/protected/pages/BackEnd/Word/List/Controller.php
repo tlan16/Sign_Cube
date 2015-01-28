@@ -141,7 +141,7 @@ class Controller extends BackEndPageAbstract
     		if(!($language = Language::get(trim(($param->CallbackParameter->item->languageId)))) instanceof Language)
     			throw new Exception("Invalid language passed in!");
     		
-    		$active = trim($param->CallbackParameter->item->categoryActive);
+    		$active = trim($param->CallbackParameter->item->active);
     		
     		if($word->getName() != ($name = trim($param->CallbackParameter->item->name)) || $word->getActive() != $active)
     		{

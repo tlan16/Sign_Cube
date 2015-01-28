@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'content' :"Definition", 'active': 'Active?','word': {'name': 'Word'}, 'definitionType': {'name': 'Definition Type'}};	}
+		return {'content' :"Definition", 'active': 'Active?','wordName':  'Word', 'definitionTypeName': 'Definition Type'};	}
 	,_bindSearchKey: function() {
 		var tmp = {}
 		tmp.me = this;
@@ -74,8 +74,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-4', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.content) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'wordName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.word.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'definitionTypeName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.definitionType.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'wordName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.wordName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'definitionTypeName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.definitionTypeName) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
 				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
 			})

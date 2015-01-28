@@ -68,11 +68,13 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				
-				$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson(), 'word'=> $obj->getWord()->getJson()));
-// 				$results['items'][] = array('definition'=> $obj->getJson(), 'definitionType'=>$obj->getDefinitionType()->getJson());
-			
-						}
+
+				$definitionType = $obj->getDefinitionType();
+				$word = $obj->getWord();
+				$results['items'][] = array('id'=> $obj->getId(), 'content'=> $obj->getContent(), 'active'=> $obj->getActive()
+						, 'definitionTypeId'=> $definitionType->getId(), 'definitionTypeName'=> $definitionType->getName(), 'wordName'=> $word->getName(), 'wordId' => $word->getId());
+
+		}
 		catch(Exception $ex)
 		{
 			$errors[] = $ex->getMessage();
@@ -143,18 +145,19 @@ class Controller extends BackEndPageAbstract
     		if(!($definitionType = DefinitionType::get(trim(($param->CallbackParameter->item->definitionTypeId)))) instanceof DefinitionType)
     			throw new Exception("Invalid DefinitionType passed in!");
     		
-    		
-    		if($definition->getContent() != ($content = trim($param->CallbackParameter->item->content)) )
+    		$definition = Definition::get(trim($param->CallbackParameter->item->id));
+    		if($definition instanceof Definition)
     		{
-    			$definition->setContent($content)
+    			$item = $definition->setContent($content)
     				->save();
     		}
-   		
-    		Dao::commitTransaction();
+    		$definitionType = $item->getDefinitionType();
+    		$word = $item->getWord();
+    		$results['items'][] = array('id'=> $item->getId(), 'content'=> $item->getContent(), 'active'=> $item->getActive()
+    				, 'definitionTypeId'=> $definitionType->getId(), 'definitionTypeName'=> $definitionType->getName(), 'wordName'=> $word->getName(), 'wordId' => $word->getId());
     		
-			$results['items'][] = $obj->getJson(array('definitionType'=> $obj->getDefinitionType()->getJson(), 'word'=> $obj->getWord()->getJson()));
-    //     		$results['item'] = array('definition'=> $definition->getJson(), 'definitionType'=>$definitionType->getName()->getJson());
-
+    		Dao::commitTransaction();
+  
     	}
     	catch(Exception $ex)
     	{

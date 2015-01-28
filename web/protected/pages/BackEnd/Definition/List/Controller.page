@@ -20,13 +20,13 @@
 					<div class="col-sm-3">
 						<div class="form-group form-group-sm">
                            <label>Word:</label>
-                           <input type="text" search_field="word.name" placeholder="The Word" class="form-control input-sm">
+                           <input type="text" search_field="wordName" placeholder="The Word" class="form-control input-sm">
                        </div>
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group form-group-sm">
                            <label>Definition Type:</label>
-                           <input type="text" search_field="definitionType.name" placeholder="The Definition Type" class="form-control input-sm">
+                           <input type="text" search_field="definitionTypeName" placeholder="The Definition Type" class="form-control input-sm">
                        </div>
 					</div>
 					<div class="col-sm-2">
