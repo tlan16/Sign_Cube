@@ -8,7 +8,7 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	protected $_focusEntity = 'Definition';
+	protected $_focusEntity = 'DefinitionType';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -44,36 +44,20 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['content']) && ($name = trim($serachCriteria['content'])) !== '')
+			if(isset($serachCriteria['deftp.name']) && ($name = trim($serachCriteria['deftp.name'])) !== '')
 			{
-				$where[] = 'content like ?';
+				$where[] = 'deftp.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['word.name']) && ($word = trim($serachCriteria['word.name'])) !== '')
-			{
-				$where[] = 'word.name = ?';
-				$params[] = $word;
-			}
-			if(isset($serachCriteria['def.definitionTypeId']) && ($deftp = trim($serachCriteria['definitionType.name'])) !== '')
-			{
-				$where[] = 'definitionType.name = ?';
-				$params[] = $deftp;
-			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('def.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-
-				$definitionType = $obj->getDefinitionType();
-				$word = $obj->getWord();
-				$results['items'][] = array('id'=> $obj->getId(), 'content'=> $obj->getContent(), 'active'=> $obj->getActive()
-						, 'definitionTypeId'=> $definitionType->getId(), 'definitionTypeName'=> $definitionType->getName(), 'wordName'=> $word->getName(), 'wordId' => $word->getId());
-
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'name'=> $obj->getName());
 		}
 		catch(Exception $ex)
 		{
@@ -126,42 +110,32 @@ class Controller extends BackEndPageAbstract
      * @throws Exception
      *
      */
- public function saveItem($sender, $param)
+    public function saveItem($sender, $param)
     {
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
-    		
-    		Dao::beginTransaction();
-    		
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		if(!($definition = Definition::get(trim(($param->CallbackParameter->item->definitionId)))) instanceof Definition)
-    			throw new Exception("Invalid Definition passed in!");
-    		if(!($word = Word::get(trim(($param->CallbackParameter->item->wordId)))) instanceof Word)
-    			throw new Exception("Invalid Word passed in!");
-    		if(!($definitionType = DefinitionType::get(trim(($param->CallbackParameter->item->definitionTypeId)))) instanceof DefinitionType)
-    			throw new Exception("Invalid DefinitionType passed in!");
-    		
-    		$definition = Definition::get(trim($param->CallbackParameter->item->id));
-    		if($definition instanceof Definition)
+    		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
+    		$name = trim($param->CallbackParameter->item->name);
+    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
+    			
+    		if($item instanceof $class)
     		{
-    			$item = $definition->setContent($content)
-    				->save();
+    			$item->setName($name)
+    			->setActive($active)
+    			->save();
     		}
-    		$definitionType = $item->getDefinitionType();
-    		$word = $item->getWord();
-    		$results['items'][] = array('id'=> $item->getId(), 'content'=> $item->getContent(), 'active'=> $item->getActive()
-    				, 'definitionTypeId'=> $definitionType->getId(), 'definitionTypeName'=> $definitionType->getName(), 'wordName'=> $word->getName(), 'wordId' => $word->getId());
-    		
-    		Dao::commitTransaction();
-  
+    		else
+    		{
+    			$item = $class::create($name);
+    		}
+    		$results['item'] = $item->getJson();
     	}
     	catch(Exception $ex)
     	{
-    		Dao::rollbackTransaction();
     		$errors[] = $ex->getMessage();
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
