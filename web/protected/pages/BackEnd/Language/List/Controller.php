@@ -62,7 +62,7 @@ class Controller extends BackEndPageAbstract
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'name'=> $obj->getName(), 'code'=> $obj->getCode());
 		}
 		catch(Exception $ex)
 		{

@@ -30,7 +30,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				.insert({'bottom': new Element('input', {'class': 'form-control', 'placeholder': 'The Code of the Language', 'save-item-panel': 'code', 'value': row.code ? row.code : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.active}) })
+				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.id ? row.active : true}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'text-right'})
 				.insert({'bottom':  new Element('span', {'class': 'btn-group btn-group-sm'})
@@ -52,11 +52,14 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					})
 				})
 			});
+		if(!row.id)
+			tmp.newDiv.down('input[save-item-panel="active"]').writeAttribute('disabled', true);
 		return tmp.newDiv;
 	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
+		console.debug(row);
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
@@ -64,7 +67,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-xs-4'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.code) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
-				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.active}) ) })
+				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.id ? row.active : true}) ) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
 				tmp.isTitle === true ?  
