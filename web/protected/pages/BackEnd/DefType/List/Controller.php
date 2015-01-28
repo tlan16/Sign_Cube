@@ -44,7 +44,6 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
@@ -53,11 +52,6 @@ class Controller extends BackEndPageAbstract
 				$where[] = 'deftp.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-// 			if(isset($serachCriteria['deftp.code']) && ($code = trim($serachCriteria['deftp.code'])) !== '')
-// 			{
-// 				$where[] = 'deftp.code = ?';
-// 				$params[] = $code;
-// 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
@@ -121,7 +115,6 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
@@ -132,14 +125,11 @@ class Controller extends BackEndPageAbstract
     		if($item instanceof $class)
     		{
     			$item->setName($name)
-//     			->setCode($code)
     			->setActive($active)
     			->save();
     		}
     		else
-    		{
     			$item = $class::create($name);
-    		}
     		
     		$results['item'] = $item->getJson();
     	}
@@ -149,7 +139,5 @@ class Controller extends BackEndPageAbstract
     	}
     	$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
     }
-    
-    
 }
 ?>
