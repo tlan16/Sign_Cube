@@ -325,19 +325,21 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.tbody = btn.up('.table').down('tbody');
-		tmp.tbody.update().insert({'bottom': tmp.me._getWordEditPanel()}).down('[save-item-panel="name"]').click();
+		tmp.searchTxt = $F($(tmp.me._htmlIds.searchPanel).down('input.search-txt'));
+		tmp.tbody.update().insert({'bottom': tmp.me._getWordEditPanel(tmp.searchTxt)}).down('[save-item-panel="name"]').click();
 		
 		return tmp.me;
 	}
-	,_getWordEditPanel: function() {
+	,_getWordEditPanel: function(searchTxt) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.searchTxt = (searchTxt || '')
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'})
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': tmp.me._word.id ? tmp.me._word.id : 'NEW'}) })
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'categoryId', 'value': tmp.me._category.id}) })
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'languageId', 'value': tmp.me._language.id}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group', 'colspan': 2})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Word', 'save-item-panel': 'name', 'value': tmp.me._word.name ? tmp.me._word.name : ''}) })
+				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Word', 'save-item-panel': 'name', 'value': tmp.me._word.name ? tmp.me._word.name : tmp.searchTxt}) })
 				.observe('click',function(){
 					$(this).down('input').select();
 					$(this).down('input').focus();
