@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'content': "Content",'category':'Category', 'sequence': 'Order', 'word': 'Word', 'definitionType' : 'Def. Type', 'active': 'Active?'};
+		return {'content': "Content", 'sequence': 'Order', 'word': 'Word','category':'Category',  'definitionType' : 'Def. Type', 'active': 'Active?'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
