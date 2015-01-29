@@ -313,7 +313,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		
 		return tmp.me;
 	}
-	,selectWord() {
+	,selectWord: function() {
 		var tmp = {};
 		tmp.me = this;
 		if(tmp.me._word.id === 'NEW') {
@@ -321,7 +321,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			tmp.me._getVideoUploadPanel();
 		}
 	}
-	,_getNewWordRow(btn) {
+	,_getNewWordRow: function(btn) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.tbody = btn.up('.table').down('tbody');
