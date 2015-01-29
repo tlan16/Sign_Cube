@@ -54,12 +54,13 @@ class ImporterController extends BackEndPageAbstract
 					$index = $param->CallbackParameter->index;
 					if(!isset($param->CallbackParameter->name) || ($name = trim($param->CallbackParameter->name)) === '')
 						throw new Exception('Invalid category name passed in! (line ' . $index .')');
-					if(!isset($param->CallbackParameter->language) || ($langname = trim($param->CallbackParameter->language)) === '')
-						throw new Exception('Invalid category name passed in! (line ' . $index .')');
 					if(!isset($param->CallbackParameter->code) || ($code = trim($param->CallbackParameter->code)) === '')
 						throw new Exception('Invalid language code passed in! (line ' . $index .')');
 					$result['path'] = 'language';
-					$language = Language::create($langname,$code);
+					$language = Language::getAllByCriteria('lang.code = ?', array($code));
+					if(count($language) < 1)
+						throw new Exception('Invalid Language Code passed in');
+					else $language = $language[0];
 					$item = Category::create($language,$name);
 					break;
 				default:
