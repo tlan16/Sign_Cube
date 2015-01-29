@@ -1,6 +1,6 @@
 <com:TContent ID="MainContent">
 <com:Application.controls.jQueryFileUploader.jQueryFileUploader />
-	<section class="backend-home" style="padding-top: 5%;">
+	<section class="backend-home" style="padding-top: 10px;">
 		<div class="overlay">
         	<div class="container" style="font-size: 20px; padding-left: 25%;">
         		<h4>Backend Managment Home</h4>
