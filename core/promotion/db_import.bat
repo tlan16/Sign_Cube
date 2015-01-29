@@ -14,3 +14,7 @@ c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\data.sql
 Pause
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\auslan.sql
 Pause
+c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\language.sql
+Pause
+#c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\frank_laptop.sql
+#Pause
