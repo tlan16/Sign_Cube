@@ -114,9 +114,9 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				}
 			})
 		;
-//		tmp.dropdown.insert({'bottom': new Element('option', {'value': 'Select a Import Type'})
-//			.update('Select a Import Type')
-//		});
+		tmp.dropdown.insert({'bottom': new Element('option', {'value': 'Select a Import Type'})
+			.update('Select a Import Type')
+		});
 		$H(tmp.me._importDataTypes).each(function(item){
 			tmp.dropdown.insert({'bottom': new Element('option', {'value': item.key})
 				.store('data', item.key)
