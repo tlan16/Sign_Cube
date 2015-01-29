@@ -14,6 +14,22 @@ BackEndPageJs.prototype = Object.extend(new FrontPageJs(), {
 		this.totalNoOfItemsId = totalNoOfItemsId;
 		return this;
 	}
+	,_getNextPageBtn: function() {
+		var tmp = {};
+		tmp.me = this;
+		return new Element('tfoot')
+			.insert({'bottom': new Element('tr')
+				.insert({'bottom': new Element('td', {'colspan': '5', 'class': 'text-center'})
+					.insert({'bottom': new Element('span', {'class': 'btn btn-primary', 'data-loading-text':"Fetching more results ..."}).update('Show More')
+						.observe('click', function() {
+							tmp.me._pagination.pageNo = tmp.me._pagination.pageNo*1 + 1;
+							jQuery(this).button('loading');
+							tmp.me.getResults();
+						})
+					})
+				})
+			});
+	}
 	,getSearchCriteria: function() {
 		var tmp = {};
 		tmp.me = this;
