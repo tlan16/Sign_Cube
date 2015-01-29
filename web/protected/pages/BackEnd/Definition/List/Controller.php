@@ -60,8 +60,9 @@ class Controller extends BackEndPageAbstract
 			{
 				$word = $obj->getWord();
 				$definitionType = $obj->getDefinitionType();
+				$category = $word->getCategory();
 				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
-										,'word'=> $word->getName(),'wordId'=> $word->getId()
+										,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
 										,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
 				);
 			}
@@ -104,8 +105,9 @@ class Controller extends BackEndPageAbstract
     		
     		$word = $obj->getWord();
     		$definitionType = $obj->getDefinitionType();
+    		$category = $word->getCategory();
     		$results['item'] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
-    				,'word'=> $word->getName(),'wordId'=> $word->getId()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
     				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
     		);
     	}
@@ -144,9 +146,10 @@ class Controller extends BackEndPageAbstract
     		$sequence = trim($param->CallbackParameter->item->sequence) === '' ? 0 : intval(trim($param->CallbackParameter->item->sequence));
     		
     		$definition->setContent($content)->setSequence($sequence)->save();
+    		$category = $word->getCategory();
     		
     		$results['item']= array('id'=> $definition->getId(), 'active'=> $definition->getActive(), 'content'=> $definition->getContent(),'sequence'=> $definition->getSequence()
-    				,'word'=> $word->getName(),'wordId'=> $word->getId()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
     				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
     		);
     	}
