@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	_getTitleRowData: function() {
-		return {'name': "Name", 'active': 'Active?'};
+		return {'content': "Content", 'sequence': 'Order', 'word': 'Word', 'definitionType' : 'Def. Type', 'active': 'Active?'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
@@ -21,10 +21,22 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_getEditPanel: function(row) {
 		var tmp = {};
 		tmp.me = this;
+		console.debug(row);
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
+			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'definitionTypeId', 'value': row.definitionTypeId ? row.definitionTypeId : ''}) })
+			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'wordId', 'value': row.wordId ? row.wordId : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Definition Type', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
+				.insert({'bottom': new Element('input', {'disabled': true, 'class': 'form-control', 'value': row.word}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group'})
+				.insert({'bottom': new Element('input', {'disabled': true, 'class': 'form-control', 'value': row.definitionType}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group'})
+				.insert({'bottom': new Element('input', {'required': true, 'save-item-panel': 'content', 'placeholder': 'the Content of the Definition', 'class': 'form-control', 'value': row.content}) })
+			})
+			.insert({'bottom': new Element('td', {'class': 'form-group'})
+				.insert({'bottom': new Element('input', {'save-item-panel': 'sequence', 'placeholder': 'the Order of the Definition', 'class': 'form-control', 'value': row.sequence}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.id ? row.active : true}) })
@@ -56,16 +68,19 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug();
+		console.debug(row);
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
 		tmp.row = new Element('tr', {'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row item_row' : 'danger item_row'))}).store('data', row)
 			.setStyle(tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '')
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-5'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'word col-xs-1'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.word) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'definitionType col-xs-2'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.definitionType) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'content col-xs-6'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.content) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'sequence col-xs-1'}).setStyle(tmp.isTitle ? 'font-weight:bold;' : '').update(row.sequence) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'active col-xs-1'})
 				.insert({'bottom': (tmp.isTitle === true ? row.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': row.id ? row.active : true}) ) })
 			})
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-2'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
 				tmp.isTitle === true ?  
 				(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })

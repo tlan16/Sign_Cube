@@ -8,7 +8,7 @@
  */
 class Controller extends BackEndPageAbstract
 {
-	protected $_focusEntity = 'DefinitionType';
+	protected $_focusEntity = 'Definition';
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
@@ -47,17 +47,24 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
-			if(isset($serachCriteria['deftp.name']) && ($name = trim($serachCriteria['deftp.name'])) !== '')
+			if(isset($serachCriteria['def.content']) && ($content = trim($serachCriteria['def.content'])) !== '')
 			{
-				$where[] = 'deftp.name like ?';
-				$params[] = '%' . $name . '%';
+				$where[] = 'def.content like ?';
+				$params[] = '%' . $content . '%';
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('deftp.id' => 'desc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('def.id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
-				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'name'=> $obj->getName());
+			{
+				$word = $obj->getWord();
+				$definitionType = $obj->getDefinitionType();
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
+										,'word'=> $word->getName(),'wordId'=> $word->getId()
+										,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
+				);
+			}
 		}
 		catch(Exception $ex)
 		{
@@ -90,11 +97,17 @@ class Controller extends BackEndPageAbstract
     		$class = trim($this->_focusEntity);
     		$id = isset($param->CallbackParameter->item_id) ? $param->CallbackParameter->item_id : array();
     			
-    		$item = $class::get($id);
+    		$obj = $class::get($id);
     			
-    		$item->setActive(false)
+    		$obj->setActive(false)
     			->save();
-    		$results['item'] = $item->getJson();
+    		
+    		$word = $obj->getWord();
+    		$definitionType = $obj->getDefinitionType();
+    		$results['item'] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId()
+    				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
+    		);
     	}
     	catch(Exception $ex)
     	{
@@ -115,24 +128,27 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
+    		var_dump($param->CallbackParameter->item);
+    		Dao::beginTransaction();
+    		
     		$class = trim($this->_focusEntity);
     		if(!isset($param->CallbackParameter->item))
     			throw new Exception("System Error: no item information passed in!");
-    		$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-    		$name = trim($param->CallbackParameter->item->name);
-    		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
-    			
-    		if($item instanceof $class)
-    		{
-    			$item->setName($name)
-    			->setActive($active)
-    			->save();
-    		}
-    		else
-    		{
-    			$item = $class::create($name);
-    		}
-    		$results['item'] = $item->getJson();
+    		if(!isset($param->CallbackParameter->item->id) || !($definition = Definition::get(trim($param->CallbackParameter->item->id))) instanceof Definition)
+    			throw new Exception("Invalid Definition passed in");
+    		if(!isset($param->CallbackParameter->item->wordId) || !($word = Word::get(trim($param->CallbackParameter->item->wordId))) instanceof Word)
+    			throw new Exception("Invalid Word passed in");
+    		if(!isset($param->CallbackParameter->item->definitionTypeId) || !($definitionType = DefinitionType::get(trim($param->CallbackParameter->item->definitionTypeId))) instanceof DefinitionType)
+    			throw new Exception("Invalid Definition Type passed in");
+    		$content = trim($param->CallbackParameter->item->content);
+    		$sequence = trim($param->CallbackParameter->item->sequence) === '' ? 0 : intval(trim($param->CallbackParameter->item->sequence));
+    		
+    		$definition->setContent($content)->setSequence($sequence)->save();
+    		
+    		$results['item']= array('id'=> $definition->getId(), 'active'=> $definition->getActive(), 'content'=> $definition->getContent(),'sequence'=> $definition->getSequence()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId()
+    				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
+    		);
     	}
     	catch(Exception $ex)
     	{
