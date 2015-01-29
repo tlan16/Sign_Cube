@@ -62,7 +62,7 @@ class Controller extends BackEndPageAbstract
 				$definitionType = $obj->getDefinitionType();
 				$category = $word->getCategory();
 				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
-										,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
+										,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName(), 'categoryId'=> $category->getId()
 										,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
 				);
 			}
@@ -107,7 +107,7 @@ class Controller extends BackEndPageAbstract
     		$definitionType = $obj->getDefinitionType();
     		$category = $word->getCategory();
     		$results['item'] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
-    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName(), 'categoryId'=> $category->getId()
     				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
     		);
     	}
@@ -140,16 +140,17 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("Invalid Definition passed in");
     		if(!isset($param->CallbackParameter->item->wordId) || !($word = Word::get(trim($param->CallbackParameter->item->wordId))) instanceof Word)
     			throw new Exception("Invalid Word passed in");
+    		if(!isset($param->CallbackParameter->item->categoryId) || !($category = Category::get(trim($param->CallbackParameter->item->categoryId))) instanceof Category)
+    			throw new Exception("Invalid Category passed in");
     		if(!isset($param->CallbackParameter->item->definitionTypeId) || !($definitionType = DefinitionType::get(trim($param->CallbackParameter->item->definitionTypeId))) instanceof DefinitionType)
     			throw new Exception("Invalid Definition Type passed in");
     		$content = trim($param->CallbackParameter->item->content);
     		$sequence = trim($param->CallbackParameter->item->sequence) === '' ? 0 : intval(trim($param->CallbackParameter->item->sequence));
     		
     		$definition->setContent($content)->setSequence($sequence)->save();
-    		$category = $word->getCategory();
     		
     		$results['item']= array('id'=> $definition->getId(), 'active'=> $definition->getActive(), 'content'=> $definition->getContent(),'sequence'=> $definition->getSequence()
-    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName()
+    				,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName(), 'categoryId'=> $category->getId()
     				,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
     		);
     	}

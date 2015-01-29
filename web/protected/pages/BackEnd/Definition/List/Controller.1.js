@@ -25,6 +25,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('tr', {'class': 'save-item-panel info'}).store('data', row)
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'id', 'value': row.id ? row.id : ''}) })
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'definitionTypeId', 'value': row.definitionTypeId ? row.definitionTypeId : ''}) })
+			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'categoryId', 'value': row.categoryId ? row.categoryId : ''}) })
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'wordId', 'value': row.wordId ? row.wordId : ''}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'disabled': true, 'class': 'form-control', 'value': row.word}) })
