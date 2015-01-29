@@ -82,8 +82,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
 				tmp.isTitle === true ?  
-				(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
-					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
+				(new Element('span', {'class': 'btn btn-primary btn-xs', 'disabled': true, 'title': 'New'})
+					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) }) // TODO: new btn
 					.insert({'bottom': ' NEW' })
 					.observe('click', function(){
 						$(this).up('thead').insert({'bottom': tmp.newEditEl = tmp.me._getEditPanel({}) });
