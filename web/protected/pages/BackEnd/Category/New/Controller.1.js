@@ -101,16 +101,22 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.data = {
 			'category': 
 				{'name': tmp.me._getFormGroup( null, new Element('input', {'class': 'input-sm', 'new-order-item': 'category', 'required': 'Required!' , 'value': ''})
-					.observe('click', function(event){
-						$(this).select();
-					}) )
+						.observe('click', function(event){
+							$(this).select();
+						})
+						.observe('keydown', function(event){
+							tmp.me.keydown(event, function() {
+								$(tmp.me._htmlIds.newOrderItemInput).down('.btn.btn-save-new-cat').click();
+							});
+						})
+					)
 				}
 			,'language': 
 				{'name': tmp.me._getFormGroup( null, new Element('input', {'class': 'input-sm', 'new-order-item': 'language', 'disabled': true , 'value': tmp.me._language.name}) )
 				  ,'id': tmp.me._getFormGroup( null, new Element('input', {'class': 'input-sm', 'new-order-item': 'languageId', 'disabled': true , 'value': tmp.me._language.id}) )
 				}
 			, 'btns': new Element('span', {'class': 'btn-group btn-group-sm pull-right'})
-					.insert({'bottom': new Element('span', {'class': 'btn btn-primary'})
+					.insert({'bottom': new Element('span', {'class': 'btn btn-primary btn-save-new-cat'})
 					.insert({'bottom': new Element('span', {'class': ' glyphicon glyphicon-floppy-saved'}) })
 					.observe('click', function() {
 						tmp.me._addNewCategoryRow($(this));

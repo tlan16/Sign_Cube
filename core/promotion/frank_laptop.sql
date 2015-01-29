@@ -1,0 +1,1 @@
+UPDATE `signcube`.`systemsettings` SET `value` = 'C:\\Users\\Frank-Laptop\\git\\Sign_Cube\\web\\assets\\video' WHERE `systemsettings`.`id` = 1;
