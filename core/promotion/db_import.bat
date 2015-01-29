@@ -1,6 +1,6 @@
 @echo off
 :: Remove Existing databases
-c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot -e "DROP DATABASE IF EXISTS signcube
+c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot -e "DROP DATABASE IF EXISTS signcube"
 Pause
 
 :: Create new databases
