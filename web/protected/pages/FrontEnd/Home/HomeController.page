@@ -7,7 +7,7 @@
 		    		<div class="container" >
 	    				<div class="msg-box text-center" style="padding: 0 0 350px;">
 	    					<h2>SignCube is an online database developed for various sign-languages around the world.<br> </h2>
-	    					<h3>SignCube will provide: <br> <span class="user-flipper lime">an online platform for documenting endagered Sign Languages around the world,a supporting Sign Language teaching service through an extensive and categorized dictionary, a platform for comparing the properties of different Sign Languages, a sophisticated system that signifies the importance of collaboration between Deaf and Hearing people</span>.
+	    					<h3>SignCube aims to provide: <br> <span class="user-flipper lime">an online platform for documenting endagered Sign Languages around the world,a supporting Sign Language teaching service through an extensive and categorized dictionary, a platform for comparing the properties of different Sign Languages, a sophisticated system that signifies the importance of collaboration between Deaf and Hearing people</span>.
 	     				</h3>
 	     				</div>
 	     				
@@ -19,12 +19,12 @@
 	    	</div>
 	    </section>
 	    <section id="users-highlight" class="home-services bg-lime">
-	     	<div class="container">
+	     	<div class="container" align="center">
 	     		<div class="row">
-	     			<div class="col-md-4 hidden-sm hidden-xs text-right ">
-	     				<p class="lead">Helps all Deaf related users:</p>
+	     			<div class="col-sm-4 col-md-4   hidden-xs text-right ">
+	     				<p class="lead">Helps all users, especially:</p>
 	     			</div>
-	     			<div class="col-sm-12 col-md-8 text-center">
+	     			<div class="col-sm-8 col-md-8 col-xs-12 text-center" align="center">
 	     				<ul>
 	     					<li>
 	     						<i class="fa fa-user"></i>
@@ -43,7 +43,8 @@
 	     		</div>
 	    	</div>
 	    </section>
-	    <section id="why" style="padding: 0 0 50px 0;">
+	    
+	    <section id="why" style="padding: 0 0 30px 0;">
 	     	<div class="container">
 	    		<div class="row">
 	    		
@@ -123,15 +124,30 @@
     				
     				</div>
     				
-    				
-    				
-    				
+    			
 				</div>
 	    	</div>
 	    </section>
 	    
-	    <section id="about">
+	    <section id="about" style="padding: 0 0 60px 0;">
+	    
+	        	<div class="container" >
+	    		<div class="row">
+	    		
+					<div class=" col-md-12" align="center" >
+					<h2 class="media-heading desc-cell-title lime">About SignCube</h2>
+		    		<p class="desc-cell-desc">
+					Our Aim is to provide a multi-lingual Sign Language database for under developed communities. We believe all information should be shared openly and we are creating avenues for various Sign Languages to be spread around the globe. 
+	    			</p>					
+					</div>
+					
+					    				
+    				</div>
+	    	</div>
+	    
 	    </section>
+		
+		
 		<section id="contactus" class="white-wrapper nopadding contact-form-wrapper" style="padding: 0 0 100px 0;">
 			<com:TCallback ID="contactUsBtn" onCallback="contactUs" />
 			<div id="map">
