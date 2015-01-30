@@ -21,6 +21,9 @@
 		
 			<!-- FrontEnd:: Importer page -->
 			<url ServiceParameter="BackEnd.Importer.New.ImporterController" pattern="importer.html" />
+
+			<!-- FrontEnd:: Word Listing page -->
+			<url ServiceParameter="FrontEnd.Word.List.WordController" pattern="wordlist.html" />
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
