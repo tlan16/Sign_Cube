@@ -65,10 +65,10 @@
 			<url ServiceParameter="BackEnd.Message.New.Controller" pattern="backend/message/new.html" />
 			
 			<!-- BackEnd:: Property:: List page -->
-			<url ServiceParameter="BackEnd.Property.List.Controller" pattern="backend/properties.html" />
+			<!--url ServiceParameter="BackEnd.Property.List.Controller" pattern="backend/properties.html" /-->
 			<!-- BackEnd:: Property:: Details page -->
-			<url ServiceParameter="BackEnd.Property.New.Controller" pattern="backend/property/new.html"/>
-			<url ServiceParameter="BackEnd.Property.Details.Controller" pattern="backend/property/{id}.html" parameters.id="\w+"/>
+			<!--url ServiceParameter="BackEnd.Property.New.Controller" pattern="backend/property/new.html"/-->
+			<!--url ServiceParameter="BackEnd.Property.Details.Controller" pattern="backend/property/{id}.html" parameters.id="\w+"/-->
 			
 			<!-- asset service -->
 			<url ServiceId="asset" ServiceParameter="" pattern="asset/{method}" parameters.method="get" />
