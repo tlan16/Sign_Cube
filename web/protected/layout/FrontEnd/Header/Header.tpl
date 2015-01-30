@@ -14,6 +14,7 @@
 				<ul class="nav navbar-nav navbar-right top-menu" >
 					<li><a href="/#header">Home</a></li>
 					<li><a href="/#why">Why</a></li>
+					<li><a href="/#wordlist">Word List</a></li>
 					<li><a href="/#about">About</a></li>
 					<li><a href="/#contactus">Contact</a></li>
 				</ul>
