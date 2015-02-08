@@ -1,0 +1,1 @@
+UPDATE `signcube`.`useraccount` SET `skey` = 'ae7b0f68074a5760839c2fe3c38f2cdd' WHERE `useraccount`.`id` = 10;

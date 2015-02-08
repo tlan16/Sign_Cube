@@ -44,6 +44,12 @@ class UserAccount extends ConfirmEntityAbstract
      * @var string
      */
     private $expiry;
+    /**
+     * the security key of the user account
+     *
+     * @var string
+     */
+    private $skey;
    	/**
    	 * Getter for username
    	 *
@@ -106,6 +112,25 @@ class UserAccount extends ConfirmEntityAbstract
     {
         $this->expiry = $value;
         return $this;
+    }
+    /**
+     * getter for skey
+     *
+     * @return string
+     */
+    public function getSkey()
+    {
+    	return $this->skey;
+    }
+    /**
+     * Setter for skey
+     *
+     * @return UserAccount
+     */
+    public function setSkey($skey)
+    {
+    	$this->skey = $skey;
+    	return $this;
     }
     /**
      * getter Person
@@ -180,11 +205,13 @@ class UserAccount extends ConfirmEntityAbstract
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
         DaoMap::setDateType('expiry');
+        DaoMap::setStringType('skey', 'varchar', 40);
         DaoMap::setManyToOne('person', 'Person');
         parent::__loadDaoMap();
         
         DaoMap::createIndex('username');
         DaoMap::createIndex('password');
+        DaoMap::createIndex('skey');
         DaoMap::commit();
     }
     /**
@@ -200,7 +227,15 @@ class UserAccount extends ConfirmEntityAbstract
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
     	$query = self::getQuery();
-    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password ANd expiry <= NOW()", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password))), true, 1, 1);
+    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password AND (expiry >= NOW() OR expiry = :zerodate)", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password)), 'zerodate' => '0001-01-01 00:00:00'), true, 1, 1);
+    	if(count($userAccounts) > 0)
+    		return $userAccounts[0];
+    	return null;
+    }
+    public static function getUserBySkey($sky, $noHashPass = false)
+    {
+    	$query = self::getQuery();
+    	$userAccounts = self::getAllByCriteria("`skey` = :skey AND (expiry >= NOW() OR expiry = :zerodate)", array('skey' => ($noHashPass === true ? $sky : self::encryptPass($sky)), 'zerodate' => '0001-01-01 00:00:00'), true, 1, 1);
     	if(count($userAccounts) > 0)
     		return $userAccounts[0];
     	return null;
@@ -231,6 +266,7 @@ class UserAccount extends ConfirmEntityAbstract
     	return $userAccount->setUserName($username)
     		->setPassword($password, !$encryptPass)
     		->setPerson($person)
+    		->setSkey(md5($username . $password))
     		->setExpiry($expiry)
     		->save()
     		->needToConfirm('UserAccount Created')
