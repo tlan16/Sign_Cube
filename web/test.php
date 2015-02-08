@@ -1,23 +1,28 @@
 <?php
 require_once 'bootstrap.php';
-
 echo '<pre>';
-Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 
 try
 {
-// 	$extraOpts = array(
-// 			CURLOPT_BINARYTRANSFER => true,
-// 			CURLOPT_FOLLOWLOCATION     => true
-// 	);
-	
-// 	$url = 'http://media.auslan.org.au/mp4video/65/65520_1.mp4';
-// 	$tmpFile = __DIR__ . '\runtime\tmp.mp4';
-	
-// 	$tmpFile = ComScriptCURL::downloadFile($url, $tmpFile, null, $extraOpts);
-// 	$asset = Asset::registerAsset(basename($url), $tmpFile);
-	$asset = Asset::get(78);
-	echo '<video controls src="' . $asset->getUrl() . '">';
+	// this username, password only existing in app
+	$username = 'test@test.com';
+	$password = 'test';
+	// app only pass over the skey to get token
+	$skey = (md5($username . sha1($password)));
+	$user = UserAccount::getUserBySkey($skey);
+	Core::setUser($user);
+	$username = $user->getUsername();
+	$password = $user->getPassword();
+	// token is a md5 of username, password and current datetime
+	$token = md5($username . $password . trim(new UDate()));
+	$now = new UDate();
+	// the default expiry is 24 hours
+	$newUser = UserAccount::create('token', $token, $user->getPerson(), $now->modify('+' . UserAccount::DEFAULT_TOKEN_EXPIRE . ' hours'));
+	// must set newUser active
+	$newUser->setActive(true)->save();
+	// after first auth, pass over token and do this
+	$comfirmUser = UserAccount::getUserBySkey(md5('token' . $token));
+	Core::setUser($comfirmUser);
 }
 catch(Exception $e) {
 	echo $e;
