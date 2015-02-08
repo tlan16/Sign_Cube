@@ -55,7 +55,7 @@ class Category extends BaseEntityAbstract
 	 *
 	 * @param Language $value The language
 	 *
-	 * @return Word
+	 * @return Category
 	 */
 	public function setLanguage(Language $value)
 	{
