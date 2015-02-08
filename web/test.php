@@ -23,6 +23,12 @@ try
 	// after first auth, pass over token and do this
 	$comfirmUser = UserAccount::getUserBySkey(md5('token' . $token));
 	Core::setUser($comfirmUser);
+	// to get infomations
+	$words = Word::getAll();
+	$videos = Video::getAll();
+	$languages = Language::getAll();
+	$categories = Category::getAllByCriteria('languageId = ?', array($languages[0]->getId()));
+	var_dump($categories);
 }
 catch(Exception $e) {
 	echo $e;
