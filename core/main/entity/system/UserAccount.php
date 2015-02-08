@@ -8,6 +8,7 @@
  */
 class UserAccount extends ConfirmEntityAbstract
 {
+	const DEFAULT_TOKEN_EXPIRE = 24; // hours
     /**
      * The id of the GUEST account
      * 
@@ -227,15 +228,15 @@ class UserAccount extends ConfirmEntityAbstract
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
     	$query = self::getQuery();
-    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password AND (expiry >= NOW() OR expiry = :zerodate)", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password)), 'zerodate' => '0001-01-01 00:00:00'), true, 1, 1);
+    	$userAccounts = self::getAllByCriteria("`username` = :username AND `Password` = :password AND (expiry >= NOW() OR expiry = :zerodate)", array('username' => $username, 'password' => ($noHashPass === true ? $password : self::encryptPass($password)), 'zerodate' => UDate::zeroDate()), true, 1, 1);
     	if(count($userAccounts) > 0)
     		return $userAccounts[0];
     	return null;
     }
-    public static function getUserBySkey($sky, $noHashPass = false)
+    public static function getUserBySkey($skey, $noHashPass = true)
     {
     	$query = self::getQuery();
-    	$userAccounts = self::getAllByCriteria("`skey` = :skey AND (expiry >= NOW() OR expiry = :zerodate)", array('skey' => ($noHashPass === true ? $sky : self::encryptPass($sky)), 'zerodate' => '0001-01-01 00:00:00'), true, 1, 1);
+    	$userAccounts = self::getAllByCriteria("`skey` = :skey AND (expiry >= NOW() OR expiry = :zerodate)", array('skey' => ($noHashPass === true ? $skey : self::encryptPass($skey)), 'zerodate' => UDate::zeroDate()), true, 1, 1);
     	if(count($userAccounts) > 0)
     		return $userAccounts[0];
     	return null;
@@ -260,14 +261,14 @@ class UserAccount extends ConfirmEntityAbstract
      * 
      * @return UserAccount
      */
-    public static function create($username, $password, Person $person, $encryptPass = true, $expiry = '')
+    public static function create($username, $password, Person $person, $expiry = '', $encryptPass = true)
     {
     	$userAccount = new UserAccount();
     	return $userAccount->setUserName($username)
     		->setPassword($password, !$encryptPass)
     		->setPerson($person)
     		->setSkey(md5($username . $password))
-    		->setExpiry($expiry)
+    		->setExpiry($expiry === '' ? UDate::zeroDate() : $expiry)
     		->save()
     		->needToConfirm('UserAccount Created')
     		->addLog(Log::TYPE_SYS, 'UserAccount created with (username=' . $username . ') with person(id=' . $person->getId() . ')');
