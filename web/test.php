@@ -28,7 +28,13 @@ try
 	$videos = Video::getAll();
 	$languages = Language::getAll();
 	$categories = Category::getAllByCriteria('languageId = ?', array($languages[0]->getId()));
-	var_dump($categories);
+	// to get json
+	$json = array();
+	foreach ($languages as $language)
+	{
+		$json[] = $language->getJson();
+	}
+	var_dump($json);
 }
 catch(Exception $e) {
 	echo $e;
