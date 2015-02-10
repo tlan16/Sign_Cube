@@ -30,10 +30,6 @@ html,body,.main-form {
 	margin-top: 0px;
 }
 
-.main-form>#footer {
-	min-height: 30%;
-}
-
 a:link,a {
 	outline: 0;
 	text-decoration: none;
@@ -120,7 +116,7 @@ a:link,a {
 
 #footer>.banner {
 	/* background: #73B819 url("images/cloud-things.png") repeat center center; */
-	background-color: #009c58;
+	background-color: #EEEEEE;
 	padding: 10px 0;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
