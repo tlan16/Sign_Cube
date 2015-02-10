@@ -23,9 +23,9 @@ return array(
 	)
 	,'google' => array(
 		'reCaptcha' => array (
-			'public-key' => '6LfRuf8SAAAAAMtF2EOsFKkAK2-FKKkOppvWgIAp', 
+			'public-key' => '6Lf4xgETAAAAAEZAew6nQnG3e8xya8d7OpZuLFtf', 
 			'verify-url' => 'https://www.google.com/recaptcha/api/siteverify',
-			'secret-key' => '6LfRuf8SAAAAAH7AH6Gc0kpi81Ynrh_ogUTBrhiB'
+			'secret-key' => '6Lf4xgETAAAAAKxK7oSZQIyxFFEOD4nXv_c1wMVW'
 		)
 	)
 	,'contact-us' => array (
