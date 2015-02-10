@@ -6,6 +6,17 @@
 				<a href="/login.html" class="signup-now lime">Signup now For Free</a>
 			</div>
 	    </section>
+	    <section id="mainContent">
+			<div class="container">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<h1><span style="font-size: 36px; font-family: Helvetica; color: rgb(57, 132, 198);">Welcome to Signcube</span></h1>
+						<p style="margin-top: 5px; margin-bottom: 10px;" class="asbBodyText"><span style="font-family: Helvetica;">
+						  Auslan signcube is a language resources site for Auslan (Australian Sign Language). 
+						  Auslan is the language of the deaf community in Australia. Here you will find:</span></p><ul><li><span style="font-family: Helvetica;">a dictionary</span></li><li><span style="font-family: Helvetica;">ability to search for signs related to medical and health topics</span></li><li><span style="font-family: Helvetica;">ability to search for signs related to educational and teaching topics</span></li><li><span style="font-family: Helvetica;">videos of deaf people using the listed Auslan signs</span></li><li><span style="font-family: Helvetica;">information on the deaf community in Australia</span></li><li><span style="font-family: Helvetica;">links to Auslan classes</span></li></ul><p style="margin-top: 5px; margin-bottom: 10px;" class="asbBodyText"><span style="font-family: Helvetica;">Users of Auslan&mdash;deaf people, deaf students, sign language interpreters, students of 
+						  Auslan, or a parents of deaf children&mdash;are invited to provide feedback to help improve the dictionary, using the links provided. Auslan is growing and changing all the time.</span></p><p style="margin-top: 5px; margin-bottom: 10px;" class="asbBodyText"><span style="font-family: Helvetica;">When financial support becomes available, future editions of signcube will include:</span></p><ul><li><span style="font-family: Helvetica;">brand new high resolution video clips that can be played at normal speed or in slow motion,</span></li><li><span style="font-family: Helvetica;">longer video clips&mdash;subtitled in English&mdash;of&nbsp;deaf people telling stories or having conversations in Auslan,</span></li><li><span style="font-family: Helvetica;">video clips of all of the examples used in the text-book on Auslan, e.g., how to make questions, statements, orders and requests, etc., (</span><span style="font-size: 14px;">Johnston, T., &amp; Schembri, A. 2007. </span><i style="font-size: 14px;">Australian Sign Language (Auslan): An introduction to sign language linguistics</i><span style="font-size: 14px;">. Cambridge: Cambridge University Press).</span></li></ul>
+				</div>
+			</div>
+	    </section>
 		<section id="contactus" class="white-wrapper nopadding contact-form-wrapper" style="padding: 0 0 100px 0;">
 			<com:TCallback ID="contactUsBtn" onCallback="contactUs" />
 			<div class="container">
