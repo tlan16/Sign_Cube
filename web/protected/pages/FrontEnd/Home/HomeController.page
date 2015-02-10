@@ -1,11 +1,6 @@
 <com:TContent ID="MainContent">
 	<com:Application.controls.simpleTextRotator.simpleTextRotator />
 	<div class="homepage-wrapper" data-offset="0" data-target="#top-menu-div" data-spy="scroll">
-	    <section id="home">
-			<div class="text-center signup-now-wrapper">
-				<a href="/login.html" class="signup-now lime">Signup now For Free</a>
-			</div>
-	    </section>
 	    <section id="mainContent">
 			<div class="container">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
