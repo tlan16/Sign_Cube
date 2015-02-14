@@ -1,9 +1,12 @@
 <com:TContent ID="MainContent">
 <com:TCallback ID="saveItemBtn" onCallback="Page.saveItem" />
 <com:Application.controls.jQueryFileUploader.jQueryFileUploader />
+<com:Application.controls.videoJs.videoJs />
 <div class="container"">
 	<div class="pagewrapper item-list-wrapper">
 		<div class="panel panel-default" id="uploader-container">
+			<div class="panel-head"></div>
+			<div class="panel-body"></div>
 		</div> 
 	</div>
 </div>
