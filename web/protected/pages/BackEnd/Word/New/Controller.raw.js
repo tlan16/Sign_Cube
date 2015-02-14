@@ -31,23 +31,27 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.data = tmp.data = [];
 		$(tmp.me._htmlIds.definitionsContainerInner).getElementsBySelector('.definitionGroup').each(function(group){
 			tmp.type = $F($(group).down('.panel-heading [save-def-item="type"]'));
+			tmp.typeId = $F($(group).down('.panel-heading [save-def-item="typeId"]'));
+			tmp.typeValid = $(group).visible();
 			if(!tmp.type.empty()) {
 				tmp.formType = tmp.type;
 				tmp.formRows = [];
 				$(group).getElementsBySelector('.panel-body .row.definitionRow').each(function(defRow){
 					tmp.row = $F($(defRow).down('[save-def-item="definitionRow"]'));
+					tmp.rowId = $F($(defRow).down('[save-def-item="definitionId"]'));
 					tmp.order = $F($(defRow).down('[save-def-item="definitionOrder"]'));
+					tmp.rowValid = $(defRow).visible();
 					if(!tmp.row.empty())
-						tmp.formRows.push ({'def': tmp.row,'order': tmp.order});
+						tmp.formRows.push ({'def': tmp.row, 'id': tmp.rowId, 'order': tmp.order, 'valid': tmp.rowValid});
 				});
-				tmp.data.push({'type': tmp.formType, 'rows': tmp.formRows});
+				tmp.data.push({'type': tmp.formType, 'id': tmp.typeId, 'rows': tmp.formRows, 'valid': tmp.typeValid});
 			}
 		});
 		
 		tmp.me.postAjax(tmp.me.getCallbackId('saveWord'), {'definitions': tmp.data, 'videos': tmp.me._videos, 'word': tmp.me._word}, {
 			'onLoading': function() {
 				$(tmp.me._htmlIds.itemDiv).insert({'top': tmp.loadingImg = tmp.me.getLoadingImg()});
-				$(tmp.me._htmlIds.definitionsContainer).hide();
+//				$(tmp.me._htmlIds.definitionsContainer).hide();
 			}
 			,'onSuccess': function(sender, param){
 				try {
@@ -56,7 +60,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						throw 'errror: php passback Error';
 					else {
 						tmp.me.showModalBox('Success','<h4>Word Saved Successfully</h4>');
-						window.location.reload();
+//						window.location.reload();
 					}
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
@@ -69,31 +73,26 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		
 		return tmp.me;
 	}
-	,_getNewDefinitionBodyRow: function() {
+	,_getNewDefinitionBodyRow: function(definition) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.definition = (definition || false);
 		tmp.newDiv = new Element('div', {'class': 'row definitionRow'}).setStyle('padding-bottom: 10px;')
 			.insert({'bottom': new Element('span', {'class': 'col-md-8'}) 
-				.insert({'bottom': new Element('input', {'save-def-item': 'definitionRow', 'type': 'text', 'placeholder': 'Definition'}).setStyle('width: 100%;')
-					.observe('click', function(){
-						$(this).focus();
-						$(this).select();
-					})
+				.insert({'bottom': new Element('input', {'save-def-item': 'definitionId', 'type': 'text', 'value': (tmp.definition === false ? '' : tmp.definition.id)}).setStyle('display: none;') })
+				.insert({'bottom': new Element('input', {'save-def-item': 'definitionRow', 'type': 'text', 'placeholder': 'Definition', 'value': (tmp.definition === false ? '' : tmp.definition.content)}).setStyle('width: 100%;')
 					.observe('keydown', function(event){
 						tmp.btn = $(this);
 						tmp.me.keydown(event, function() {
-							tmp.btn.up('.row.definitionRow').down('[save-def-item="definitionOrder"]').click();
+							tmp.btn.up('.row.definitionRow').down('[save-def-item="definitionOrder"]').focus();
+							tmp.btn.up('.row.definitionRow').down('[save-def-item="definitionOrder"]').select();
 						});
 						return false;
 					})
 				})
 			})
 			.insert({'bottom': new Element('span', {'class': 'col-md-2'}) 
-				.insert({'bottom': new Element('input', {'save-def-item': 'definitionOrder', 'type': 'value', 'placeholder': 'Order (optional)'}).setStyle('width: 100%;')
-					.observe('click', function(){
-						$(this).focus();
-						$(this).select();
-					})
+				.insert({'bottom': new Element('input', {'save-def-item': 'definitionOrder', 'type': 'value', 'placeholder': 'Order (optional)', 'value': (tmp.definition === false ? '' : tmp.definition.sequence)}).setStyle('width: 100%;')
 					.observe('keydown', function(event){
 						tmp.btn = $(this);
 						tmp.me.keydown(event, function() {
@@ -110,30 +109,29 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						.observe('click', function(){
 							$(this).up('.panel.definitionGroup').down('.panel-body')
 								.insert({'bottom': tmp.newDefRow = tmp.me._getNewDefinitionBodyRow()});
-							tmp.newDefRow.down('[save-def-item="definitionRow"]').click();
+							tmp.newDefRow.down('[save-def-item="definitionRow"]').focus();
+							tmp.newDefRow.down('[save-def-item="definitionRow"]').select();
 						})
 					})
 					.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-xs'})
 						.insert({'bottom': new Element('i', {'class': 'fa fa-times'})})
 						.observe('click', function(){
-							$(this).up('.row.definitionRow').remove();
+							$(this).up('.row.definitionRow').hide();
 						})
 					})
 				})
 			});
 		return tmp.newDiv;
 	}
-	,_getNewDefinitionGroup: function() {
+	,_getNewDefinitionGroup: function(definition) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.definition = (definition || false);
 		tmp.newDiv = new Element('div', {'class': 'panel panel-default definitionGroup'})
 			.insert({'bottom': new Element('div', {'class': 'panel-heading'})
 				.insert({'bottom': new Element('div', {'class': 'row'})
-					.insert({'bottom': new Element('input', {'save-def-item': 'type', 'type': 'text', 'placeholder': 'the Type of Definition'}).setStyle('width: 100%;')
-						.observe('click', function(){
-							$(this).focus();
-							$(this).select();
-						})
+					.insert({'bottom': new Element('input', {'save-def-item': 'typeId', 'type': 'text', 'value': (tmp.definition === false ? '' : tmp.definition.definitionType.id)}).setStyle('display: none;') })
+					.insert({'bottom': new Element('input', {'save-def-item': 'type', 'type': 'text', 'placeholder': 'the Type of Definition', 'value': (tmp.definition === false ? '' : tmp.definition.definitionType.name)}).setStyle('width: 100%;')
 						.observe('keydown', function(event){
 							tmp.btn = $(this);
 							tmp.me.keydown(event, function() {
@@ -149,13 +147,14 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							.observe('click', function(){
 								$(this).up('.panel.definitionGroup').down('.panel-body')
 									.insert({'bottom': tmp.me.bodyRow = tmp.me._getNewDefinitionBodyRow()});
-								tmp.me.bodyRow.down('[save-def-item="definitionRow"]').click();
+								tmp.me.bodyRow.down('[save-def-item="definitionRow"]').focus();
+								tmp.me.bodyRow.down('[save-def-item="definitionRow"]').select();
 							})
 						})
 						.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-floppy-remove'})})
 							.observe('click', function(){
-								$(this).up('.panel.definitionGroup').remove();
+								$(this).up('.panel.definitionGroup').hide();
 							})
 						})
 					})
@@ -163,7 +162,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			})
 			.insert({'bottom': new Element('div', {'class': 'panel-body'})
 			});
-		$(tmp.me._htmlIds.definitionsContainerInner).insert({'top': tmp.newDiv}).down('input[save-def-item="type"]').click();
+		$(tmp.me._htmlIds.definitionsContainerInner).insert({'top': tmp.newDiv});
+		tmp.newDiv.down('input[save-def-item="type"]').focus();
+		tmp.newDiv.down('input[save-def-item="type"]').select();
+		
+		return tmp.newDiv;
 	}
 	,_getDefinitionsContainer: function() {
 		var tmp = {};
@@ -187,8 +190,29 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							tmp.me._saveWord();
 					})
 				})
-			})
+			});
 		$(tmp.me._htmlIds.itemDiv).update(tmp.newDIv);
+		tmp.newDIv.down('.btn.btn-new-definitionGroup').click();
+		if(tmp.me._word.definitions && tmp.me._word.definitions.length > 0) {
+			tmp.me._word.definitions.each(function(definition){
+				tmp.foundType = false;
+				$(tmp.me._htmlIds.definitionsContainerInner).getElementsBySelector('[save-def-item="type"]').each(function(typeRow){
+					if(tmp.foundType === false && $F(typeRow) == definition.definitionType.name) {
+						tmp.foundType = true;
+						tmp.order = typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]') ? $F(typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]')) : 0;
+						if(parseInt(definition.sequence) > tmp.order)
+							typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
+						else
+							typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'top': tmp.me._getNewDefinitionBodyRow(definition)});
+					}
+				});
+				if(tmp.foundType === false) {
+					tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup(definition);
+					tmp.newDefinitionGroup.down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
+				}
+			});
+		}
+		return tmp.me;
 	}
 	/**
 	 * Ajex: get all Definition Types
@@ -207,7 +231,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						throw 'errror';
 					tmp.me_definitionTypes = tmp.result.items;
 					tmp.me._getDefinitionsContainer();
-					$(tmp.me._htmlIds.definitionsContainer).down('.btn.btn-new-definitionGroup').click();
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
 				}
@@ -221,6 +244,58 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._getDefinitionTypes();
+	}
+	,getVideoRow: function(container, video, asset){
+		var tmp = {};
+		tmp.me = this;
+		container
+			.insert({'bottom': new Element('div', {'class': 'row video-row', 'video-id': video.id})
+				.insert({'bottom': new Element('div', {'class': 'col-md-4'})
+					.insert({'bottom': tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+						.insert({'bottom': new Element('source', {'src': video.asset.url, 'type': asset.mimeType}) })
+					})
+				})
+				.insert({'bottom': new Element('div', {'class': 'col-md-8'})
+					.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Asset</b>') })
+					.insert({'bottom': tmp.assetKeyRow = new Element('div', {'class': 'row asset-key-row'}) })
+					.insert({'bottom': tmp.assetValueRow = new Element('div', {'class': 'row asset-value-row'}) })
+					.insert({'bottom': new Element('div', {'class': 'row clearfix'}).setStyle('border: 1px solid brown;') })
+					.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Video</b>') })
+					.insert({'bottom': tmp.videoKeyRow = new Element('div', {'class': 'row video-key-row'}) })
+					.insert({'bottom': tmp.videoValueRow = new Element('div', {'class': 'row video-value-row'}) })
+					.insert({'bottom': new Element('div', {'class': 'row btn-row btn-hide-row text-right'}) 
+						.insert({'bottom': new Element('div', {'class': 'btn btn-delete-video btn-danger btn-xs'})
+							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-trash'}) })
+							.observe('click',function(){
+								$(this).up('[video-id="' + video.id + '"]').hide();
+							})
+						})
+					})
+				})
+			});
+		tmp.me._signRandID(tmp.videoEl);
+		videojs($(tmp.videoEl.id), {}, function() { });
+		$H(video.asset).each(function(item){
+			tmp.assetKeyRow.insert({'bottom': new Element('span', {'class': ((item.key == 'filename' || item.key == 'assetId')  ? 'col-md-3' : 'col-md-1'), 'title': item.key}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: clip;').update(item.key)});
+			tmp.assetValueRow.insert({'bottom': new Element('span', {'class': ((item.key == 'filename' || item.key == 'assetId') ? 'col-md-3' : 'col-md-1'), 'title': item.value}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: ellipsis;').update(item.value)
+				.observe('dblclick', function(){
+					tmp.me.showModalBox(item.key, tmp.txtArea = new Element('input', {'value': item.value}).setStyle('width: 100%;').observe('keyup',function(){tmp.txtArea.value = item.value;}));
+					tmp.txtArea.focus(); tmp.txtArea.select();
+				})
+			});
+		});
+		$H(video).each(function(item){
+			tmp.videoKeyRow.insert({'bottom': new Element('span', {'class': 'col-md-1', 'title': item.key}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: clip;').update(item.key)});
+			tmp.videoValueRow.insert({'bottom': new Element('span', {'class': 'col-md-1', 'title': item.value}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: ellipsis;').update(item.value)
+				.observe('dblclick', function(){
+					tmp.me.showModalBox(item.key, tmp.txtArea = new Element('input', {'value': item.value}).setStyle('width: 100%;').observe('keyup',function(){tmp.txtArea.value = item.value;}));
+					tmp.txtArea.focus(); tmp.txtArea.select();
+				})
+			});
+		});
+		tmp.videoValueRow.insert({'top': new Element('input', {'class': 'hidden', 'value': video.id, 'save-item': 'videoId'})});
+		
+		return tmp.me;
 	}
 	,_loadUploader: function(){
 		var tmp = {};
@@ -254,52 +329,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				jQuery('#progress .bar').css(
 			            'width', '0%'
 			        );
-				$(tmp.me._htmlIds.uploaderDivId).down('.panel-body')
-					.insert({'bottom': new Element('div', {'class': 'row video-row', 'video-id': data._response.result.video.id})
-						.insert({'bottom': new Element('div', {'class': 'col-md-4'})
-							.insert({'bottom': tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
-								.insert({'bottom': new Element('source', {'src': data._response.result.video.asset.url, 'type': data._response.result.video.asset.mimeType}) })
-							})
-						})
-						.insert({'bottom': new Element('div', {'class': 'col-md-8'})
-							.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Asset</b>') })
-							.insert({'bottom': tmp.assetKeyRow = new Element('div', {'class': 'row asset-key-row'}) })
-							.insert({'bottom': tmp.assetValueRow = new Element('div', {'class': 'row asset-value-row'}) })
-							.insert({'bottom': new Element('div', {'class': 'row clearfix'}).setStyle('border: 1px solid brown;') })
-							.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Video</b>') })
-							.insert({'bottom': tmp.videoKeyRow = new Element('div', {'class': 'row video-key-row'}) })
-							.insert({'bottom': tmp.videoValueRow = new Element('div', {'class': 'row video-value-row'}) })
-							.insert({'bottom': new Element('div', {'class': 'row btn-row btn-hide-row text-right'}) 
-								.insert({'bottom': new Element('div', {'class': 'btn btn-delete-video btn-danger btn-xs'})
-									.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-trash'}) })
-									.observe('click',function(){
-										$(this).up('[video-id="' + data._response.result.video.id + '"]').hide();
-									})
-								})
-							})
-						})
-					});
-				tmp.me._signRandID(tmp.videoEl);
-				videojs($(tmp.videoEl.id), {}, function() { });
-				$H(data._response.result.video.asset).each(function(item){
-					tmp.assetKeyRow.insert({'bottom': new Element('span', {'class': ((item.key == 'filename' || item.key == 'assetId')  ? 'col-md-3' : 'col-md-1'), 'title': item.key}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: clip;').update(item.key)});
-					tmp.assetValueRow.insert({'bottom': new Element('span', {'class': ((item.key == 'filename' || item.key == 'assetId') ? 'col-md-3' : 'col-md-1'), 'title': item.value}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: ellipsis;').update(item.value)
-						.observe('dblclick', function(){
-							tmp.me.showModalBox(item.key, tmp.txtArea = new Element('input', {'value': item.value}).setStyle('width: 100%;').observe('keyup',function(){tmp.txtArea.value = item.value;}));
-							tmp.txtArea.focus(); tmp.txtArea.select();
-						})
-					});
-				});
-				$H(data._response.result.video).each(function(item){
-					tmp.videoKeyRow.insert({'bottom': new Element('span', {'class': 'col-md-1', 'title': item.key}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: clip;').update(item.key)});
-					tmp.videoValueRow.insert({'bottom': new Element('span', {'class': 'col-md-1', 'title': item.value}).setStyle('white-space: nowrap; overflow: hidden; text-overflow: ellipsis;').update(item.value)
-						.observe('dblclick', function(){
-							tmp.me.showModalBox(item.key, tmp.txtArea = new Element('input', {'value': item.value}).setStyle('width: 100%;').observe('keyup',function(){tmp.txtArea.value = item.value;}));
-							tmp.txtArea.focus(); tmp.txtArea.select();
-						})
-					});
-				});
-				tmp.videoValueRow.insert({'top': new Element('input', {'class': 'hidden', 'value': data._response.result.video.id, 'save-item': 'videoId'})});
+				tmp.me.getVideoRow($(tmp.me._htmlIds.uploaderDivId).down('.panel-body'), data._response.result.video, data._response.result.video.asset);
 			}
 			,fail: function (e, data) {
 				tmp.message = '';
@@ -350,6 +380,12 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		
 		tmp.me._loadUploader();
 		
+		if(pageJs._word.videos && pageJs._word.videos .length > 0) {
+			pageJs._word.videos.each(function(video){
+				tmp.me.getVideoRow($(tmp.me._htmlIds.uploaderDivId).down('.panel-body'), video, video.asset);
+			});
+		}
+		
 		return tmp.me;
 	}
 	,getUploaderDiv: function() {
@@ -362,13 +398,24 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			});
 		return tmp.newDiv;
 	}
-	,selectWord: function() {
+	,selectWord: function(word) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.word = (word || false);
 		if(tmp.me._word.id === 'NEW') {
 			$(tmp.me._htmlIds.itemDiv).update('');
 			tmp.me._getVideoUploadPanel();
+		} else if(!word.id.empty()){
+			word.categoryId = tmp.me._category.id;
+			word.categoryName = tmp.me._category.name;
+			word.languageId = tmp.me._language.id;
+			word.languageName = tmp.me._language.name;
+			tmp.me._word = word;
+			$(tmp.me._htmlIds.itemDiv).update('');
+			tmp.me._getVideoUploadPanel();
 		}
+		
+		return tmp.me;
 	}
 	,_getNewWordRow: function(btn) {
 		var tmp = {};

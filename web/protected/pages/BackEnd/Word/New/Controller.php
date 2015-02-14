@@ -46,23 +46,35 @@ class Controller extends BackEndPageAbstract
 			{
 				if(!isset($item->id) || !isset($item->valid) || !($video = Video::get(trim($item->id))) instanceof Video)
 					throw new Exception('Nothing passed through'); 
-				if($item->valid === false)
+				if($item->valid === false) {
 					$video->setActive(false)->save();
-				elseif($item->valid === true)
+					$video->getAsset()->setActive(false)->save();
+					if(count($wordVideos = WordVideo::getAllByCriteria('wordId = ? AND videoId = ?', array($word->getId(), $video->getId()), true , 1, 1)) > 0)
+						$wordVideos[0]->setActive(false)->save();
+				} elseif($item->valid === true)
 					WordVideo::create($word, $video);
 			}
 			
 			foreach($definitionGroups as $definitionGroup)
 			{
-				if(!isset($definitionGroup->type) || ($type = $definitionGroup->type) === '')
+				if(!isset($definitionGroup->type) || ($type = trim($definitionGroup->type)) === '')
 					throw new Exception('Invalid Definition Type passed in');
-				$definitionType = DefinitionType::create($type);
+				if(DefinitionType::get($definitionGroup->id) instanceof DefinitionType)
+				{
+					$definitionType = DefinitionType::get($definitionGroup->id);
+					$definitionType->setName($type)->setActive($definitionGroup->valid)->save();
+				}
+				else 
+					$definitionType = DefinitionType::create($type);
 				if(!isset($definitionGroup->rows) || count($rows = $definitionGroup->rows) < 1)
 					throw new Exception('Invalid Definition passed in (definition type = ' . $type . '.');
 				foreach ($rows as $row)
 				{
 					$order = preg_replace("/[^0-9]/","",$row->order); // only take numbers from string
-					Definition::create(trim($row->def), $definitionType, $word, $order);
+					if(($definition = Definition::get($row->id)) instanceof Definition)
+						$definition->setContent(trim($row->def))->setSequence($order)->setActive(($definitionGroup->valid === false) ? false : $row->valid)->save();
+					else
+						$definition = Definition::create(trim($row->def), $definitionType, $word, $order);
 				}
 			}
 			$results['item'] = array('name'=> $word->getName(), 'id'=> $word->getId());
@@ -110,9 +122,14 @@ class Controller extends BackEndPageAbstract
 		{
 			$items = array();
 			$searchTxt = isset($param->CallbackParameter->searchTxt) ? trim($param->CallbackParameter->searchTxt) : '';
-			foreach(Word::getAllByCriteria('name like :searchTxt', array('searchTxt' => $searchTxt . '%')) as $word)
+			foreach(Word::getAllByCriteria('name = :searchTxt', array('searchTxt' => $searchTxt)) as $word)
 			{
-				$items[] = $word->getJson();
+				$definitions = array();
+				foreach (Definition::getAllByCriteria('wordId = ?', array($word->getId())) as $definition)
+				{
+					$definitions[] = $definition->getJson();
+				}
+				$items[] = $word->getJson(array('definitions'=> $definitions));
 			}
 			$results['items'] = $items;
 		}
