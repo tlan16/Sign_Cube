@@ -1,5 +1,6 @@
 <com:TContent ID="MainContent">
 <com:Application.controls.jQueryFileUploader.jQueryFileUploader />
+<com:Application.controls.videoJs.videoJs />
 <com:TCallback ID="searchCategoryBtn" onCallback="searchCategory" />
 <com:TCallback ID="searchWordBtn" onCallback="searchWord" />
 <com:TCallback ID="getDefTypesBtn" onCallback="Page.getDefTypes" />

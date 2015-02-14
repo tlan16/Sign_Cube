@@ -24,7 +24,7 @@ class Controller extends BackEndPageAbstract
 	}
 	public function saveWord($sender, $param)
 	{
-		$results = $errors = array();
+		$results = $errors = $videos = array();
 		try
 		{
 			Dao::beginTransaction();
@@ -35,21 +35,27 @@ class Controller extends BackEndPageAbstract
 				throw new Exception('Invalid Language passed in');
 			if(!isset($param->CallbackParameter->word->categoryId) || !($cateogry = Category::get(trim($param->CallbackParameter->word->categoryId))) instanceof Category)
 				throw new Exception('Invalid Category passed in');
-			if(!isset($param->CallbackParameter->asset->id) || !($asset = Asset::get(trim($param->CallbackParameter->asset->id))) instanceof Asset)
-				throw new Exception('Invalid Asset passed in');
-			if(!isset($param->CallbackParameter->video->id) || !($video = Video::get(trim($param->CallbackParameter->video->id))) instanceof Video || $video->getAsset()->getId() !== $asset->getId())
+			if(!isset($param->CallbackParameter->videos) || count($param->CallbackParameter->videos) < 1)
 				throw new Exception('Invalid Video passed in');
 			if(!isset($param->CallbackParameter->definitions) || count($definitionGroups = $param->CallbackParameter->definitions) < 1)
 				throw new Exception('Nothing passed through');
 			
 			if(!($word = Word::get(trim($param->CallbackParameter->word->id))) instanceof Word)
 				$word = Word::create($language, $cateogry, $wordName);
+			foreach ($param->CallbackParameter->videos as $item)
+			{
+				if(!isset($item->id) || !isset($item->valid) || !($video = Video::get(trim($item->id))) instanceof Video)
+					throw new Exception('Nothing passed through'); 
+				if($item->valid === false)
+					$video->setActive(false)->save();
+				elseif($item->valid === true)
+					WordVideo::create($word, $video);
+			}
 			
 			foreach($definitionGroups as $definitionGroup)
 			{
 				if(!isset($definitionGroup->type) || ($type = $definitionGroup->type) === '')
 					throw new Exception('Invalid Definition Type passed in');
-				// TODO: if type if existing
 				$definitionType = DefinitionType::create($type);
 				if(!isset($definitionGroup->rows) || count($rows = $definitionGroup->rows) < 1)
 					throw new Exception('Invalid Definition passed in (definition type = ' . $type . '.');
