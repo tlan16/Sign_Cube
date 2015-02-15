@@ -140,6 +140,17 @@ class Definition extends BaseEntityAbstract
 		DaoMap::commit();
 	}
 	/**
+	 * overload parent getJson
+	 *
+	 * @param bool $reset Forcing the function to fetch data from the database again
+	 *
+	 * @return array The associative arary for json
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		return parent::getJson(array_merge($extra, array('definitionType'=> $this->getDefinitionType()->getJson())));
+	}
+	/**
 	 * creating a Definition
 	 *
 	 * @param unknown 			$content

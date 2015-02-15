@@ -151,6 +151,22 @@ class Word extends BaseEntityAbstract
         DaoMap::commit();
     }
     /**
+     * overload parent getJson
+     *
+     * @param bool $reset Forcing the function to fetch data from the database again
+     *
+     * @return array The associative arary for json
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$videos = array();
+    	foreach (WordVideo::getAllByCriteria('wordId = ?', array($this->getId())) as $wordVideo)
+    	{
+    		$videos[] = $wordVideo->getVideo()->getJson();
+    	}
+    	return parent::getJson(array_merge($extra, array('videos'=> $videos)));
+    }
+    /**
      * creating a property
      *
      * @param Language		$language

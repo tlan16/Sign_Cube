@@ -115,6 +115,18 @@ class Video extends BaseEntityAbstract
 	
 		DaoMap::commit();
 	}
+/**
+     * overload parent
+     * 
+     * @param bool $reset Forcing the function to fetch data from the database again
+     *
+     * @return array The associative arary for json
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$array = array('asset'=> $this->getAsset()->getJson());
+    	return parent::getJson(array_merge($array, $extra));
+    }
 	/**
 	 * creating a Video
 	 * @param Asset		$asset
