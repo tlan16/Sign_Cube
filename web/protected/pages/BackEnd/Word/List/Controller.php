@@ -44,7 +44,6 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-			var_dump($serachCriteria);
 				
 			$where = array(1);
 			$params = array();
@@ -127,8 +126,6 @@ class Controller extends BackEndPageAbstract
     	$results = $errors = array();
     	try
     	{
-    		var_dump($param->CallbackParameter->item);
-    		
     		Dao::beginTransaction();
     		
     		$class = trim($this->_focusEntity);
@@ -142,7 +139,6 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("Invalid language passed in!");
     		
     		$active = trim($param->CallbackParameter->item->active);
-    		
     		if($word->getName() != ($name = trim($param->CallbackParameter->item->name)) || $word->getActive() != $active)
     		{
     			$word->setName($name)
@@ -151,10 +147,7 @@ class Controller extends BackEndPageAbstract
     		}
     		
     		Dao::commitTransaction();
-    		
-			$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson(), 'category'=>$obj->getCategory()->getJson()));
-      		
-//     		$results['item'] = array('category'=> $category->getJson(), 'language'=>$category->getLanguage()->getJson());
+			$results['item'] = $word->getJson(array('language'=> $word->getLanguage()->getJson(), 'category'=>$word->getCategory()->getJson()));
     	}
     	catch(Exception $ex)
     	{
