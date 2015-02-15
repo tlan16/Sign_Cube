@@ -64,7 +64,7 @@ class Controller extends BackEndPageAbstract
 					$definitionType = DefinitionType::get($definitionGroup->id);
 					$definitionType->setName($type)->setActive($definitionGroup->valid)->save();
 				}
-				else 
+				elseif ($definitionGroup->valid === true)
 					$definitionType = DefinitionType::create($type);
 				if(!isset($definitionGroup->rows) || count($rows = $definitionGroup->rows) < 1)
 					throw new Exception('Invalid Definition passed in (definition type = ' . $type . '.');
@@ -73,7 +73,7 @@ class Controller extends BackEndPageAbstract
 					$order = preg_replace("/[^0-9]/","",$row->order); // only take numbers from string
 					if(($definition = Definition::get($row->id)) instanceof Definition)
 						$definition->setContent(trim($row->def))->setSequence($order)->setActive(($definitionGroup->valid === false) ? false : $row->valid)->save();
-					else
+					elseif($definitionGroup->valid === true && $row->valid === true)
 						$definition = Definition::create(trim($row->def), $definitionType, $word, $order);
 				}
 			}
