@@ -115,7 +115,7 @@ class Word extends BaseEntityAbstract
 	 *
 	 * @param Category $value The category
 	 *
-	 * @return WordCategory
+	 * @return Word
 	 */
 	public function setCategory(Category $value)
 	{
