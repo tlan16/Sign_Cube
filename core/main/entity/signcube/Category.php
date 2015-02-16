@@ -86,6 +86,18 @@ class Category extends BaseEntityAbstract
 		DaoMap::commit();
 	}
 	/**
+	 * overload parent
+	 *
+	 * @param bool $reset Forcing the function to fetch data from the database again
+	 *
+	 * @return array The associative arary for json
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = array('language'=> $this->getLanguage()->getJson());
+		return parent::getJson($array);
+	}
+	/**
 	 * creating a category
 	 *
 	 * @param Language	$language
