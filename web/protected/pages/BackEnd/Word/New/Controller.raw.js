@@ -51,7 +51,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me.postAjax(tmp.me.getCallbackId('saveWord'), {'definitions': tmp.data, 'videos': tmp.me._videos, 'word': tmp.me._word}, {
 			'onLoading': function() {
 				$(tmp.me._htmlIds.itemDiv).insert({'top': tmp.loadingImg = tmp.me.getLoadingImg()});
-//				$(tmp.me._htmlIds.definitionsContainer).hide();
+				$(tmp.me._htmlIds.definitionsContainer).hide();
 			}
 			,'onSuccess': function(sender, param){
 				try {
@@ -60,7 +60,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						throw 'errror: php passback Error';
 					else {
 						tmp.me.showModalBox('Success','<h4>Word Saved Successfully</h4>');
-//						window.location.reload();
+						window.location.reload();
 					}
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
