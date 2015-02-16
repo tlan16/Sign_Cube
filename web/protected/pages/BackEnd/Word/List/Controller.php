@@ -136,21 +136,22 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("System Error: no item information passed in!");
     		if(!($word = Word::get(trim(($param->CallbackParameter->item->id)))) instanceof Word)
     			throw new Exception("Invalid Word passed in!");
-    		if(!($category = Category::get(trim(($param->CallbackParameter->item->categoryId)))) instanceof Category)
+    		if(($name = trim(($param->CallbackParameter->item->name))) === '')
+    			throw new Exception("Invalid Name passed in!");
+    		if(!($category = Category::get(trim(($param->CallbackParameter->item->category)))) instanceof Category)
     			throw new Exception("Invalid category passed in!");
     		if(!($language = Language::get(trim(($param->CallbackParameter->item->languageId)))) instanceof Language)
     			throw new Exception("Invalid language passed in!");
-    		
     		$active = trim($param->CallbackParameter->item->active);
-    		if($word->getName() != ($name = trim($param->CallbackParameter->item->name)) || $word->getActive() != $active)
-    		{
-    			$word->setName($name)
-    				->setActive($active)
-    				->save();
-    		}
     		
-    		Dao::commitTransaction();
+    		$word->setName($name)
+    			->setActive($active)
+    			->setLanguage($category->getLanguage())
+    			->setCategory($category)
+    			->save();
+    		
 			$results['item'] = $word->getJson(array('language'=> $word->getLanguage()->getJson(), 'category'=>$word->getCategory()->getJson()));
+    		Dao::commitTransaction();
     	}
     	catch(Exception $ex)
     	{
