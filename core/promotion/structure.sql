@@ -1,10 +1,10 @@
 -- Setting Up Database
-DROP TABLE IF EXISTS `auslanvideo`;
-CREATE TABLE `auslanvideo` (
+DROP TABLE IF EXISTS `thirdpartyvideo`;
+CREATE TABLE `thirdpartyvideo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`media` varchar(255) NOT NULL DEFAULT '',
-	`poster` varchar(255) NOT NULL DEFAULT '',
-	`assetId` varchar(255) NOT NULL DEFAULT '',
+	`assetId` int(10) unsigned NOT NULL DEFAULT 0,
+	`thirdpartyName` varchar(32) NOT NULL DEFAULT '',
+	`thirdpartyLink` text NOT NULL ,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -14,11 +14,11 @@ CREATE TABLE `auslanvideo` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `auslanword`;
-CREATE TABLE `auslanword` (
+DROP TABLE IF EXISTS `thirdpartyword`;
+CREATE TABLE `thirdpartyword` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(32) NOT NULL DEFAULT '',
-	`href` text NOT NULL ,
+	`name` varchar(64) NOT NULL DEFAULT '',
+	`tag` varchar(32) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -27,21 +27,20 @@ CREATE TABLE `auslanword` (
 	PRIMARY KEY (`id`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
-	,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `auslanwordrel`;
-CREATE TABLE `auslanwordrel` (
+DROP TABLE IF EXISTS `thirdpartywordvideo`;
+CREATE TABLE `thirdpartywordvideo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`wordId` int(10) unsigned NOT NULL DEFAULT 0,
-	`videoId` int(10) unsigned NOT NULL DEFAULT 0,
+	`thirdPartyWordId` int(10) unsigned NOT NULL DEFAULT 0,
+	`thirdPartyVideoId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
-	,INDEX (`wordId`)
-	,INDEX (`videoId`)
+	,INDEX (`thirdPartyWordId`)
+	,INDEX (`thirdPartyVideoId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
@@ -226,8 +225,6 @@ CREATE TABLE `language` (
 DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
-	`EntityName` varchar(100) NOT NULL DEFAULT '',
 	`assetId` int(10) unsigned NOT NULL DEFAULT 0,
 	`thirdpartyName` varchar(32) NOT NULL DEFAULT '',
 	`thirdpartyLink` varchar(255) NOT NULL DEFAULT '',
@@ -240,8 +237,6 @@ CREATE TABLE `video` (
 	,INDEX (`assetId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
-	,INDEX (`entityId`)
-	,INDEX (`EntityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `word`;
 CREATE TABLE `word` (
@@ -422,6 +417,7 @@ CREATE TABLE `useraccount` (
 	`username` varchar(100) NOT NULL DEFAULT '',
 	`password` varchar(40) NOT NULL DEFAULT '',
 	`expiry` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`skey` varchar(40) NOT NULL DEFAULT '',
 	`personId` int(10) unsigned NOT NULL DEFAULT 0,
 	`confirmationId` int(10) unsigned NULL DEFAULT NULL,
 	`active` bool NOT NULL DEFAULT 1,
@@ -436,6 +432,7 @@ CREATE TABLE `useraccount` (
 	,INDEX (`updatedById`)
 	,INDEX (`username`)
 	,INDEX (`password`)
+	,INDEX (`skey`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `entitytag`;
 CREATE TABLE `entitytag` (
