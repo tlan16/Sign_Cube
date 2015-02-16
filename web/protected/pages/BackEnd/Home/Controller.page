@@ -26,17 +26,11 @@
 					<div class="btn btn-default" onclick="window.open('/backend/deftype.html', '_self')">
 						Definition Type List/New
 					</div>
-					<div class="btn btn-default" onclick="window.open('/backend/video.html', '_self')">
-						Video List
-					</div>
-					<div class="btn btn-default" onclick="window.open('/backend/video/new.html', '_self')">
-						Video New
-					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/word.html', '_self')">
-						Word List
+						Word List/Edit(name & category)
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/word/new.html', '_self')">
-						Word New
+						Word New/Edit(video & definition)
 					</div>
 				</div>
             </div><!-- end container -->
