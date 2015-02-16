@@ -11,6 +11,8 @@ class Controller extends BackEndPageAbstract
 	protected $_focusEntity = 'Word';
 	protected function _getEndJs()
 	{
+		$categories = array_map(create_function('$a', 'return $a->getJson();'), Category::getAll(true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('name'=>'asc')));
+		
 		$js = parent::_getEndJs();
 		$js .= "pageJs";
 		$js .= "._bindSearchKey()";
@@ -19,6 +21,7 @@ class Controller extends BackEndPageAbstract
 		$js .= ".setCallbackId('saveItem', '" . $this->saveItemBtn->getUniqueID() . "')";
 		$js .= ".setHTMLIds('item-list', 'searchPanel', 'total-found-count')";
 		$js .= ".getResults(true, " . DaoQuery::DEFAUTL_PAGE_SIZE . ");";
+		$js .= "pageJs._categories=" . json_encode($categories);
 		return $js;
 	}
 	/**
