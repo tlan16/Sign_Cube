@@ -181,7 +181,7 @@ CREATE TABLE `definition` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`content` TEXT NOT NULL ,
 	`sequence` int(10) unsigned NOT NULL DEFAULT 0,
-	`wordId` int(10) unsigned NOT NULL DEFAULT 0,
+	`videoId` int(10) unsigned NOT NULL DEFAULT 0,
 	`definitionTypeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -189,7 +189,7 @@ CREATE TABLE `definition` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
-	,INDEX (`wordId`)
+	,INDEX (`videoId`)
 	,INDEX (`definitionTypeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)

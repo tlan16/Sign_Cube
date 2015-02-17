@@ -18,11 +18,11 @@ class Definition extends BaseEntityAbstract
 	 */
 	private $sequence;
 	/**
-	 * The Word of Definition
+	 * The Video of Definition
 	 *
-	 * @var Word
+	 * @var Video
 	 */
-	protected $word;
+	protected $video;
 	/**
 	 * The DefinitionType of Definition
 	 *
@@ -72,25 +72,25 @@ class Definition extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for word
+	 * Getter for video
 	 *
-	 * @return Word
+	 * @return Video
 	 */
-	public function getWord() 
+	public function getVideo() 
 	{
-		$this->loadManyToOne('word');
-	    return $this->word;
+		$this->loadManyToOne('video');
+	    return $this->video;
 	}
 	/**
-	 * Setter for word
+	 * Setter for video
 	 *
-	 * @param Word $value The word
+	 * @param Video $value The video
 	 *
 	 * @return Definition
 	 */
-	public function setWord(Word $value) 
+	public function setVideo(Video $value) 
 	{
-	    $this->word = $value;
+	    $this->video = $value;
 	    return $this;
 	}
 	/**
@@ -133,7 +133,7 @@ class Definition extends BaseEntityAbstract
 		DaoMap::begin($this, 'def');
 		DaoMap::setStringType('content', 'TEXT', 1000);
 		DaoMap::setIntType('sequence');
-		DaoMap::setManyToOne('word', 'Word', 'def_wd', false);
+		DaoMap::setManyToOne('video', 'Video', 'def_vid', false);
 		DaoMap::setManyToOne('definitionType', 'DefinitionType', 'def_deftp', false);
 		parent::__loadDaoMap();
 		
@@ -153,21 +153,21 @@ class Definition extends BaseEntityAbstract
 	/**
 	 * creating a Definition
 	 *
-	 * @param unknown 			$content
+	 * @param string 			$content
 	 * @param DefinitionType 	$definitionType
-	 * @param Word 				$word
-	 * @param unknown 			$sequence
+	 * @param Video				$video
+	 * @param int 	 			$sequence
 	 *
 	 * @return Definition
 	 */
-	public static function create($content, DefinitionType $definitionType, Word $word, $sequence = 0)
+	public static function create($content, DefinitionType $definitionType, Video $video, $sequence = 0)
 	{
 		$existingEntity = self::getAllByCriteria('content = ? AND wordId = ? AND definitionTypeId = ?', array(trim($content),$word->getId(), $definitionType->getId()));
 		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Definition();
 		return $entity->setContent($content)
 			->setSequence($sequence)
 			->setDefinitionType($definitionType)
-			->setWord($word)
+			->setVideo($video)
 			->save()
 			->addLog(Log::TYPE_SYS, 'Definition (' . $content . ') with Word (' . $word->getName() . ') with DefinitionType(' . $definitionType->getName() . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now with an sequence: ' . $sequence . ')', __CLASS__ . '::' . __FUNCTION__);
 	}

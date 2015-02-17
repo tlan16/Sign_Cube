@@ -6,9 +6,13 @@ echoLog ('START ' . new UDate() . "\n");
 
 const MAX_PAGE_NO = 99;
 
-try {
-	getAllLinks('http://www.auslan.org.au/dictionary/');
-	getAllVideoLinks();
+try 
+{
+// 	getAllLinks('http://www.auslan.org.au/dictionary/');
+// 	getAllVideoLinks();
+	if(count($category = Category::getAllByCriteria('name = ?', array('Auslan'), true, 1, 1)) == 0 || !($category = $category[0]) instanceof Category)
+		throw new Exception('auslan Category must exist');
+	
 } catch (Exception $ex) {
 	echoLog($ex->getMessage());
 }

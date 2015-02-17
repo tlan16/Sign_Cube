@@ -107,7 +107,7 @@ class Video extends BaseEntityAbstract
 	{
 		DaoMap::begin($this, 'vid');
 	
-		DaoMap::setManyToOne('asset','Asset', 'attachment_ass');
+		DaoMap::setManyToOne('asset','Asset', 'vid_con');
 		DaoMap::setStringType('thirdpartyName', 'varchar', '32');
 		DaoMap::setStringType('thirdpartyLink', 'varchar', '255');
 	
