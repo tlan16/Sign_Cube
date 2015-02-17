@@ -1,6 +1,0 @@
-<com:TContent ID="MainContent">
-	<com:Application.controls.simpleTextRotator.simpleTextRotator />
-	<com:TCallback ID="getItemsBtn" onCallback="Page.getItems" />
-	<div class="auslan-wrapper" id="auslan_container">
-	</div>
-</com:TContent>
