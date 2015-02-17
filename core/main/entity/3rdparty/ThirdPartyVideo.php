@@ -19,13 +19,19 @@ class ThirdPartyVideo extends BaseEntityAbstract
 	 * 
 	 * @var string
 	 */
-	private $thirdpartyName;
+	private $name;
 	/**
 	 * The thirdparty link of imported Video
 	 * 
 	 * @var string
 	 */
-	private $thirdpartyLink;
+	private $link;
+	/**
+	 * The poster link of imported Video
+	 * 
+	 * @var string
+	 */
+	private $poster;
 	/**
 	 * Getter for the assetId
 	 *
@@ -50,45 +56,64 @@ class ThirdPartyVideo extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * Getter for thirdpartyName
+	 * Getter for name
 	 * 
 	 * @return string
 	 */
-	public function getThirdpartyName()
+	public function getName()
 	{
-		return $this->thirdpartyName;
+		return $this->name;
 	}
 	/**
-	 * Setter for the thirdpartyName
+	 * Setter for the name
 	 * 
 	 * @param string $value
 	 * 
 	 * @return ThirdPartyVideo
 	 */
-	public function setThirdpartyName($value)
+	public function setName($value)
 	{
-		$this->thirdpartyName = trim($value);
+		$this->name = trim($value);
 		return $this;
 	}
 	/**
-	 * Getter for thirdpartyLink
+	 * Getter for link
 	 * 
 	 * @return string
 	 */
-	public function getThirdpartyLink()
+	public function getLink()
 	{
-		return $this->thirdpartyLink;
+		return $this->link;
 	}
 	/**
-	 * Setter for the thirdpartyLink
+	 * Setter for the link
 	 * 
 	 * @param string $value
 	 * 
 	 * @return ThirdPartyVideo
 	 */
-	public function setThirdpartyLink($value)
+	public function setLink($value)
 	{
-		$this->thirdpartyLink = trim($value);
+		$this->link = trim($value);
+		return $this;
+	}
+	/**
+	 * getter for poster
+	 *
+	 * @return string
+	 */
+	public function getPoster()
+	{
+		return $this->poster;
+	}
+	/**
+	 * Setter for poster
+	 *
+	 * @return ThirdPartyVideo
+	 */
+	public function setPoster($poster)
+	{
+		$this->poster = $poster;
 		return $this;
 	}
 	/**
@@ -109,8 +134,9 @@ class ThirdPartyVideo extends BaseEntityAbstract
 		DaoMap::begin($this, 'trdvid');
 	
 		DaoMap::setIntType('assetId');
-		DaoMap::setStringType('thirdpartyName', 'varchar', '32');
-		DaoMap::setStringType('thirdpartyLink', 'text');
+		DaoMap::setStringType('name', 'varchar', '32');
+		DaoMap::setStringType('link', 'text');
+		DaoMap::setStringType('poster', 'text');
 	
 		parent::__loadDaoMap();
 	
@@ -131,21 +157,23 @@ class ThirdPartyVideo extends BaseEntityAbstract
 	/**
 	 * creating a ThirdPartyVideo
 	 * @param string	$assetId
-	 * @param string	$thirdpartyName
-	 * @param string	$thirdpartyLink
+	 * @param string	$name
+	 * @param string	$link
+	 * @param string	$poster
 	 * 
 	 * @return ThirdPartyVideo
 	 */
-	public static function create($thirdpartyName, $thirdpartyLink, $assetId = '')
+	public static function create($name, $link, $poster = '', $assetId = '')
 	{
 		if(!empty($assetId) && !(Asset::get($assetId)) instanceof Asset)
 			throw new Exception('$asset must be empty string or an instance of Asset');
-		$existingEntity = self::getAllByCriteria('thirdpartyLink = ?', array($thirdpartyLink), true ,1 ,1);
+		$existingEntity = self::getAllByCriteria('link = ?', array($link), true ,1 ,1);
 		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new self();
 		$entity
 			->setAssetId($assetId)
-			->setThirdpartyName($thirdpartyName)
-			->setThirdpartyLink($thirdpartyLink)
+			->setName($name)
+			->setLink($link)
+			->setPoster($poster)
 			->save();
 		return $entity;
 	}

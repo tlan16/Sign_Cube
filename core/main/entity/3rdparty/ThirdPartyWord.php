@@ -19,6 +19,12 @@ class ThirdPartyWord extends BaseEntityAbstract
 	 */
 	private $name;
 	/**
+	 *  The link of the Word
+	 *  
+	 *  @var string
+	 */
+	private $link;
+	/**
 	 *  The tag of the Word
 	 *  
 	 *  @var string
@@ -43,6 +49,25 @@ class ThirdPartyWord extends BaseEntityAbstract
 	public function setName($value)
 	{
 		$this->name = trim($value);
+		return $this;
+	}
+	/**
+	 * getter for link
+	 *
+	 * @return $this->link
+	 */
+	public function getLink()
+	{
+		return $this->link;
+	}
+	/**
+	 * Setter for link
+	 *
+	 * @return ThirdPartyWord
+	 */
+	public function setLink($link)
+	{
+		$this->link = $link;
 		return $this;
 	}
 	/**
@@ -86,6 +111,7 @@ class ThirdPartyWord extends BaseEntityAbstract
         DaoMap::begin($this, 'trdwd');
         DaoMap::setStringType('name', 'varchar', 64);
         DaoMap::setStringType('tag', 'varchar', 32);
+        DaoMap::setStringType('link', 'text');
         parent::__loadDaoMap();
         
         DaoMap::commit();
@@ -110,15 +136,17 @@ class ThirdPartyWord extends BaseEntityAbstract
      * creating a property
      *
      * @param string		$name
+     * @param string		$link
      * @param string		$tag
      *
      * @return ThirdPartyWord
      */
-    public static function create($name, $tag = self::TYPE_DEFAULT)
+    public static function create($name, $link = '', $tag = self::TYPE_DEFAULT)
     {
     	$existingEntity = self::getAllByCriteria('name = ?', array(trim($name)));
     	$entity = count($existingEntity) > 0 ? $existingEntity[0] : new self();
     	return $entity->setName(trim($name))
+    		->setLink($link)
 	    	->setTag($tag)
 	    	->save();
     }
