@@ -18,6 +18,14 @@ html,body,.main-form {
 	top: 10px;
 }
 
+.btn-hide-row .btn {
+	visibility: hidden;
+}
+
+.btn-hide-row:hover .btn {
+	visibility: visible;
+}
+
 .main-form>#mainbody,.main-form>#footer {
 	display: block;
 }
