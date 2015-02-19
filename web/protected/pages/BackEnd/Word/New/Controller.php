@@ -52,13 +52,18 @@ class Controller extends BackEndPageAbstract
 					if(count($wordVideos = WordVideo::getAllByCriteria('wordId = ? AND videoId = ?', array($word->getId(), $video->getId()), true , 1, 1)) > 0)
 						$wordVideos[0]->setActive(false)->save();
 				} elseif($item->valid === true)
+				{
 					WordVideo::create($word, $video);
+					$videos[] = $video;
+				}
 			}
 			
 			foreach($definitionGroups as $definitionGroup)
 			{
 				if(!isset($definitionGroup->type) || ($type = trim($definitionGroup->type)) === '')
 					throw new Exception('Invalid Definition Type passed in');
+				if(!isset($definitionGroup->videoId) || (!($video = Video::get(trim($definitionGroup->videoId))) instanceof Video && $definitionGroup->videoId !== 'ALL'))
+					throw new Exception('Invalid Video passed in');
 				if(DefinitionType::get($definitionGroup->id) instanceof DefinitionType)
 				{
 					$definitionType = DefinitionType::get($definitionGroup->id);
@@ -74,7 +79,15 @@ class Controller extends BackEndPageAbstract
 					if(($definition = Definition::get($row->id)) instanceof Definition)
 						$definition->setContent(trim($row->def))->setSequence($order)->setActive(($definitionGroup->valid === false) ? false : $row->valid)->save();
 					elseif($definitionGroup->valid === true && $row->valid === true)
-						$definition = Definition::create(trim($row->def), $definitionType, $word, $order);
+					{
+						if($definitionGroup->videoId === 'ALL')
+						{
+							foreach ($videos as $video)
+								$definition = Definition::create(trim($row->def), $definitionType, $video, $order);
+						} else {
+							$definition = Definition::create(trim($row->def), $definitionType, $video, $order);
+						}
+					}
 				}
 			}
 			$results['item'] = array('name'=> $word->getName(), 'id'=> $word->getId());
@@ -125,9 +138,12 @@ class Controller extends BackEndPageAbstract
 			foreach(Word::getAllByCriteria('name = :searchTxt', array('searchTxt' => $searchTxt)) as $word)
 			{
 				$definitions = array();
-				foreach (Definition::getAllByCriteria('wordId = ?', array($word->getId())) as $definition)
+				foreach (WordVideo::getAllByCriteria('wordId = ?', array($word->getId())) as $wordVideo)
 				{
-					$definitions[] = $definition->getJson();
+					foreach (Definition::getAllByCriteria('videoId = ?', array($wordVideo->getVideo()->getId())) as $definition)
+					{
+						$definitions[] = $definition->getJson();
+					}
 				}
 				$items[] = $word->getJson(array('definitions'=> $definitions));
 			}
