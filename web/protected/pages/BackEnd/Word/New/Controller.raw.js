@@ -28,9 +28,10 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		
-		tmp.data = tmp.data = [];
+		tmp.data = [];
 		$(tmp.me._htmlIds.definitionsContainerInner).getElementsBySelector('.definitionGroup').each(function(group){
 			tmp.type = $F($(group).down('.panel-heading [save-def-item="type"]'));
+			tmp.videoId = $(group).up('.video-container').readAttribute('videoid');
 			tmp.typeId = $F($(group).down('.panel-heading [save-def-item="typeId"]'));
 			tmp.typeValid = $(group).visible();
 			if(!tmp.type.empty()) {
@@ -44,14 +45,22 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					if(!tmp.row.empty())
 						tmp.formRows.push ({'def': tmp.row, 'id': tmp.rowId, 'order': tmp.order, 'valid': tmp.rowValid});
 				});
-				tmp.data.push({'type': tmp.formType, 'id': tmp.typeId, 'rows': tmp.formRows, 'valid': tmp.typeValid});
+				tmp.data.push({'type': tmp.formType, 'id': tmp.typeId, 'videoId': tmp.videoId, 'rows': tmp.formRows, 'valid': tmp.typeValid});
 			}
 		});
-		
+		tmp.nothing = true;
+		tmp.data.each(function(item){
+			if(item.valid === true && item.rows.length > 0)
+				tmp.nothing = false;
+		})
+		if(tmp.nothing === true) {
+			tmp.me.showModalBox('Notice', '<h4>There has to be <b>at least</b> one definition for word "' + tmp.me._word.name + '"</h4>');
+			return tmp.me;
+		}
 		tmp.me.postAjax(tmp.me.getCallbackId('saveWord'), {'definitions': tmp.data, 'videos': tmp.me._videos, 'word': tmp.me._word}, {
 			'onLoading': function() {
 				$(tmp.me._htmlIds.itemDiv).insert({'top': tmp.loadingImg = tmp.me.getLoadingImg()});
-				$(tmp.me._htmlIds.definitionsContainer).hide();
+//				$(tmp.me._htmlIds.definitionsContainer).hide();
 			}
 			,'onSuccess': function(sender, param){
 				try {
@@ -60,7 +69,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						throw 'errror: php passback Error';
 					else {
 						tmp.me.showModalBox('Success','<h4>Word Saved Successfully</h4>');
-						window.location.reload();
+//						window.location.reload();
 					}
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
@@ -70,7 +79,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				tmp.loadingImg.remove();
 			}
 		});
-		
 		return tmp.me;
 	}
 	,_getNewDefinitionBodyRow: function(definition) {
@@ -107,10 +115,15 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-xs btn-new-defRow'})
 						.insert({'bottom': new Element('i', {'class': 'fa fa-plus'})})
 						.observe('click', function(){
-							$(this).up('.panel.definitionGroup').down('.panel-body')
-								.insert({'bottom': tmp.newDefRow = tmp.me._getNewDefinitionBodyRow()});
-							tmp.newDefRow.down('[save-def-item="definitionRow"]').focus();
-							tmp.newDefRow.down('[save-def-item="definitionRow"]').select();
+							if($F($(this).up('.row.definitionRow').down('[save-def-item="definitionRow"]')).empty())
+								$(this).up('.row.definitionRow').down('[save-def-item="definitionRow"]').focus();
+							else {
+								$(this).up('.panel.definitionGroup').getElementsBySelector('.row.definitionRow').each(function(item){item.addClassName('btn-hide-row');});
+								$(this).up('.panel.definitionGroup').down('.panel-body')
+									.insert({'bottom': tmp.newDefRow = tmp.me._getNewDefinitionBodyRow()});
+								tmp.newDefRow.down('[save-def-item="definitionRow"]').focus();
+								tmp.newDefRow.down('[save-def-item="definitionRow"]').select();
+							}
 						})
 					})
 					.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-xs'})
@@ -142,16 +155,20 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						.wrap(new Element('span', {'class': 'col-md-8'})) 
 					})
 					.insert({'bottom': new Element('span', {'class': 'col-md-4 btn-group'})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-sm btn-save-def-type'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-xs btn-save-def-type'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-floppy-saved'})})
 							.observe('click', function(){
-								$(this).up('.panel.definitionGroup').down('.panel-body')
-									.insert({'bottom': tmp.me.bodyRow = tmp.me._getNewDefinitionBodyRow()});
-								tmp.me.bodyRow.down('[save-def-item="definitionRow"]').focus();
-								tmp.me.bodyRow.down('[save-def-item="definitionRow"]').select();
+								if($F($(this).up('.panel-heading').down('[save-def-item="type"]')).empty())
+									$(this).up('.panel-heading').down('[save-def-item="type"]').focus();
+								else {
+									$(this).up('.panel.definitionGroup').down('.panel-body')
+										.insert({'bottom': tmp.me.bodyRow = tmp.me._getNewDefinitionBodyRow()});
+									tmp.me.bodyRow.down('[save-def-item="definitionRow"]').focus();
+									tmp.me.bodyRow.down('[save-def-item="definitionRow"]').select();
+								}
 							})
 						})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-sm'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-xs'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-floppy-remove'})})
 							.observe('click', function(){
 								$(this).up('.panel.definitionGroup').hide();
@@ -160,57 +177,149 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					})
 				})
 			})
-			.insert({'bottom': new Element('div', {'class': 'panel-body'})
-			});
-		$(tmp.me._htmlIds.definitionsContainerInner).insert({'top': tmp.newDiv});
-		tmp.newDiv.down('input[save-def-item="type"]').focus();
-		tmp.newDiv.down('input[save-def-item="type"]').select();
-		
+			.insert({'bottom': new Element('div', {'class': 'panel-body'}) });
 		return tmp.newDiv;
 	}
 	,_getDefinitionsContainer: function() {
 		var tmp = {};
 		tmp.me = this;
 		tmp.newDIv = new Element('div', {'id': tmp.me._htmlIds.definitionsContainer})
-			.insert({'bottom': new Element('div', {'class': 'row', 'id': tmp.me._htmlIds.definitionsContainerInner}) })
-			.insert({'bottom': new Element('div', {'class': 'row pull-right btn-group'})
-				.insert({'bottom': new Element('div', {'class': 'btn btn-md btn-info btn-new-definitionGroup'})
-					.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
+			.insert({'bottom': new Element('div', {'class': 'row'})
+				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-success pull-right'})
+					.insert({'bottom': new Element('span').update('Save Word')})
 					.observe('click', function(){
-						tmp.me._getNewDefinitionGroup();
-						$(tmp.me._htmlIds.definitionsContainerInner).down('[save-def-item="type"]').click();
+						tmp.me._saveWord();
 					})
 				})
-				.insert({'bottom': new Element('div', {'class': 'btn btn-md btn-success btn-save-definitionGroup'})
-					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-floppy-disk'}).update('  Save') })
-					.observe('click', function(){
-						if(!$(tmp.me._htmlIds.itemDiv).getElementsBySelector('[save-def-item="definitionRow"]').length || $F($(tmp.me._htmlIds.itemDiv).down('[save-def-item="definitionRow"]')).empty())
-							tmp.me.showModalBox('Notice', 'you must add <b>at least one definition</b> for ' + tmp.me._word.name);
-						else
-							tmp.me._saveWord();
+			})
+			.insert({'bottom': new Element('div', {'id': tmp.me._htmlIds.definitionsContainerInner}) 
+				.insert({'bottom': new Element('div', {'class': 'row video-container panel panel-sucess', 'videoid': 'ALL'}).setStyle(tmp.me._videos.length > 1 ? 'box-shadow: 0 1px 10px #70af00;' : 'box-shadow: unset;')
+					.insert({'bottom': new Element('div', {'class': 'panel-body'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-xs btn-default btn-video-preview'}).setStyle(tmp.me._videos.length > 1 ? 'display:none;' : '')
+							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-play-circle'}) })
+							.insert({'bottom': new Element('span').update('Preview video') })
+							.observe('click', function(){
+								tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+								.insert({'bottom': new Element('source', {'src': tmp.me._videos[0].src, 'type': tmp.me._videos[0].mimeType}) });
+								tmp.me._signRandID(tmp.videoEl);
+								tmp.me.showModalBox('Video Preview',tmp.videoEl);
+								videojs($(tmp.videoEl.id), {}, function() { });
+							})
+						})
+						.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+							.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
+							.observe('click', function(){
+								$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
+								tmp.newDefinitionGroup.down('[save-def-item="type"]').focus();
+							})
+						})
 					})
 				})
 			});
 		$(tmp.me._htmlIds.itemDiv).update(tmp.newDIv);
-		tmp.newDIv.down('.btn.btn-new-definitionGroup').click();
-		if(tmp.me._word.definitions && tmp.me._word.definitions.length > 0) {
-			tmp.me._word.definitions.each(function(definition){
-				tmp.foundType = false;
-				$(tmp.me._htmlIds.definitionsContainerInner).getElementsBySelector('[save-def-item="type"]').each(function(typeRow){
-					if(tmp.foundType === false && $F(typeRow) == definition.definitionType.name) {
-						tmp.foundType = true;
-						tmp.order = typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]') ? $F(typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]')) : 0;
-						if(parseInt(definition.sequence) > tmp.order)
-							typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
-						else
-							typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'top': tmp.me._getNewDefinitionBodyRow(definition)});
-					}
+		if(!jQuery.isNumeric(tmp.me._word.id)) { // when creating new word
+			tmp.newDIv.down('.btn.btn-new-definitionGroup').click();
+			$(tmp.me._htmlIds.definitionsContainer)
+				.insert({'top': new Element('a', {'class': 'pull-right'}).setStyle(tmp.me._videos.length > 1 ? '' : 'display: none;')
+					.update('Different definition for each video ? cleck here')
+					.setStyle('cursor: pointer;')
+					.observe('click', function(){
+						$(this).up('.diff-link-row').hide();
+						tmp.oldGroups = $(tmp.me._htmlIds.definitionsContainerInner).down('[videoid="ALL"]').remove();;
+						tmp.me._videos.each(function(item){
+							if(item.valid === true) {
+								$(tmp.me._htmlIds.definitionsContainerInner)
+									.insert({'bottom': new Element('div', {'class': 'row video-container panel panel-sucess', 'videoid': item.id}).setStyle(tmp.me._videos.length > 1 ? 'box-shadow: 0 1px 10px #70af00;' : 'box-shadow: unset;')
+										.insert({'bottom': new Element('span', {'class': 'btn btn-xs btn-default btn-video-preview'})
+											.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-play-circle'}) })
+											.insert({'bottom': new Element('span').update('Preview video') })
+											.observe('click', function(){
+												tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+												.insert({'bottom': new Element('source', {'src': item.src, 'type': item.mimeType}) });
+												tmp.me._signRandID(tmp.videoEl);
+												tmp.me.showModalBox('Video Preview',tmp.videoEl);
+												videojs($(tmp.videoEl.id), {}, function() { });
+											})
+										})
+										.insert({'bottom': new Element('div', {'class': 'panel-body'})
+											.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+												.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
+												.observe('click', function(){
+													$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
+													tmp.newDefinitionGroup.down('[save-def-item="type"]').focus();
+												})
+											})
+											.insert({'bottom': tmp.me._getNewDefinitionGroup()})
+										})
+									});
+							}
+						});
+						tmp.id = $(tmp.me._htmlIds.definitionsContainerInner).down('.video-container').readAttribute('videoid');
+						$(tmp.me._htmlIds.definitionsContainerInner).down('.video-container').replace(tmp.oldGroups);
+						tmp.previewEL = $(tmp.me._htmlIds.definitionsContainerInner).down('.video-container .btn.btn-video-preview');
+						tmp.previewEL.remove();
+						$(tmp.me._htmlIds.definitionsContainerInner).down('.video-container').insert({'top': tmp.previewEL});
+						tmp.previewEL.show();
+						$(tmp.me._htmlIds.definitionsContainerInner).down('.video-container').writeAttribute('videoid', tmp.id);
+					})
+					.wrap(new Element('div', {'class': 'row diff-link-row'}))
 				});
-				if(tmp.foundType === false) {
-					tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup(definition);
-					tmp.newDefinitionGroup.down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
+		}
+		else if(tmp.me._word.definitions && tmp.me._word.definitions.length > 0) { // when editing existing word
+			tmp.me._videos.each(function(video){
+				if(video.valid === true && $(tmp.me._htmlIds.definitionsContainerInner).down('.row.video-container[videoid="' + video.id + '"]') === undefined) {
+					$(tmp.me._htmlIds.definitionsContainerInner)
+					.insert({'bottom': new Element('div', {'class': 'row video-container panel panel-sucess', 'videoid': video.id}).setStyle('box-shadow: 0 1px 10px #70af00;')
+						.insert({'bottom': new Element('span', {'class': 'btn btn-xs btn-default btn-video-preview'})
+							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-play-circle'}) })
+							.insert({'bottom': new Element('span').update('Preview video') })
+							.observe('click', function(){
+								tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+								.insert({'bottom': new Element('source', {'src': video.src, 'type': video.mimeType}) });
+								tmp.me._signRandID(tmp.videoEl);
+								tmp.me.showModalBox('Video Preview',tmp.videoEl);
+								videojs($(tmp.videoEl.id), {}, function() { });
+							})
+						})
+						.insert({'bottom': new Element('div', {'class': 'panel-body'})
+							.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+								.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
+								.observe('click', function(){
+									$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
+									tmp.newDefinitionGroup.down('[save-def-item="type"]').focus();
+								})
+							})
+						})
+					});
 				}
 			});
+			tmp.me._word.definitions.each(function(definition){
+				tmp.valid = false;
+				tmp.me._videos.each(function(video){
+					if(tmp.valid === false && video.id === definition.video.id && video.valid === true)
+						tmp.valid = true;
+				});
+				if(tmp.valid === true) {
+					tmp.videoContainer = $(tmp.me._htmlIds.definitionsContainerInner).down('.row.video-container[videoid="' + definition.video.id + '"]');
+					
+					tmp.foundType = false;
+					tmp.videoContainer.getElementsBySelector('[save-def-item="type"]').each(function(typeRow){
+						if(tmp.foundType === false && $F(typeRow) == definition.definitionType.name) {
+							tmp.foundType = true;
+							tmp.order = typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]') ? $F(typeRow.up('.panel.definitionGroup').down('.panel-body').down('[save-def-item="definitionOrder"]')) : 0;
+							if(parseInt(definition.sequence) > tmp.order)
+								typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
+							else
+								typeRow.up('.panel.definitionGroup').down('.panel-body').insert({'top': tmp.me._getNewDefinitionBodyRow(definition)});
+						}
+					});
+					if(tmp.foundType === false) {
+						tmp.videoContainer.down('.panel-body').insert({'bottom': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup(definition)});
+						tmp.newDefinitionGroup.down('.panel-body').insert({'bottom': tmp.me._getNewDefinitionBodyRow(definition)});
+					}
+				}
+			});
+			$(tmp.me._htmlIds.definitionsContainerInner).down('.video-container[videoid="ALL"]').remove();
 		}
 		return tmp.me;
 	}
@@ -263,7 +372,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Video</b>') })
 					.insert({'bottom': tmp.videoKeyRow = new Element('div', {'class': 'row video-key-row'}) })
 					.insert({'bottom': tmp.videoValueRow = new Element('div', {'class': 'row video-value-row'}) })
-					.insert({'bottom': new Element('div', {'class': 'row btn-row btn-hide-row text-right'}) 
+					.insert({'bottom': new Element('div', {'class': 'row btn-row text-right'}) 
 						.insert({'bottom': new Element('div', {'class': 'btn btn-delete-video btn-danger btn-xs'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-trash'}) })
 							.observe('click',function(){
@@ -293,7 +402,9 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				})
 			});
 		});
-		tmp.videoValueRow.insert({'top': new Element('input', {'class': 'hidden', 'value': video.id, 'save-item': 'videoId'})});
+		tmp.videoValueRow.insert({'top': new Element('input', {'value': video.id, 'save-item': 'videoId'}).setStyle('display:none;')});
+		tmp.videoValueRow.insert({'top': new Element('input', {'value': video.asset.url, 'save-item': 'videoSrc'}).setStyle('display:none;')});
+		tmp.videoValueRow.insert({'top': new Element('input', {'value': video.asset.mimeType, 'save-item': 'mimeType'}).setStyle('display:none;')});
 		
 		return tmp.me;
 	}
@@ -364,7 +475,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('span').update('Confirm Videos') })
 					.observe('click', function(){
 						$(tmp.me._htmlIds.uploaderDivId).getElementsBySelector('.video-row').each(function(row){
-							tmp.me._videos.push({'id': tmp.me._collectFormData(row,'save-item').videoId, 'valid': row.visible()})
+							tmp.me._videos.push({'id': tmp.me._collectFormData(row,'save-item').videoId, 'src': tmp.me._collectFormData(row,'save-item').videoSrc, 'mimeType': tmp.me._collectFormData(row,'save-item').mimeType, 'valid': row.visible()})
 						})
 						if(!pageJs._videos.length)
 							tmp.me.showModalBox('Notice','<h4>Please upload <b>at least one video</b></h4>');
@@ -490,7 +601,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'th': 'td');
-		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'btn-hide-row item_row') + (word.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : word.id)}).store('data', word)
+		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'item_row') + (word.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : word.id)}).store('data', word)
 			.insert({'bottom': new Element(tmp.tag, {'class': tmp.isTitle ? 'hidden' : ''})
 				.insert({'bottom': (tmp.isTitle === true ? '&nbsp;':
 					new Element('span', {'class': 'btn btn-primary btn-xs'}).update('select')	
