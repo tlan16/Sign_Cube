@@ -38,7 +38,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Category', 'save-item-panel': 'name', 'value': row.name ? row.name : ''}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
-				.insert({'bottom': new Element('input', {'class': 'form-control','disabled': true, 'placeholder': 'The Name of the Language', 'save-item-panel': 'langName', 'value': row.langName ? row.langName : ''}) })
+				.insert({'bottom': new Element('input', {'class': 'form-control','disabled': true, 'placeholder': 'The Name of the Language', 'save-item-panel': 'langName', 'value': row.langName ? row.langName : '', 'langId': row.langId}) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'type': 'checkbox', 'class': 'form-control', 'save-item-panel': 'active', 'checked': row.id ? row.active : true}) })
@@ -93,6 +93,19 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
 						.observe('click', function(){
 							$(this).up('.item_row').replace(tmp.editEl = tmp.me._getEditPanel(row));
+							$langId = tmp.editEl.down('input[save-item-panel="langName"]').readAttribute('langId');
+							tmp.selectEl = new Element('select', {'class': 'select2 form-control', 'data-placeholder': 'Select a Language', 'save-item-panel': 'langId'});
+							if(tmp.me._languages && tmp.me._languages.length > 0) {
+								tmp.me._languages.each(function(language){
+									tmp.selectEl.insert({'bottom': new Element('option', {'value': language.id}).update(language.name) }); 
+								});
+							}
+							tmp.selectEl.down('[value="' + $langId + '"]').writeAttribute('selected', true);
+							tmp.editEl.down('input[save-item-panel="langName"]').replace(tmp.selectEl);
+							tmp.me._signRandID(tmp.selectEl);
+							jQuery("#" + tmp.selectEl.id).select2({
+								allowClear: true
+							});
 							tmp.editEl.down('.form-control[save-item-panel]').focus();
 							tmp.editEl.down('.form-control[save-item-panel]').select();
 							tmp.editEl.getElementsBySelector('.form-control[save-item-panel]').each(function(item) {

@@ -141,7 +141,6 @@ class Controller extends BackEndPageAbstract
     			throw new Exception("System Error: Invalid Language passed in!");
     		$name = trim($param->CallbackParameter->item->name);
     		$active = (!isset($param->CallbackParameter->item->active) || $param->CallbackParameter->item->active !== true ? false : true);
-    		// TODO: handle changable Language
     		
     		$category = Category::get(trim($param->CallbackParameter->item->id));
     		if($category instanceof Category)
