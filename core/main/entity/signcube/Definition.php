@@ -43,7 +43,7 @@ class Definition extends BaseEntityAbstract
 	 * 
 	 * @param string $value The content
 	 * 
-	 * @return DefRow
+	 * @return Definition
 	 */
 	public function setContent($value)
 	{
@@ -64,7 +64,7 @@ class Definition extends BaseEntityAbstract
 	 * 
 	 * @param string $value The sequence
 	 * 
-	 * @return DefRow
+	 * @return Definition
 	 */
 	public function setSequence($value)
 	{
@@ -148,7 +148,7 @@ class Definition extends BaseEntityAbstract
 	 */
 	public function getJson($extra = array(), $reset = false)
 	{
-		return parent::getJson(array_merge($extra, array('definitionType'=> $this->getDefinitionType()->getJson())));
+		return parent::getJson(array_merge($extra, array('video'=> $this->getVideo()->getJson(), 'definitionType'=> $this->getDefinitionType()->getJson())));
 	}
 	/**
 	 * creating a Definition
@@ -162,14 +162,14 @@ class Definition extends BaseEntityAbstract
 	 */
 	public static function create($content, DefinitionType $definitionType, Video $video, $sequence = 0)
 	{
-		$existingEntity = self::getAllByCriteria('content = ? AND wordId = ? AND definitionTypeId = ?', array(trim($content),$word->getId(), $definitionType->getId()));
+		$existingEntity = self::getAllByCriteria('content = ? AND videoId = ? AND definitionTypeId = ?', array(trim($content),$video->getId(), $definitionType->getId()));
 		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new Definition();
 		return $entity->setContent($content)
 			->setSequence($sequence)
 			->setDefinitionType($definitionType)
 			->setVideo($video)
 			->save()
-			->addLog(Log::TYPE_SYS, 'Definition (' . $content . ') with Word (' . $word->getName() . ') with DefinitionType(' . $definitionType->getName() . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now with an sequence: ' . $sequence . ')', __CLASS__ . '::' . __FUNCTION__);
+			->addLog(Log::TYPE_SYS, 'Definition (' . $content . ') with Video (ID=' . $video->getId() . ') with DefinitionType(' . $definitionType->getName() . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now with an sequence: ' . $sequence . ')', __CLASS__ . '::' . __FUNCTION__);
 	}
 }
 ?>

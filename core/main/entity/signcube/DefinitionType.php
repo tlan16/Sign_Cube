@@ -27,7 +27,7 @@ class DefinitionType extends BaseEntityAbstract
 	 * 
 	 * @param string $value The name
 	 * 
-	 * @return DefType
+	 * @return DefinitionType
 	 */
 	public function setName($value)
 	{
