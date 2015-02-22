@@ -12,10 +12,7 @@
 						Language List/New
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/category.html', '_self')">
-						Category List
-					</div>
-					<div class="btn btn-default" onclick="window.open('/backend/category/new.html', '_self')">
-						Category New
+						Category
 					</div>
 					<div class="btn btn-default" onclick="window.open('/backend/definition.html', '_self')">
 						Definition List
