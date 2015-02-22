@@ -58,13 +58,8 @@ class Controller extends BackEndPageAbstract
 			$results['items'] = array();
 			foreach($objects as $obj)
 			{
-				$word = $obj->getWord();
 				$definitionType = $obj->getDefinitionType();
-				$category = $word->getCategory();
-				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence()
-										,'word'=> $word->getName(),'wordId'=> $word->getId(), 'category'=> $category->getName(), 'categoryId'=> $category->getId()
-										,'definitionType'=> $definitionType->getName(), 'definitionTypeId'=> $definitionType->getId()
-				);
+				$results['items'][] = array('id'=> $obj->getId(), 'active'=> $obj->getActive(), 'content'=> $obj->getContent(),'sequence'=> $obj->getSequence());
 			}
 		}
 		catch(Exception $ex)
