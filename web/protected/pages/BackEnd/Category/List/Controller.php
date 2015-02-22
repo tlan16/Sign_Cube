@@ -11,7 +11,10 @@ class Controller extends BackEndPageAbstract
 	protected $_focusEntity = 'Category';
 	protected function _getEndJs()
 	{
+		$languages = array_map(create_function('$a', 'return $a->getJson();'), Language::getAll(true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('name'=>'asc')));
+		
 		$js = parent::_getEndJs();
+		$js .= "pageJs._languages=" . json_encode($languages) . ";";
 		$js .= "pageJs";
 		$js .= "._bindSearchKey()";
 		$js .= ".setCallbackId('getItems', '" . $this->getItemsBtn->getUniqueID() . "')";
@@ -47,29 +50,20 @@ class Controller extends BackEndPageAbstract
 				
 			$where = array(1);
 			$params = array();
+			$query = Category::getQuery();
 			if(isset($serachCriteria['cat.name']) && ($name = trim($serachCriteria['cat.name'])) !== '')
 			{
 				$where[] = 'cat.name like ?';
 				$params[] = '%' . $name . '%';
 			}
+			if(isset($serachCriteria['cat.lang.id']) && ($languageId = trim($serachCriteria['cat.lang.id'])) !== '')
+			{
+				$query->eagerLoad("Category.language", 'inner join', 'lang', 'lang.id = cat.languageId');
+				$where[] = 'cat.languageId = ?';
+				$params[] = $languageId;
+			}
 			$stats = array();
 			$objects = Category::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('cat.id' => 'asc'), $stats);
-			// TODO: serach by language, inner join
-// 			if(isset($serachCriteria['cat.lang']))
-// 			{
-// 				$searchTxt = trim($serachCriteria['cat.lang']);
-// 				$languages = Language::getAllByCriteria('lang.name like ? AND lang.code = ?', array('%' . $searchTxt . '%', $searchTxt));
-// 			}
-// 			else $languages = Language::getAll();
-// 			$objects = array();
-// 			foreach ($categories as $category)
-// 			{
-// 				foreach ($languages as $language)
-// 				{
-// 					if($category->getLanguage()->getId() === $language->getId())
-// 						$objects[] = $category;
-// 				}
-// 			}
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)

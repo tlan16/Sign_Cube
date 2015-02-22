@@ -16,6 +16,16 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				});
 			})
 		});
+		tmp.selectEl = new Element('select', {'class': 'select2 form-control', 'data-placeholder': 'Select a Language', 'search_field': 'cat.lang.id'}).insert({'bottom': new Element('option').update('')});
+		if(tmp.me._languages && tmp.me._languages.length > 0) {
+			tmp.me._languages.each(function(language){
+				tmp.selectEl.insert({'bottom': new Element('option', {'value': language.id}).update(language.name) }); 
+			});
+		}
+		$('searchPanel').down('input[search_field="cat.lang.id"]').replace(tmp.selectEl);
+		jQuery(".select2").select2({
+			allowClear: true
+		});
 		return this;
 	}
 	,_getEditPanel: function(row) {
