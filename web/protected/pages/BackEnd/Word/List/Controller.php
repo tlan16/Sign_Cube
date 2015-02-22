@@ -14,6 +14,7 @@ class Controller extends BackEndPageAbstract
 		$categories = array_map(create_function('$a', 'return $a->getJson();'), Category::getAll(true, null, DaoQuery::DEFAUTL_PAGE_SIZE, array('name'=>'asc')));
 		
 		$js = parent::_getEndJs();
+		$js .= "pageJs._categories=" . json_encode($categories) . ";";
 		$js .= "pageJs";
 		$js .= "._bindSearchKey()";
 		$js .= ".setCallbackId('getItems', '" . $this->getItemsBtn->getUniqueID() . "')";
@@ -21,7 +22,6 @@ class Controller extends BackEndPageAbstract
 		$js .= ".setCallbackId('saveItem', '" . $this->saveItemBtn->getUniqueID() . "')";
 		$js .= ".setHTMLIds('item-list', 'searchPanel', 'total-found-count')";
 		$js .= ".getResults(true, " . DaoQuery::DEFAUTL_PAGE_SIZE . ");";
-		$js .= "pageJs._categories=" . json_encode($categories);
 		return $js;
 	}
 	/**
@@ -47,23 +47,25 @@ class Controller extends BackEndPageAbstract
 			}
 			
 			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-				
 			$where = array(1);
 			$params = array();
+			$query = Word::getQuery();
 			if(isset($serachCriteria['wd.name']) && ($name = trim($serachCriteria['wd.name'])) !== '')
 			{
 				$where[] = 'wd.name like ?';
 				$params[] = '%' . $name . '%';
 			}
-			if(isset($serachCriteria['category.name']) && ($category = trim($serachCriteria['category.name'])) !== '')
+			if(isset($serachCriteria['category.id']) && ($categoryId = trim($serachCriteria['category.id'])) !== '')
 			{
-				$where[] = 'category.name = ?';
-				$params[] = $category;
+				$query->eagerLoad("Word.category", 'inner join', 'cat', 'cat.id = wd.categoryId');
+				$where[] = 'cat.id = ?';
+				$params[] = $categoryId;
 			}
-			if(isset($serachCriteria['language.name']) && ($language = trim($serachCriteria['language.name'])) !== '')
+			if(isset($serachCriteria['language.id']) && ($languageId = trim($serachCriteria['language.id'])) !== '')
 			{
-				$where[] = 'language.name = ?';
-				$params[] = $language;
+				$query->eagerLoad("Word.language", 'inner join', 'lang', 'lang.id = wd.languageId');
+				$where[] = 'lang.id = ?';
+				$params[] = $languageId;
 			}
 			$stats = array();
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('wd.id' => 'asc'), $stats);
@@ -71,7 +73,6 @@ class Controller extends BackEndPageAbstract
 			$results['items'] = array();
 			foreach($objects as $obj)
 				$results['items'][] = $obj->getJson(array('language'=> $obj->getLanguage()->getJson(), 'category'=>$obj->getCategory()->getJson()));
-// 				$results['items'][] = array('category'=> $obj->getJson(), 'language'=>$obj->getLanguage()->getJson());
 		}
 		catch(Exception $ex)
 		{
