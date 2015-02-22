@@ -1,4 +1,36 @@
 -- Setting Up Database
+DROP TABLE IF EXISTS `thirdpartydefinition`;
+CREATE TABLE `thirdpartydefinition` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`content` TEXT NOT NULL ,
+	`sequence` int(10) unsigned NOT NULL DEFAULT 0,
+	`thirdPartyVideoId` int(10) unsigned NOT NULL DEFAULT 0,
+	`thirdPartyDefinitionTypeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`thirdPartyVideoId`)
+	,INDEX (`thirdPartyDefinitionTypeId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `thirdpartydefinitiontype`;
+CREATE TABLE `thirdpartydefinitiontype` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(64) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `thirdpartyvideo`;
 CREATE TABLE `thirdpartyvideo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
