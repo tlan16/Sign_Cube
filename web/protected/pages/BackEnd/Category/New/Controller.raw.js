@@ -229,7 +229,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'th': 'td');
-		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'btn-hide-row item_row') + (language.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : language.id)}).store('data', language)
+		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'item_row') + (language.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : language.id)}).store('data', language)
 			.insert({'bottom': new Element(tmp.tag)
 				.insert({'bottom': (tmp.isTitle === true ? '&nbsp;':
 					new Element('span', {'class': 'btn btn-primary btn-xs'}).update('select')	
@@ -294,7 +294,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'id': tmp.me._htmlIds.searchPanel, 'class': 'panel panel-default search-panel'})
 			.insert({'bottom': new Element('div', {'class': 'panel-heading form-inline'})
-				.insert({'bottom': new Element('strong').update('Creating a new category for language: ') })
+				.insert({'bottom': new Element('strong').update('Please select Language : ') })
 				.insert({'bottom': new Element('span', {'class': 'input-group col-sm-6'})
 					.insert({'bottom': new Element('input', {'class': 'form-control search-txt init-focus', 'placeholder': 'Language name or code'}) 
 						.observe('keydown', function(event){
