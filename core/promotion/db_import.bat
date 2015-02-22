@@ -10,6 +10,7 @@ Pause
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\structure.sql
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\userAccount.sql
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\data.sql
+c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\thirdpartyword(auslan).sql
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\language.sql
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\category.sql
 c:\wamp\bin\mysql\mysql5.6.17\bin\mysql.exe -u root -proot signcube < .\postUserAccount.sql
