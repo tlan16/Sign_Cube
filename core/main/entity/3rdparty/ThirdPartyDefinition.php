@@ -122,7 +122,7 @@ class ThirdPartyDefinition extends BaseEntityAbstract
 	public function preSave()
 	{
 		if(trim($this->getContent()) === '')
-			throw new EntityException('Content can NOT be empty', 'exception_entity_defRow_content_empty');
+			throw new EntityException('Content can NOT be empty');
 	}
 	/**
 	 * (non-PHPdoc)

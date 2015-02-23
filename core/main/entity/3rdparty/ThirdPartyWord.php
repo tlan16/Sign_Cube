@@ -98,7 +98,7 @@ class ThirdPartyWord extends BaseEntityAbstract
 	public function preSave()
 	{
 		if(trim($this->getName()) === '')
-			throw new Exception('Name can NOT be empty', 'exception_entity_word_name_empty');
+			throw new Exception('Name can NOT be empty');
 		if(trim($this->getTag()) === '')
 			throw new Exception('Tag can NOT be empty');
 	}

@@ -41,7 +41,7 @@ class ThirdPartyDefinitionType extends BaseEntityAbstract
 	public function preSave()
 	{
 		if(trim($this->getName()) === '')
-			throw new EntityException('Name can NOT be empty', 'exception_entity_defType_name_empty');
+			throw new EntityException('Name can NOT be empty');
 	}
 	/**
 	 * (non-PHPdoc)
@@ -68,8 +68,7 @@ class ThirdPartyDefinitionType extends BaseEntityAbstract
 		$existingEntity = self::getAllByCriteria('name = ?', array(trim($name)));
 		$entity = count($existingEntity) > 0 ? $existingEntity[0] : new self();
 		return $entity->setName($name)
-			->save()
-			->addLog(Log::TYPE_SYS, 'DefinitionType (' . $name . ') ' . (count($existingEntity) > 0 ? 'updated' : 'created') . 'now', __CLASS__ . '::' . __FUNCTION__);
+			->save();
 	}
 }
 ?>
