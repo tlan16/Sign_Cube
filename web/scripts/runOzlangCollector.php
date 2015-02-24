@@ -6,7 +6,7 @@ echoLog ('START ' . new UDate() . "\n");
 
 const MAX_PAGE_NO = 99;
 
-try 
+try
 {
 	if(count($category = Category::getAllByCriteria('name = ?', array('Auslan'), true, 1, 1)) == 0 || !($category = $category[0]) instanceof Category)
 		throw new Exception('auslan Category must exist');
@@ -15,10 +15,38 @@ try
 } catch (Exception $ex) {
 	echoLog($ex->getMessage());
 }
+function getWordDefinition($name) // from dictionary.com
+{
+	$definitionGroups = array();
+	
+	$pageURL = htmlspecialchars_decode(("http://dictionary.reference.com/browse/" . trim($name)), ENT_QUOTES);
+	$pageHtml = Simple_HTML_DOM_Abstract::file_get_html($pageURL);
+	foreach ($pageHtml->find('.source-data section.def-pbk') as $block)
+	{
+		if(count($headers = $block->find('header')) > 0)
+		{
+			$type = trim($headers[0]->plaintext);
+			$type = str_replace('</audio>', '', $type);
+			if(strpos($type,'[') !== false)
+				$type = trim(preg_replace('/\[.*/', '', $type));
+			foreach ($block->find('.def-set') as $defset)
+			{
+				if(count($sequences = $defset->find('.def-number')) > 0 && count($contents = $defset->find('.def-content')) > 0 && (intval(isset($sequence) ? $sequence : 0) < intval(trim(str_replace('.', '', $sequences[0]->plaintext)))))
+				{
+					$sequence = trim(str_replace('.', '', $sequences[0]->plaintext));
+					$sequence = preg_replace("/[^0-9]/", "", $sequence); // only take numbers from string
+					$content = trim($contents[0]->plaintext);
+					$definitionGroups[] = array('type'=> htmlspecialchars_decode($type, ENT_QUOTES), 'content'=> htmlspecialchars_decode($content, ENT_QUOTES), 'sequence'=> htmlspecialchars_decode($sequence, ENT_QUOTES));
+				}
+			}
+		}
+	}
+	return $definitionGroups;
+}
 function getPageDefinition($url)
 {
 	$pageURL = htmlspecialchars_decode($url, ENT_QUOTES);
-		
+	
 	$pageHtml = Simple_HTML_DOM_Abstract::file_get_html($pageURL);
 	$definitionGroups = $definitionTypes = $definitionRows = array();
 	foreach ($pageHtml->find('#definitionblock .col-md-8 h3') as $item)
@@ -56,17 +84,30 @@ function getAllVideoLinks($delay = 0)
 				$page = $video['page'];
 				$video = count(ThirdPartyVideo::getAllByCriteria('link = ?', array($video['video']), false, 1, 1)) == 0 ? ThirdPartyVideo::create(basename($video['video']), $video['video'], $video['poster']) : ThirdPartyVideo::getAllByCriteria('link = ? AND poster = ?', array($video['video'], $video['poster']), false, 1, 1)[0];
 				echoLog($page . "\n");
-				foreach (getPageDefinition($page) as $definition)
+				$pageDefinitions = getPageDefinition($page);
+				if(count($pageDefinitions) > 0)
 				{
-					foreach ($definition as $key=>$value)
+					foreach ($pageDefinitions as $definition)
 					{
-						$definitionType = ThirdPartyDefinitionType::create($key);
-						$definitionRows = array();
-						foreach ($value as $item)
+						foreach ($definition as $key=>$value)
 						{
-							$definitionRows[] = $definitionRow = ThirdPartyDefinition::create($item, $definitionType, $video);
-							echoLog($definitionType->getName() . '(ID=' . $definitionType->getId() . '): (ID=' . $definitionRow->getId() . ')' . $definitionRow->getContent() . "\n");
+							$definitionType = ThirdPartyDefinitionType::create($key);
+							$definitionRows = array();
+							foreach ($value as $item)
+							{
+								$definitionRows[] = $definitionRow = ThirdPartyDefinition::create($item, $definitionType, $video);
+								echoLog($definitionType->getName() . '(ID=' . $definitionType->getId() . '): (ID=' . $definitionRow->getId() . ')' . $definitionRow->getContent() . "\n");
+							}
 						}
+					}
+				}
+				else 
+				{
+					foreach (getWordDefinition($word->getName()) as $definition)
+					{
+						$definitionType = ThirdPartyDefinitionType::create($definition['type']);
+						$definitionRow = ThirdPartyDefinition::create($definition['content'], $definitionType, $video, $definition['sequence']);
+						echoLog($definitionType->getName() . '(ID=' . $definitionType->getId() . '):' . (empty($definition['sequence']) ? '' : ' ' . $definition['sequence'] . ' :') . ' (ID=' . $definitionRow->getId() . ')' . $definitionRow->getContent() . "\n");
 					}
 				}
 				$wordVideo = count(ThirdPartyWordVideo::getAllByCriteria('thirdPartyWordId = ? AND thirdPartyVideoId = ?', array($word->getId(), $video->getId()), 1, 1)) == 0 ? ThirdPartyWordVideo::create($word, $video) : ThirdPartyWordVideo::getAllByCriteria('thirdPartyWordId = ? AND thirdPartyVideoId = ?', array($word->getId(), $video->getId()), 1, 1)[0];
@@ -83,50 +124,46 @@ function getAllVideoLinks($delay = 0)
 }
 function getAllLinks($url, $delay = 0)
 {
-	try {
-		$dictionaryURL = $url;
-		foreach (getAZLinks($dictionaryURL) as $AZLink)
+	$dictionaryURL = $url;
+	foreach (getAZLinks($dictionaryURL) as $AZLink)
+	{
+		try 
 		{
-			try 
+			Dao::beginTransaction();
+			sleep($delay);
+			echoLog($delay === 0 ? '' : ('Delay for ' . $delay . ' seconds' . "\n"));
+			
+			for($pageNo=1; $pageNo<MAX_PAGE_NO; $pageNo++)
 			{
-				Dao::beginTransaction();
-				sleep($delay);
-				echoLog(($AZLink . "\n"));
+				echoLog(('Page ' . $pageNo . ':' . "\n"));
 				
-				for($pageNo=1; $pageNo<MAX_PAGE_NO; $pageNo++)
+				$pageWordsThis = getPageWords($AZLink . '&page=' . $pageNo);
+				$pageWordsNext = getPageWords($AZLink . '&page=' . ($pageNo+1) );
+				if($pageWordsThis !== $pageWordsNext)
 				{
-					echoLog(('Page ' . $pageNo . ':' . "\n"));
-					
-					$pageWordsThis = getPageWords($AZLink . '&page=' . $pageNo);
-					$pageWordsNext = getPageWords($AZLink . '&page=' . ($pageNo+1) );
-					if($pageWordsThis !== $pageWordsNext)
+					foreach ($pageWordsThis as $item)
 					{
-						foreach ($pageWordsThis as $item)
-						{
-							$word = count(ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)) == 0 ? ThirdPartyWord::create($item['word'], $item['href']) : ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)[0];
-							echoLog($word->getName() . "(id= " . $word->getId() . "): " . $word->getLink() . "\n");
-						}
-						echoLog("\n");
-					} else
-					{
-						foreach ($pageWordsNext as $item)
-						{
-							$word = count(ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)) == 0 ? ThirdPartyWord::create($item['word'], $item['href']) : ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)[0];
-							echoLog($word->getName() . "(id= " . $word->getId() . "): " . $word->getLink() . "\n");
-						}
-						echoLog("\n");
-						break;
+						$word = count(ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)) == 0 ? ThirdPartyWord::create($item['word'], $item['href']) : ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)[0];
+						echoLog($word->getName() . "(id= " . $word->getId() . "): " . $word->getLink() . "\n");
 					}
+					echoLog("\n");
+				} else
+				{
+					foreach ($pageWordsNext as $item)
+					{
+						$word = count(ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)) == 0 ? ThirdPartyWord::create($item['word'], $item['href']) : ThirdPartyWord::getAllByCriteria('name = ? AND link = ?', array($item['word'], $item['href']), false, 1, 1)[0];
+						echoLog($word->getName() . "(id= " . $word->getId() . "): " . $word->getLink() . "\n");
+					}
+					echoLog("\n");
+					break;
 				}
-				echoLog("\n");
-				Dao::commitTransaction();
-			} catch (Exception $ex) {
-				Dao::rollbackTransaction();
-				echoLog($ex->getMessage());
 			}
+			echoLog("\n");
+			Dao::commitTransaction();
+		} catch (Exception $ex) {
+			Dao::rollbackTransaction();
+			echoLog($ex->getMessage());
 		}
-	} catch (Exception $ex) {
-		echoLog($ex->getMessage());
 	}
 }
 function bindAsset($url)
@@ -181,7 +218,9 @@ function getVideos($url)
 		foreach ($pages as $page)
 		{
 			$iframe = Simple_HTML_DOM_Abstract::file_get_html(getHostUrl($url) . $page->dom->find('#videocontainer iframe')[0]->src);
-			$result[] = array('poster'=> $iframe->find('video')[0]->poster, 'video'=> $iframe->find('video source')[0]->src, 'page'=> $page->link);
+			$source = $iframe->find('video source')[0]->src;
+			$poster = $iframe->find('video')[0]->poster;
+			$result[] = array('poster'=> (strpos($poster, "http://") === false ? getHostUrl($page->link) . $poster : $poster), 'video'=> (strpos($source, "http://") === false ? getHostUrl($page->link) . $source : $source), 'page'=> $page->link);
 		}
 	}catch(Exception $ex)
 	{
@@ -247,6 +286,7 @@ function getPageLinks($url, $pageNo)
 }
 function getHostUrl($url)
 {
+	$url = htmlspecialchars_decode($url, ENT_QUOTES);
 	$parts = parse_url($url);
 	return (isset($parts['scheme']) && isset($parts['host']) ) ? (trim($parts['scheme']) . '://' . trim($parts['host']) ) : '';
 }
