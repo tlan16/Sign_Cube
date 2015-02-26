@@ -1,9 +1,21 @@
 <?php
+use Html5Video\Html5Video;
 require_once 'bootstrap.php';
 echo '<pre>';
-
+Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 try
 {
+	$class = new Html5Video();
+	$profileName = '480p-hd'; // other profiles are listed in src/Html5Video/profiles
+	$config = array(
+			'ffmpeg.bin' => "C:\Users\Frank-Desktop\git\Sign_Cube\core\main\util\Html5Video\ffmpeg\bin\ffmpeg.exe",
+			'qt-faststart.bin' => "C:\Users\Frank-Desktop\git\Sign_Cube\core\main\util\Html5Video\qt-faststart\qt-faststart.exe",
+	);
+	$class->convert("C:\Users\Frank-Desktop\Videos\Wildlife.wmv", "C:\Users\Frank-Desktop\Videos\Wildlife.mp4", $profileName, $config);
+	
+	
+	
+	die;
 	// this username, password only existing in app
 	$username = 'test@test.com';
 	$password = 'test';
