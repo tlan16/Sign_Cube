@@ -1,11 +1,5 @@
 <?php
 require_once dirname(__FILE__) . '/../../../bootstrap.php';
-/**
- * The cronjob for the message sending.
- * 
- * @author lin
- *
- */
 abstract class MessageSender
 {
 	public static function run()
@@ -17,15 +11,15 @@ abstract class MessageSender
 			self::_logMsg("    Looping message(ID=" . $message->getId() . ': ', __CLASS__, __FUNCTION__);
 			try {
 				Dao::beginTransaction();
-				EmailSenderAbstract::sendEmail($message->getTo(), $message->getSubject(), $message->getBody());
-				$message->setStatus(Message::SENT_TYPE_SENT)
+				EmailSender::sendEmail($message->getFrom(), $message->getTo(), $message->getSubject(), $message->getBody(), $message->getAttachmentAssetIdArray());
+				$message->setStatus(Message::STATUS_SENT)
 					->save();
 				Dao::commitTransaction();
 				
 				self::_logMsg("    SUCCESS sending message(ID=" . $message->getId() . ').', __CLASS__, __FUNCTION__);
 			} catch(Exception $ex) {
 				Dao::rollbackTransaction();
-				$message->setStatus(Message::SENT_TYPE_FAILED)
+				$message->setStatus(Message::STATUS_FAILED)
 					->save();
 				self::_logMsg("    ERROR sending message(ID=" . $message->getId() . ': ' . $ex->getMessage(), __CLASS__, __FUNCTION__);
 				self::_logMsg("    ERROR sending message(ID=" . $message->getId() . ': ' . $ex->getTraceAsString(), __CLASS__, __FUNCTION__);
@@ -42,8 +36,8 @@ abstract class MessageSender
 	private static function _getAndMarkMessages()
 	{
 		$randId = StringUtilsAbstract::getRandKey();
-		Message::updateByCriteria('transId = ?, status = ?', 'active = 1 and status = ?', array($randId, Message::SENT_TYPE_SENDING, Message::SENT_TYPE_NEW));
-		return Message::getAllByCriteria('transId = ? and status = ?', array($randId, Message::SENT_TYPE_SENDING));
+		Message::updateByCriteria('transId = ?, status = ?', 'active = 1 and status = ?', array($randId, Message::STATUS_SENDING, Message::STATUS_NEW));
+		return Message::getAllByCriteria('transId = ? and status = ?', array($randId, Message::STATUS_SENDING));
 	}
 }
 

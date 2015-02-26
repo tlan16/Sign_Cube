@@ -54,7 +54,7 @@ class LoginController extends FrontEndPageAbstract
             $password = StringUtilsAbstract::getRandKey($email);
             Core::setUser(UserAccount::get(UserAccount::ID_GUEST_ACCOUNT));
             
-            $newUser = UserAccount::create($email, $password, ($person = Person::create($email, 'User', $email)));
+            $newUser = UserAccount::create($email, $password, ($person = Person::create($email, 'User', $email)), '', false);
             $appInfo = Core::getAppMetaInfo();
             Message::create(Core::getUser()->getPerson(), $person, 
             	($subject = 'Welcome to ' . $appInfo['name'] . ', you are just one step away from it.') , 
@@ -62,7 +62,7 @@ class LoginController extends FrontEndPageAbstract
             	.'<div>'
             		.'<div>here is your initial login details, please change it after you logged in</div>'
             		.'<div><b>Username: </b>' . $email . ' </div>'
-            		.'<div><b>Initial Password: </b>' . $password . ' </div>'
+            		.'<div><b>Password: </b>' . $password . ' </div>'
             	.'</div>', 
             	Message::TYPE_EMAIL
             ); 

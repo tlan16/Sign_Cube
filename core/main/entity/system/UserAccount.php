@@ -270,7 +270,7 @@ class UserAccount extends ConfirmEntityAbstract
     		->setSkey(md5($username . $password))
     		->setExpiry($expiry === '' ? UDate::zeroDate() : $expiry)
     		->save()
-    		->needToConfirm('UserAccount Created')
+//     		->needToConfirm('UserAccount Created')
     		->addLog(Log::TYPE_SYS, 'UserAccount created with (username=' . $username . ') with person(id=' . $person->getId() . ')');
     }
     /**

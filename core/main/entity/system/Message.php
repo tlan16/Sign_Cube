@@ -1,108 +1,71 @@
 <?php
+/**
+ * Entity for Customer
+ *
+ * @package    Core
+ * @subpackage Entity
+ * @author     lhe<helin16@gmail.com>
+ */
 class Message extends BaseEntityAbstract
 {
 	const TYPE_EMAIL = 'EMAIL';
-	const TYPE_SMS = 'SMS';
 	
-	const SENT_TYPE_NEW = 'NEW';
-	const SENT_TYPE_SENDING = 'SENDING';
-	const SENT_TYPE_SENT = 'SENT';
-	const SENT_TYPE_FAILED = 'FAILED';
+	const STATUS_NEW = 'NEW';
+	const STATUS_SENDING = 'SENDING';
+	const STATUS_SENT = 'SENT';
+	const STATUS_FAILED = 'FAILED';
+	
 	/**
-	 * The message is send to
-	 * 
-	 * @var Person
-	 */
-	protected $to;
-	/**
-	 * The message is send from
-	 * 
-	 * @var Person
-	 */
-	protected $from;
-	/**
-	 * Type of the message: system or user
-	 * 
+	 * The type of the message
+	 *
 	 * @var string
 	 */
 	private $type;
 	/**
-	 * The subject of the message
-	 * 
+	 * The originator of message
+	 *
+	 * @var string
+	 */
+	private $from;
+	/**
+	 * The destination of message
+	 *
+	 * @var string
+	 */
+	private $to;
+	/**
+	 * The subject of message
+	 *
 	 * @var string
 	 */
 	private $subject;
 	/**
-	 * The body of the message
-	 * 
+	 * The body of message
+	 *
 	 * @var string
 	 */
 	private $body;
 	/**
-	 * Whether the message has been read by the user
-	 * 
-	 * @var string
-	 */
-	private $isRead = false;
-	/**
-	 * The messge sending type: NEW, SENDING and SENT
-	 * 
-	 * @var string
-	 */
-	private $sendType = self::SENT_TYPE_NEW;
-	/**
-	 * The identifier of that transation
+	 * The status of message
 	 *
+	 * @var string
+	 */
+	private $status = self::STATUS_NEW;
+	/**
+	 * Transaction ID
+	 * 
 	 * @var string
 	 */
 	private $transId = '';
 	/**
-	 * Getter for to
-	 *
-	 * @return Person
+	 * The comma separated assetIds
+	 * 
+	 * @var string
 	 */
-	public function getTo() 
-	{
-		$this->loadManyToOne('to');
-	    return $this->to;
-	}
+	private $attachAssetIds = '';
 	/**
-	 * Setter for to
-	 *
-	 * @param Person $value The to
-	 *
-	 * @return Message
-	 */
-	public function setTo(Person $value) 
-	{
-	    $this->to = $value;
-	    return $this;
-	}
-	/**
-	 * Getter for from
-	 *
-	 * @return Person
-	 */
-	public function getFrom() 
-	{
-		$this->loadManyToOne('from');
-	    return $this->from;
-	}
-	/**
-	 * Setter for from
-	 *
-	 * @param Person $value The from
-	 *
-	 * @return Message
-	 */
-	public function setFrom(Person $value) 
-	{
-	    $this->from = $value;
-	    return $this;
-	}
-	/**
-	 * Getter for type
-	 *
+	 * Getter for the type
+	 * 
 	 * @return string
 	 */
 	public function getType() 
@@ -110,10 +73,10 @@ class Message extends BaseEntityAbstract
 	    return $this->type;
 	}
 	/**
-	 * Setter for type
-	 *
-	 * @param string $value The type
-	 *
+	 * Setter for the type
+	 * 
+	 * @param string $value The type of the message
+	 * 
 	 * @return Message
 	 */
 	public function setType($value) 
@@ -122,8 +85,50 @@ class Message extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
-	 * Getter for subject
-	 *
+	 * Getter for the from
+	 * 
+	 * @return string
+	 */
+	public function getFrom() 
+	{
+	    return $this->from;
+	}
+	/**
+	 * Setter for the from
+	 * 
+	 * @param string $value The from of the message
+	 * 
+	 * @return Message
+	 */
+	public function setFrom($value) 
+	{
+	    $this->from = $value;
+	    return $this;
+	}
+	/**
+	 * Getter for the to
+	 * 
+	 * @return string
+	 */
+	public function getTo() 
+	{
+	    return $this->to;
+	}
+	/**
+	 * Setter for the to
+	 * 
+	 * @param string $value The to of the message
+	 * 
+	 * @return Message
+	 */
+	public function setTo($value) 
+	{
+	    $this->to = $value;
+	    return $this;
+	}
+	/**
+	 * Getter for the subject
+	 * 
 	 * @return string
 	 */
 	public function getSubject() 
@@ -131,10 +136,10 @@ class Message extends BaseEntityAbstract
 	    return $this->subject;
 	}
 	/**
-	 * Setter for subject
-	 *
-	 * @param string $value The subject
-	 *
+	 * Setter for the subject
+	 * 
+	 * @param string $value The subject of the message
+	 * 
 	 * @return Message
 	 */
 	public function setSubject($value) 
@@ -143,8 +148,8 @@ class Message extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
-	 * Getter for body
-	 *
+	 * Getter for the body
+	 * 
 	 * @return string
 	 */
 	public function getBody() 
@@ -152,10 +157,10 @@ class Message extends BaseEntityAbstract
 	    return $this->body;
 	}
 	/**
-	 * Setter for body
-	 *
-	 * @param string $value The body
-	 *
+	 * Setter for the body
+	 * 
+	 * @param string $value The body of the message
+	 * 
 	 * @return Message
 	 */
 	public function setBody($value) 
@@ -164,136 +169,130 @@ class Message extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
-	 * Getter for the transId
-	 *
+	 * Getter for the status
+	 * 
 	 * @return string
 	 */
-	public function getTransId()
+	public function getStatus() 
 	{
-		return $this->transId;
+	    return $this->status;
+	}
+	/**
+	 * Setter for the status
+	 * 
+	 * @param string $value The status of the message
+	 * 
+	 * @return Message
+	 */
+	public function setStatus($value) 
+	{
+    	$this->status = trim($value);
+	    return $this;
+	}
+	/**
+	 * Getter for the transId
+	 * 
+	 * @return string
+	 */
+	public function getTransId() 
+	{
+	    return $this->transId;
 	}
 	/**
 	 * Setter for the transId
-	 *
-	 * @param string $value The transId
-	 *
+	 * 
+	 * @param string $value The transId of the message
+	 * 
 	 * @return Message
 	 */
-	public function setTransId($value)
+	public function setTransId($value) 
 	{
-		$this->transId = $value;
-		return $this;
+    	$this->transId = trim($value);
+	    return $this;
 	}
 	/**
-	 * Getter for the isRead
-	 *
-	 * @return bool
+	 * Getter for the attachAssetIds
+	 * 
+	 * @return array()
 	 */
-	public function getIsRead()
+	public function getAttachAssetIds() 
 	{
-		return $this->isRead;
+		return $this->attachAssetIds;
 	}
 	/**
-	 * Setter for the isRead
-	 *
-	 * @param bool $value The isRead
-	 *
+	 * Setter for the attachAssetIds
+	 * 
+	 * @param string $value The attachAssetIds of the message
+	 * 
 	 * @return Message
 	 */
-	public function setIsRead($value)
+	public function setAttachAssetIds($value) 
 	{
-		$this->isRead = $value;
-		return $this;
+    	$this->attachAssetIds = $value;
+	    return $this;
 	}
 	/**
-	 * Getter for the sendType
-	 *
-	 * @return string
+	 * Getting the array of assetids
+	 * 
+	 * @return multitype:string
 	 */
-	public function getSendType()
+	public function getAttachmentAssetIdArray()
 	{
-		return $this->sendType;
-	}
-	/**
-	 * Setter for the sendType
-	 *
-	 * @param bool $value The sendType
-	 *
-	 * @return Message
-	 */
-	public function setSendType($value)
-	{
-		$this->sendType = $value;
-		return $this;
+   		return array_map(create_function('$a', 'return trim($a);'), explode(',', $this->getAttachAssetIds()));
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::getJson()
-	 */
-	public function getJson($extra = '', $reset = false)
-	{
-		$array = array();
-		if(!$this->isJsonLoaded($reset))
-		{
-			$array['to'] = $this->getTo()->getJson();
-			$array['from'] = $this->getFrom()->getJson();
-		}
-		return parent::getJson($array, $reset);
-	}
-	/**
-	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::__toString()
-	 */
-	public function __toString()
-	{
-		return 'Message for ' . $this->getTo() . ' from ' . $this->getFrom() . ': ' . $this->getSubject();
-	}
-	/**
-	 * (non-PHPdoc)
-	 * @see BaseEntity::__loadDaoMap()
+	 * @see HydraEntity::__loadDaoMap()
 	 */
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'msg');
 	
-		DaoMap::setBoolType('isRead');
-		DaoMap::setStringType('sendType','varchar', 10);
-		DaoMap::setManyToOne('to', 'Person');
-		DaoMap::setManyToOne('from', 'Person');
-		DaoMap::setStringType('type','varchar', 10);
-		DaoMap::setStringType('subject','varchar', 100);
-		DaoMap::setStringType('body','longtext');
 		DaoMap::setStringType('transId','varchar', 32);
-	
+		DaoMap::setStringType('type', 'varchar', 50);
+		DaoMap::setStringType('from', 'varchar', 200);
+		DaoMap::setStringType('to', 'varchar', 255);
+		DaoMap::setStringType('subject', 'varchar', 200);
+		DaoMap::setStringType('body', 'longtext');
+		DaoMap::setStringType('status', 'varchar', 10);
+		DaoMap::setStringType('attachAssetIds', 'longtext');
+		
 		parent::__loadDaoMap();
 	
-		DaoMap::createIndex('isRead');
-		DaoMap::createIndex('sendType');
 		DaoMap::createIndex('transId');
 		DaoMap::createIndex('type');
-		DaoMap::createIndex('subject');
+		DaoMap::createIndex('from');
+		DaoMap::createIndex('to');
+		DaoMap::createIndex('status');
 	
 		DaoMap::commit();
 	}
 	/**
-	 * creating a message
-	 * 
-	 * @param Person  $from
-	 * @param Person  $to
-	 * @param unknown $type
-	 * @param unknown $subject
-	 * @param unknown $body
-	 * 
+	 * Creating a instance of this
+	 *
+	 * @param string  $from
+	 * @param string  $to
+	 * @param string  $subject
+	 * @param string  $body
+	 * @param string  $type
+	 * @param string  $status
+	 *
 	 * @return Message
 	 */
-	public static function create(Person $from, Person $to, $subject, $body, $type)
+	public static function create($from, $to, $subject, $body, $type, $attachmentAssets = array())
 	{
+		$attacheAssetIds = array();
+		foreach($attachmentAssets as $asset) {
+			if($asset instanceof Asset)
+				$attacheAssetIds[] = trim($asset->getAssetId());
+		}
 		$entity = new Message();
-		return $entity->setTo($to)
-			->setFrom($from)
-			->setType(trim($type))
+		return $entity->setFrom(trim($from))
+			->setTo(trim($to))
 			->setSubject(trim($subject))
 			->setBody(trim($body))
+			->setType(trim($type))
+			->setAttachAssetIds(implode(',', $attacheAssetIds))
 			->save();
 	}
 }
