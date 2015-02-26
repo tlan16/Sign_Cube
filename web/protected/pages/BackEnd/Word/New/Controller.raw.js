@@ -22,6 +22,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me._htmlIds.uploaderDivId = uploaderDivId;
 		tmp.me._htmlIds.definitionsContainer = 'definitions_container';
 		tmp.me._htmlIds.definitionsContainerInner = 'definitions_container_inner';
+		tmp.me._htmlIds.breadcrumb = 'breadcrumb';
 		return this;
 	}
 	,_saveWord: function() {
@@ -60,7 +61,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me.postAjax(tmp.me.getCallbackId('saveWord'), {'definitions': tmp.data, 'videos': tmp.me._videos, 'word': tmp.me._word}, {
 			'onLoading': function() {
 				$(tmp.me._htmlIds.itemDiv).insert({'top': tmp.loadingImg = tmp.me.getLoadingImg()});
-//				$(tmp.me._htmlIds.definitionsContainer).hide();
+				$(tmp.me._htmlIds.definitionsContainer).hide();
 			}
 			,'onSuccess': function(sender, param){
 				try {
@@ -69,7 +70,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						throw 'errror: php passback Error';
 					else {
 						tmp.me.showModalBox('Success','<h4>Word Saved Successfully</h4>');
-//						window.location.reload();
+						window.location.reload();
 					}
 				} catch(e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);
@@ -88,7 +89,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.newDiv = new Element('div', {'class': 'row definitionRow'}).setStyle('padding-bottom: 10px;')
 			.insert({'bottom': new Element('span', {'class': 'col-md-8'}) 
 				.insert({'bottom': new Element('input', {'save-def-item': 'definitionId', 'type': 'text', 'value': (tmp.definition === false ? '' : tmp.definition.id)}).setStyle('display: none;') })
-				.insert({'bottom': new Element('input', {'save-def-item': 'definitionRow', 'type': 'text', 'placeholder': 'Definition', 'value': (tmp.definition === false ? '' : tmp.definition.content)}).setStyle('width: 100%;')
+				.insert({'bottom': new Element('input', {'save-def-item': 'definitionRow', 'type': 'text', 'placeholder': 'Definition', 'title': 'Definition', 'value': (tmp.definition === false ? '' : tmp.definition.content)}).setStyle('width: 60%;')
 					.observe('keydown', function(event){
 						tmp.btn = $(this);
 						tmp.me.keydown(event, function() {
@@ -100,7 +101,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 				})
 			})
 			.insert({'bottom': new Element('span', {'class': 'col-md-2'}) 
-				.insert({'bottom': new Element('input', {'save-def-item': 'definitionOrder', 'type': 'value', 'placeholder': 'Order (optional)', 'value': (tmp.definition === false ? '' : tmp.definition.sequence)}).setStyle('width: 100%;')
+				.insert({'bottom': new Element('input', {'save-def-item': 'definitionOrder', 'type': 'value', 'placeholder': 'Order (optional)', 'title': 'Order (optional)', 'value': (tmp.definition === false ? '' : tmp.definition.sequence)}).setStyle('width: 60%;')
 					.observe('keydown', function(event){
 						tmp.btn = $(this);
 						tmp.me.keydown(event, function() {
@@ -144,7 +145,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element('div', {'class': 'panel-heading'})
 				.insert({'bottom': new Element('div', {'class': 'row'})
 					.insert({'bottom': new Element('input', {'save-def-item': 'typeId', 'type': 'text', 'value': (tmp.definition === false ? '' : tmp.definition.definitionType.id)}).setStyle('display: none;') })
-					.insert({'bottom': new Element('input', {'save-def-item': 'type', 'type': 'text', 'placeholder': 'the Type of Definition', 'value': (tmp.definition === false ? '' : tmp.definition.definitionType.name)}).setStyle('width: 100%;')
+					.insert({'bottom': new Element('input', {'save-def-item': 'type', 'type': 'text', 'placeholder': 'the Type of Definition', 'value': (tmp.definition === false ? '' : tmp.definition.definitionType.name)}).setStyle('width: 60%;')
 						.observe('keydown', function(event){
 							tmp.btn = $(this);
 							tmp.me.keydown(event, function() {
@@ -154,8 +155,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						})
 						.wrap(new Element('span', {'class': 'col-md-8'})) 
 					})
-					.insert({'bottom': new Element('span', {'class': 'col-md-4 btn-group'})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-xs btn-save-def-type'})
+					.insert({'bottom': new Element('span', {'class': 'col-md-4 btn-group pull-right'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-xs btn-save-def-type pull-right'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-floppy-saved'})})
 							.observe('click', function(){
 								if($F($(this).up('.panel-heading').down('[save-def-item="type"]')).empty())
@@ -168,7 +169,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 								}
 							})
 						})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-xs'})
+						.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-xs pull-right'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-floppy-remove'})})
 							.observe('click', function(){
 								$(this).up('.panel.definitionGroup').hide();
@@ -185,7 +186,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.newDIv = new Element('div', {'id': tmp.me._htmlIds.definitionsContainer})
 			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-success pull-right'})
+				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-success pull-right'}).setStyle('margin-right: 5%;')
 					.insert({'bottom': new Element('span').update('Save Word')})
 					.observe('click', function(){
 						tmp.me._saveWord();
@@ -199,14 +200,14 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-play-circle'}) })
 							.insert({'bottom': new Element('span').update('Preview video') })
 							.observe('click', function(){
-								tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+								tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': '100%', 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
 								.insert({'bottom': new Element('source', {'src': tmp.me._videos[0].src, 'type': tmp.me._videos[0].mimeType}) });
 								tmp.me._signRandID(tmp.videoEl);
 								tmp.me.showModalBox('Video Preview',tmp.videoEl);
 								videojs($(tmp.videoEl.id), {}, function() { });
 							})
 						})
-						.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+						.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'}).setStyle('margin-top: -22px;')
 							.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
 							.observe('click', function(){
 								$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
@@ -234,7 +235,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 											.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-play-circle'}) })
 											.insert({'bottom': new Element('span').update('Preview video') })
 											.observe('click', function(){
-												tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
+												tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': '100%', 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
 												.insert({'bottom': new Element('source', {'src': item.src, 'type': item.mimeType}) });
 												tmp.me._signRandID(tmp.videoEl);
 												tmp.me.showModalBox('Video Preview',tmp.videoEl);
@@ -242,7 +243,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 											})
 										})
 										.insert({'bottom': new Element('div', {'class': 'panel-body'})
-											.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+											.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'}).setStyle('margin-top: -2%;')
 												.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
 												.observe('click', function(){
 													$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
@@ -282,7 +283,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							})
 						})
 						.insert({'bottom': new Element('div', {'class': 'panel-body'})
-							.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'})
+							.insert({'bottom': new Element('div', {'class': 'btn btn-xs btn-primary btn-new-definitionGroup pull-right'}).setStyle('margin-top: -2%;')
 								.insert({'bottom': new Element('i', {'class': 'fa fa-plus'}).update('&nbsp;&nbsp;New Definition Type') })
 								.observe('click', function(){
 									$(this).insert({'after': tmp.newDefinitionGroup = tmp.me._getNewDefinitionGroup()});
@@ -353,6 +354,27 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._getDefinitionTypes();
+		tmp.count = 0;
+		tmp.me._videos.each(function(item){
+			if(item.valid === true)
+				tmp.count += 1;
+		});
+		$(tmp.me._htmlIds.breadcrumb).show().insert({'bottom': new Element('li').update(tmp.count + ' Video' + (tmp.count === 1 ? '' : 's') )});
+	}
+	,getVideoEl: function(source, type, width, height) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.width = (width || false);
+		tmp.height = (height || false);
+		tmp.videoEl =  new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'controls': (jQuery(window).width() < 380 ? false : true), 'preload': 'auto', 'autoplay': true, 'loop': true})
+			.insert({'bottom': new Element('source', {'src': source, 'type': type}) });
+		if(jQuery(window).width() < 380)
+			tmp.videoEl.writeAttribute('width', '90%');
+		if(tmp.width !== false)
+			tmp.videoEl.writeAttribute('width', tmp.width);
+		if(tmp.height !== false)
+			tmp.videoEl.writeAttribute('height', tmp.height);
+		return tmp.videoEl;
 	}
 	,getVideoRow: function(container, video, asset){
 		var tmp = {};
@@ -360,18 +382,16 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		container
 			.insert({'bottom': new Element('div', {'class': 'row video-row', 'video-id': video.id})
 				.insert({'bottom': new Element('div', {'class': 'col-md-4'})
-					.insert({'bottom': tmp.videoEl = new Element('video', {'class': 'video-js vjs-default-skin vjs-big-play-centered', 'width': 320, 'height': 240, 'controls': true, 'preload': 'auto', 'autoplay': true, 'loop': true})
-						.insert({'bottom': new Element('source', {'src': video.asset.url, 'type': asset.mimeType}) })
-					})
+					.insert({'bottom': tmp.videoEl = tmp.me.getVideoEl(video.asset.url, asset.mimeType) })
 				})
 				.insert({'bottom': new Element('div', {'class': 'col-md-8'})
-					.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Asset</b>') })
-					.insert({'bottom': tmp.assetKeyRow = new Element('div', {'class': 'row asset-key-row'}) })
-					.insert({'bottom': tmp.assetValueRow = new Element('div', {'class': 'row asset-value-row'}) })
-					.insert({'bottom': new Element('div', {'class': 'row clearfix'}).setStyle('border: 1px solid brown;') })
-					.insert({'bottom': new Element('div', {'class': 'row'}).update('<b>Video</b>') })
-					.insert({'bottom': tmp.videoKeyRow = new Element('div', {'class': 'row video-key-row'}) })
-					.insert({'bottom': tmp.videoValueRow = new Element('div', {'class': 'row video-value-row'}) })
+					.insert({'bottom': new Element('div', {'class': 'row hidden-xs'}).update('<b>Asset</b>') })
+					.insert({'bottom': tmp.assetKeyRow = new Element('div', {'class': 'row asset-key-row hidden-xs'}) })
+					.insert({'bottom': tmp.assetValueRow = new Element('div', {'class': 'row asset-value-row hidden-xs'}) })
+					.insert({'bottom': new Element('div', {'class': 'row clearfix hidden-xs'}).setStyle('border: 1px solid brown;') })
+					.insert({'bottom': new Element('div', {'class': 'row hidden-xs'}).update('<b>Video</b>') })
+					.insert({'bottom': tmp.videoKeyRow = new Element('div', {'class': 'row video-key-row hidden-xs'}) })
+					.insert({'bottom': tmp.videoValueRow = new Element('div', {'class': 'row video-value-row hidden-xs'}) })
 					.insert({'bottom': new Element('div', {'class': 'row btn-row text-right'}) 
 						.insert({'bottom': new Element('div', {'class': 'btn btn-delete-video btn-danger btn-xs'})
 							.insert({'bottom': new Element('i', {'class': 'glyphicon glyphicon-trash'}) })
@@ -524,7 +544,9 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			tmp.me._word = word;
 			$(tmp.me._htmlIds.itemDiv).update('');
 			tmp.me._getVideoUploadPanel();
-		}
+		} else return;
+		
+		$(tmp.me._htmlIds.breadcrumb).show().insert({'bottom': new Element('li').update('Word: ' + tmp.me._word.name)});
 		
 		return tmp.me;
 	}
@@ -565,12 +587,12 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element('td', {'class': 'form-group'})
 				.insert({'bottom': new Element('input', {'class': 'form-control', 'disabled': true, 'title': 'Language Name', 'save-item-panel': 'languageName', 'value': tmp.me._language.name}) })
 			})
-			.insert({'bottom': new Element('td')
+			.insert({'bottom': new Element('td', {'class': 'hidden'})
 				.insert({'bottom': (tmp.isTitle === true ? word.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': tmp.me._word.active ? tmp.me._word.active : true}) ) })
 			})
 			.insert({'bottom': new Element('td', {'class': 'text-right'})
-				.insert({'bottom':  new Element('span', {'class': 'btn-group btn-group-sm'})
-					.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-save-word', 'title': 'Save'})
+				.insert({'bottom':  new Element('span', {'class': 'btn-group'})
+					.insert({'bottom': new Element('span', {'class': 'btn btn-success btn-save-word btn-responsive btn-sm', 'title': 'Save'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-ok'}) })
 						.observe('click', function(){
 							tmp.btn = this;
@@ -578,7 +600,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							tmp.me.selectWord();
 						})
 					})
-					.insert({'bottom': new Element('span', {'class': 'btn btn-danger', 'title': 'Delete'})
+					.insert({'bottom': new Element('span', {'class': 'btn btn-danger btn-responsive btn-sm', 'title': 'Delete'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'}) })
 						.observe('click', function(){
 							if(tmp.me._word.id)
@@ -613,11 +635,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'colspan': tmp.isTitle ? 2 : 1}).update(word.name) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Category' : tmp.me._category.name) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Language' : tmp.me._language.name) })
-			.insert({'bottom': new Element(tmp.tag)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'hidden'})
 				.insert({'bottom': (tmp.isTitle === true ? word.active : new Element('input', {'type': 'checkbox', 'disabled': true, 'checked': word.active}) ) })
 			})
-			.insert({'bottom': tmp.isTitle !== true ? '' : new Element(tmp.tag, {'id': tmp.me._htmlIds.newWordBtn, 'class': 'text-right'})
-				.insert({'bottom': new Element('a', {'class': 'btn btn-success btn-xs'})
+			.insert({'bottom': tmp.isTitle !== true ? '' : new Element(tmp.tag, {'id': tmp.me._htmlIds.newWordBtn, 'class': 'text-right'}).setStyle('display: none;')
+				.insert({'bottom': new Element('a', {'class': 'btn btn-success btn-xs btn-responsive'})
 					.insert({'bottom': new Element('span', {'class': 'fa fa-plus'})})
 				})
 				.observe('click', function(){
@@ -656,9 +678,13 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 							.insert({'bottom': tmp.listDiv = new Element('tbody') })
 						})
 					});
-					tmp.result.items.each(function(item) {
-						tmp.listDiv.insert({'bottom': tmp.me._getWordRow(item) });
-					});
+					if(tmp.result.items.length > 0) {
+						tmp.result.items.each(function(item) {
+							tmp.listDiv.insert({'bottom': tmp.me._getWordRow(item) });
+						});
+					} else {
+						$(tmp.me._htmlIds.newWordBtn).show();
+					}
 				} catch (e) {
 					$(tmp.searchPanel).insert({'bottom': new Element('div', {'class': 'panel-body'}).update(tmp.me.getAlertBox('ERROR', e).addClassName('alert-danger')) });
 				}
@@ -698,13 +724,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						})
 					})
 				})
-				.insert({'bottom': new Element('span', {'class': 'btn btn-success pull-right btn-sm btn-danger'})
-					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'}) })
-					.observe('click', function(){
-						$(tmp.me._htmlIds.searchPanel).down('.search-txt').clear().focus();
-						$(tmp.me._htmlIds.searchPanel).down('.table tbody').innerHTML = null;
-					})
-				})
 			})
 			;
 		return tmp.newDiv;
@@ -714,6 +733,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.me._category = category;
 		tmp.me._language = category.language;
+		$(tmp.me._htmlIds.breadcrumb).show().insert({'bottom': new Element('li').update('Category: ' + category.name)});
 		$(tmp.me._htmlIds.itemDiv).update(tmp.wordPanel = tmp.me._getWordListPanel());
 		tmp.wordPanel.down('input.search-txt').focus();
 		return tmp.me;
@@ -726,7 +746,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'th': 'td');
-		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'btn-hide-row item_row') + (category.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : category.id)}).store('data', category)
+		tmp.newDiv = new Element('tr', {'class': (tmp.isTitle === true ? 'item_top_row' : 'item_row') + (category.active == 0 ? ' danger' : ''), 'item_id': (tmp.isTitle === true ? '' : category.id)}).store('data', category)
 			.insert({'bottom': new Element(tmp.tag)
 				.insert({'bottom': (tmp.isTitle === true ? '&nbsp;':
 					new Element('span', {'class': 'btn btn-primary btn-xs'}).update('select')	
@@ -815,13 +835,6 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 									$(tmp.me._htmlIds.searchPanel).down('.table tbody').innerHTML = null;
 							}
 						})
-					})
-				})
-				.insert({'bottom': new Element('span', {'class': 'btn btn-success pull-right btn-sm btn-danger'})
-					.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'}) })
-					.observe('click', function(){
-						$(tmp.me._htmlIds.searchPanel).down('.search-txt').clear().focus();
-						$(tmp.me._htmlIds.searchPanel).down('.table tbody').innerHTML = null;
 					})
 				})
 			})

@@ -7,6 +7,7 @@
 <com:TCallback ID="saveWordBtn" onCallback="Page.saveWord" />
 <div class="container"">
 	<div class="pagewrapper categorydetails">
+		<ol id="breadcrumb" class="breadcrumb" style="display: none;"></ol>
 		<div id="detailswrapper" class="contentDiv"></div>
 	</div>
 </div>
