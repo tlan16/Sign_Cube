@@ -27,7 +27,7 @@
        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
        </div><!-- end columns -->
        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 user-menu-bar" >
-       	   <com:TPanel ID="user_menu_not_login" CssClass="top-bar-menu pull-right">
+       	   <com:TPanel ID="user_menu_not_login" CssClass="top-bar-menu pull-right hidden">
       	   		<ul class="nav nav-pills" role="tablist">
       	   			<li><a href="/login.html"><i class="fa fa-user"></i> Admin Login</a></li>
       	   		</ul>
