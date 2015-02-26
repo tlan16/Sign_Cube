@@ -30,6 +30,7 @@ abstract class SystemCoreAbstract
 			$base . '/exception/',
 			$base . '/util/',
 			$base . '/util/Connectors/',
+			$base . '/util/Connectors/Mailchimp/'
 		);
 		foreach ($autoloadPaths as $path)
 		{

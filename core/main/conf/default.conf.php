@@ -28,6 +28,9 @@ return array(
 			'secret-key' => '6LfeqgITAAAAALYcYcQFP2jd7oAqnvMxZBcxyl'
 		)
 	)
+	,'mailChimp' => array(
+		'api-key' => '24672389dcbb536fddab603d23a0ad2a-us10'
+	)
 	,'contact-us' => array (
 		'tos' => array('tlan16@sina.com' => 'Signcube Web Contact')
 	)
