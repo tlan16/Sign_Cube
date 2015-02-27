@@ -24,13 +24,40 @@ $upload_handler = new UploadHandler(array(
 	'print_response' => false
 	,'upload_dir'	=> $path 
 	,'param_name' => 'file'
+	,'max_file_size' => 1000000/*1MB*/ * 50
 ));
 
-$fileName = $path . $_FILES['file']['name'];
-if(!is_file($fileName))
-	die('Invalid file!');
-$asset = Asset::registerAsset($_FILES['file']['name'], $fileName);
+$fileName = $outputFile = $path . $_FILES['file']['name'];
+if($_FILES['file']['type'] !== 'video/mp4')
+{
+	$inputFile = $fileName;
+	$outputFile = $path. pathinfo($inputFile, PATHINFO_FILENAME) . "_after.mp4";
+	$commend = Config::get('handbrake', 'program') . "  -i " . $inputFile . " -t 1 --angle 1 -c 1 -o " . $outputFile . Config::get('handbrake', 'param');
+	execAndWait($commend);
+}
+
+if(!is_file($outputFile))
+	throw new Exception('Invalid file!');
+$asset = Asset::registerAsset(basename($outputFile), $outputFile);
 $video = Video::create($asset, '', '');
 header('Content-Type: application/json');
-echo json_encode(array('asset'=> $asset->getJson(), 'video'=> $video->getJson()));
+echo json_encode(array('video'=> $video->getJson()));
 
+function execAndWait($cmd) {
+	if (substr(php_uname(), 0, 7) == "Windows"){
+		$WshShell = new COM("WScript.Shell");
+		$oExec = $WshShell->Run($cmd, 3, true);
+	}
+	else {
+		exec($cmd);
+	}
+}
+function execInBackground($cmd) {
+	if (substr(php_uname(), 0, 7) == "Windows"){
+		$WshShell = new COM("WScript.Shell");
+		$oExec = $WshShell->Run($cmd, 3, false);
+	}
+	else {
+		exec($cmd);
+	}
+}
