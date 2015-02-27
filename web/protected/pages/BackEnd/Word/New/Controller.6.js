@@ -441,10 +441,10 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			,add: function(e, data) {
 	                tmp.uploadErrors = [];
 	                console.debug(data.originalFiles[0]['type']);
-	                tmp.me.showModalBox('Type', data.originalFiles[0]['type']);
-	                return tmp.me;
+//	                tmp.me.showModalBox('Type', data.originalFiles[0]['type']);
+//	                return tmp.me;
 	                
-	                tmp.acceptFileTypes = /^video\/(mp4|x-ms-wmv)$/i; // only take mp4 so far since it's well browser supported
+	                tmp.acceptFileTypes = /^video\/(mp4|x-ms-wmv|quicktime)$/i; // only take mp4 so far since it's well browser supported
 	                // Only one file each time
 	                if(data.originalFiles && data.originalFiles.length != 1) {
 	                	tmp.me.showModalBox('Invalid File Quantity', 'Only one file per upload');
