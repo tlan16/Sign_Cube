@@ -40,7 +40,11 @@ return array(
 				'"S:\Program Files\Handbrake\HandBrakeCLI.exe"'
 			:
 				'HandBrakeCLI'
-		,'param'	=> " -e x264  -q 20.0 -r 24 --vfr  -a 1,1 -E ffaac,copy:ac3 -B 80,80 -6 mono,none -R Auto,Auto -D 0.0,0.0 --audio-copy-mask aac,ac3,dtshd,dts,mp3 --audio-fallback ffac3 -f mp4 -X 480 --keep-display-aspect --modulus 2 -m --x264-preset fast --h264-profile high --h264-level 4.0",
+		,'param' =>
+			(substr(php_uname(), 0, 7) == "Windows") ?
+				" -e x264  -q 20.0 -r 24 --vfr  -a 1,1 -E ffaac,copy:ac3 -B 80,80 -6 mono,none -R Auto,Auto -D 0.0,0.0 --audio-copy-mask aac,ac3,dtshd,dts,mp3 --audio-fallback ffac3 -f mp4 -X 480 --keep-display-aspect --modulus 2 -m --x264-preset fast --h264-profile high --h264-level 4.0"
+			:
+				" -e x264  -q 20.0 -r 24 --vfr  -a 1,1 -E ffaac,copy:ac3 -B 80,80 -6 mono,none -R Auto,Auto -D 0.0,0.0 -f mp4 -X 480 --keep-display-aspect --modulus 2 -m"'
 	)
 );
 
