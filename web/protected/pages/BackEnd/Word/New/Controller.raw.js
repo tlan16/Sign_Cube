@@ -431,7 +431,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 	,_loadUploader: function(){
 		var tmp = {};
 		tmp.me = this;
-		tmp.fileSizeLimit = 1000000/*1MB*/ * 500;
+		tmp.fileSizeLimit = 1000000/*1MB*/ * 50;
 		tmp.uploader = jQuery('#fileupload').fileupload({
 			url: '/fileUploader/'
 			,type: 'POST'
@@ -440,17 +440,24 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			,maxFileSize: tmp.fileSizeLimit
 			,add: function(e, data) {
 	                tmp.uploadErrors = [];
-	                // Video Type Limit
-	                tmp.acceptFileTypes = /^video\/(mp4)$/i; // only take mp4 so far since it's well browser supported
+//	                tmp.me.showModalBox('Type', data.originalFiles[0]['type']);
+//	                return tmp.me;
+	                
+	                tmp.acceptFileTypes = /^video\/(mp4|x-ms-wmv|quicktime)$/i; // only take mp4 so far since it's well browser supported
+	                // Only one file each time
 	                if(data.originalFiles && data.originalFiles.length != 1) {
 	                	tmp.me.showModalBox('Invalid File Quantity', 'Only one file per upload');
+	                	return tmp.me;
 	                }
+	                // Video Type Limit
 	                if(data.originalFiles[0]['type'].length && !tmp.acceptFileTypes.test(data.originalFiles[0]['type'])) {
 	                	tmp.me.showModalBox('Invalid File Type', 'Not an accepted file type');
+	                	return tmp.me;
 	                }
 	                // Video Size Limit
 	                if(data.originalFiles[0]['size'] && data.originalFiles[0]['size'] > tmp.fileSizeLimit) {
-	                	tmp.me.showModalBox('Invalid File Size', 'Filesize is too big');
+	                	tmp.me.showModalBox('Invalid File Size', 'File is too big');
+	                	return tmp.me;
 	                }
 	                if(tmp.uploadErrors.length == 0) {
 	                    data.submit();
@@ -555,11 +562,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.tbody = btn.up('.table').down('tbody');
 		tmp.searchTxt = $F($(tmp.me._htmlIds.searchPanel).down('input.search-txt'));
-		tmp.tbody.update().insert({'bottom': tmp.me._getWordEditPanel(tmp.searchTxt)}).down('[save-item-panel="name"]').click();
+		tmp.tbody.update().insert({'bottom': tmp.me._getNewWordPanel(tmp.searchTxt)}).down('[save-item-panel="name"]').select();
 		
 		return tmp.me;
 	}
-	,_getWordEditPanel: function(searchTxt) {
+	,_getNewWordPanel: function(searchTxt) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.searchTxt = (searchTxt || '')
@@ -569,14 +576,11 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 			.insert({'bottom': new Element('input', {'type': 'hidden', 'save-item-panel': 'languageId', 'value': tmp.me._language.id}) })
 			.insert({'bottom': new Element('td', {'class': 'form-group', 'colspan': 2})
 				.insert({'bottom': new Element('input', {'required': true, 'class': 'form-control', 'placeholder': 'The Name of the Word', 'save-item-panel': 'name', 'value': tmp.me._word.name ? tmp.me._word.name : tmp.searchTxt}) })
-				.observe('click',function(){
-					$(this).down('input').select();
-					$(this).down('input').focus();
-				})
 				.observe('keydown', function(event){
 					tmp.btn = $(this);
 					tmp.me.keydown(event, function() {
-						tmp.btn.up('.save-item-panel').down('.btn.btn-save-word').click();
+						tmp.btn.up('.save-item-panel').down('.btn.btn-save-word').select();
+						tmp.btn.up('.save-item-panel').down('.btn.btn-save-word').focus();
 					});
 					return false;
 				})
@@ -604,7 +608,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-remove'}) })
 						.observe('click', function(){
 							if(tmp.me._word.id)
-								$(this).up('.save-item-panel').replace(tmp.me._getWordEditPanel().addClassName('item_row').writeAttribute('item_id', tmp.me._word.id) );
+								$(this).up('.save-item-panel').replace(tmp.me._getNewWordPanel().addClassName('item_row').writeAttribute('item_id', tmp.me._word.id) );
 							else
 								$(this).up('.save-item-panel').remove();
 						})
@@ -632,7 +636,8 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					})
 				) })
 			})
-			.insert({'bottom': new Element(tmp.tag, {'colspan': tmp.isTitle ? 2 : 1}).update(word.name) })
+			.insert({'bottom': new Element(tmp.tag).update('').setStyle(tmp.isTitle ? '' : 'display:none;') })
+			.insert({'bottom': new Element(tmp.tag, {'colspan': 1}).update(word.name) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Category' : tmp.me._category.name) })
 			.insert({'bottom': new Element(tmp.tag).update(tmp.isTitle === true ? 'Language' : tmp.me._language.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'hidden'})
@@ -810,9 +815,10 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.newDiv = new Element('div', {'id': tmp.me._htmlIds.searchPanel, 'class': 'panel panel-default search-panel'})
 			.insert({'bottom': new Element('div', {'class': 'panel-heading form-inline'})
-				.insert({'bottom': new Element('strong').update('Select the Category for the Word: ') })
+				.insert({'bottom': new Element('span').update('Search for ') })
+				.insert({'bottom': new Element('strong').update('Sign Language: ') })
 				.insert({'bottom': new Element('span', {'class': 'input-group col-sm-6'})
-					.insert({'bottom': new Element('input', {'class': 'form-control search-txt init-focus', 'placeholder': 'the Name of Category ...'}) 
+					.insert({'bottom': new Element('input', {'title': 'Name of Sign Language', 'class': 'form-control search-txt init-focus', 'placeholder': 'the Name of Sign Language ...'}) 
 						.observe('keydown', function(event){
 							tmp.txtBox = this;
 							tmp.me.keydown(event, function() {
