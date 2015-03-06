@@ -35,16 +35,10 @@
        	   <com:TPanel ID="user_menu_login" CssClass="top-bar-menu pull-right" Visible='false'>
       	   		<ul class="nav nav-pills" role="tablist">
       	   			<li><a href="/backend.html" title="Home"><i class="glyphicon glyphicon-home"></i><span class="hidden-xs hidden-sm"> Home</span></a></li>
-      	   			<li><a href="/backend/properties.html" title="Properties"><i class="glyphicon glyphicon-th-list"></i><span class="hidden-xs hidden-sm"> Properties</span></a></li>
       	   			<li><a href="/backend/word/new.html" title="Word Creation"><i class="fa fa-caret-square-o-right"></i><span class="hidden-xs hidden-sm"> Word Creation</span></a></li>
-      	   			<li><a href="/backend/messages.html" title="Messages"><i class="glyphicon glyphicon-envelope"></i><span class="hidden-xs hidden-sm"> Messages</span></a></li>
       	   			<li class="dropdown visible-xs visible-md visible-sm visible-lg">
       	   				<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i><span class="hidden-xs hidden-sm"> <%= Core::getUser()->getPerson()->getFirstName() %></span><span class="caret"></span></a>
       	   				<ul class="dropdown-menu" role="menu">
-							<li><a href="#"><i class="fa fa-lock"></i><span class="hidden-xs hidden-sm"> Messages</span></a></li>
-							<li><a href="#">Another action</a></li>
-							<li><a href="#">Something else here</a></li>
-							<li class="divider"></li>
 							<li><a href="/logout.html"><i class="fa fa-sign-out"></i>Logout</a></li>
 						</ul>
       	   			</li>
