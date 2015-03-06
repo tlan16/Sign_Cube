@@ -115,10 +115,17 @@ PageJs.prototype = Object.extend(new FrontPageJs(), {
 		tmp.row = new Element('tr').setStyle(tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '').store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-3'}).update(row.name).setStyle(tmp.isTitle ? 'font-weight:bold;' : 'text-decoration: underline; cursor: pointer;')
 				.observe('click', function(){
-					
+					tmp.me._openDetailPage(row);
 				})
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'categoryName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.category.name + '(' + row.category.language.name + ')') });
 		return tmp.row;
+	}
+	,_openDetailPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newWindow = window.open('/wordlist/' + row.id + '.html','_blank');
+		tmp.newWindow.focus();
+		return tmp.me;
 	}
 });
