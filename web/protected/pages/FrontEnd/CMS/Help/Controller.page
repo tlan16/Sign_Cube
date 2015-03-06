@@ -1,0 +1,28 @@
+<com:TContent ID="MainContent">
+	<div class="homepage-wrapper" data-offset="0" data-target="#top-menu-div" data-spy="scroll">
+	    <section id="mainContent">
+			<div class="container">
+				<div class="jumbotron">
+					<h2>Help</h2>
+					<br/>
+					<h3>To upload a video follow the instructions below: </h3>
+<div style="padding-left:2%;">
+<li>
+1. Sign Up by clicking the Login button at the top of the page, and registering with an email address.
+</li><li>
+2. Download our Android Mobile friendly Application from the Play Store or click here.
+</li><li>
+3. Once You have downloaded the application you will be promted to enter your user name and password, to log in as a secure user.
+</li><li>
+4. Set up your Smart Phone or Tablet on a still surface, if possible with the camera facing you. Position yourself underneath the guidelines and when the timer has reached zero, begin to perform the sign.
+</li><li>
+5. After completing the sign, follow the prompts and enter the Word name, the Sign-Language name, the Word Type and a Definition for the word.
+</li><li>
+6. Hit Upload and your video will be processed by SignCube administrators and put online swiftly. 
+</li>
+</div>
+				</div>
+			</div>
+	    </section>
+	</div>
+</com:TContent>

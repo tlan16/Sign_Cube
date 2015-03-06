@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<application id="PropertA" mode="Performance">
+<application id="PropertA" mode="Debug">
 	<!-- alias definitions and namespace usings <paths> <alias id="myalias" 
 		path="./lib" /> <using namespace="Application.common.*" /> </paths> -->
 
@@ -11,20 +11,24 @@
 
 	<!-- configurations for modules -->
 	<modules>
-		<module id="cache" class="System.Caching.TAPCCache" />
+		<!--module id="cache" class="System.Caching.TAPCCache" /-->
 		<module id="Session" class="Application.classes.Session.SessionDb" UseCustomStorage="true" />
 		<module id="security" class="TSecurityManager" EncryptionKey="ProertAAwesome" ValidationKey="bfb9e1b24ba6308e39495a4a78f35d70" />
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
 		
-			<!-- FrontEnd:: 3rdPartt Auslan page -->
-			<url ServiceParameter="BackEnd.3rdParty.Auslan.AuslanController" pattern="3rdparty/auslan.html" />
-		
+			<!-- FrontEnd:: Dictionary Listing page -->
+			<url ServiceParameter="FrontEnd.Dictionary.List.Controller" pattern="wordlist.html" />
+			<!-- FrontEnd:: Dictionary Detail page -->
+			<url ServiceParameter="FrontEnd.Dictionary.Detail.DetailsController" pattern="wordlist/{id}.html" parameters.id="\d+"/>
+				
+			<!-- FrontEnd:: CMS Career page -->
+			<url ServiceParameter="FrontEnd.CMS.Career.Controller" pattern="career.html" />
+			<!-- FrontEnd:: CMS Help page -->
+			<url ServiceParameter="FrontEnd.CMS.Help.Controller" pattern="help.html" />
+					
 			<!-- FrontEnd:: Importer page -->
 			<url ServiceParameter="BackEnd.Importer.New.ImporterController" pattern="importer.html" />
-
-			<!-- FrontEnd:: Word Listing page -->
-			<url ServiceParameter="FrontEnd.Word.List.WordController" pattern="wordlist.html" />
 			
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="FrontEnd.Login.LoginController" pattern="login.html" />
@@ -39,6 +43,11 @@
 			
 			<!-- BackEnd:: Language:: List/New page -->
 			<url ServiceParameter="BackEnd.Language.List.Controller" pattern="backend/language.html" />
+			
+			<!-- BackEnd:: Video:: List page -->
+			<url ServiceParameter="BackEnd.Video.List.Controller" pattern="backend/video.html" />
+			<!-- BackEnd:: Video:: New page -->
+			<url ServiceParameter="BackEnd.Video.New.Controller" pattern="backend/video/new.html" />
 			
 			<!-- BackEnd:: Category:: List page -->
 			<url ServiceParameter="BackEnd.Category.List.Controller" pattern="backend/category.html" />
@@ -80,8 +89,8 @@
 			<!-- asset service -->
 			<url ServiceId="backendAjax" ServiceParameter="" pattern="backend/ajax/{method}" parameters.method="\w+"  />
 			
-			<!-- asset service -->
-			<url ServiceId="ajax" ServiceParameter="" pattern="ajax/{method}" parameters.method="\w+"  />
+			<!-- ajax service -->
+			<url ServiceId='ajax' ServiceParameter="" pattern="ajax/{method}" parameters.method="\w+"  />
 			
 			<!-- asset service -->
 			<url ServiceId="app" ServiceParameter="" pattern="app/{method}" parameters.method="\w+"  />
