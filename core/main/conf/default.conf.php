@@ -46,6 +46,9 @@ return array(
 					: // server has an older version
 				" -e x264  -q 20.0 -r 24 -a 1,1 -E faac,copy:ac3 -B 80,80 -6 mono,none -R Auto,Auto -D 0.0,0.0 -f mp4 -X 480 --loose-anamorphic -m -x cabac=0:ref=2:me=umh:bframes=0:weightp=0:8x8dct=0:trellis=0:subme=6"
 	)
+	,'welcomeVideo' => array (
+		'id' => 3
+)
 );
 
 ?>
