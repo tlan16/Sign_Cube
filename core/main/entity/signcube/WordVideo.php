@@ -4,7 +4,7 @@
  *
  * @package    Core
  * @subpackage Entity
- * @author     lhe<helin16@gmail.com>
+ * @author     tlan<tlan16@sina.com>
  */
 class WordVideo extends BaseEntityAbstract
 {

@@ -4,7 +4,7 @@
  * 
  * @package    Web
  * @subpackage Controller
- * @author     lhe<helin16@gmail.com>
+ * @author     lhe<helin16@gmail.com> tlan<tlan16@sina.com>
  */
 class HomeController extends FrontEndPageAbstract
 {
