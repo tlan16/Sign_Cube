@@ -498,3 +498,9 @@ border-left: 1px solid #588f11;
     line-height: 1.2;
   }
 }
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
