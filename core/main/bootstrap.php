@@ -23,7 +23,6 @@ abstract class SystemCoreAbstract
 			$base . '/entity/',
 			$base . '/entity/3rdparty/',
 			$base . '/entity/content/',
-			$base . '/entity/property/',
 			$base . '/entity/signcube/',
 			$base . '/entity/system/',
 			$base . '/entity/tag/',
