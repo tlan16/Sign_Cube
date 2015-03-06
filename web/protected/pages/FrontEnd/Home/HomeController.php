@@ -52,5 +52,11 @@ class HomeController extends FrontEndPageAbstract
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 		return $this;
 	}
+	public function getWelcomeVideo()
+	{
+		if(!($video = Video::get(Config::get('welcomeVideo', 'id'))) instanceof Video)
+			throw new Exception('No Welcome Video Found');
+		return '"' . $video->getAsset()->getUrl() . '"';
+	}
 }
 ?>

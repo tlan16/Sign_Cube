@@ -3,7 +3,7 @@
 	<div class="homepage-wrapper" data-offset="0" data-target="#top-menu-div" data-spy="scroll">
 	    <section id="mainContent">
 			<div class="container">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 vcenter">
 					<h1>
 						<span style="font-size: 36px; font-family: Helvetica; color: rgb(57, 132, 198);">Welcome to Signcube</span>
 					</h1>
@@ -27,6 +27,12 @@
 						<li><span style="font-family: Helvetica;">longer video clips&mdash;subtitled in English&mdash;of&nbsp;deaf people telling stories or having conversations in Auslan,</span></li>
 						<li><span style="font-family: Helvetica;">some of the video clips of used in the Signcube is from third party.</li>
 					</ul>
+				</div><!--
+   				--><div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 vcenter">
+					<video width="100%" autoplay loop>
+						<source src=<%= $this->getWelcomeVideo() %> type="video/mp4">
+						Your browser does not support the video tag.
+					</video> 
 				</div>
 			</div>
 	    </section>
