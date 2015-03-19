@@ -160,7 +160,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.tag = (tmp.isTitle === true ? 'th' : 'td');
 		tmp.isTitle = (isTitle || false);
-		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).store('data', row)
+		tmp.row = new Element('tr', {'style': tmp.isTitle ? 'font-size:110%; font-weight:bold;' : '', 'class': (tmp.isTitle === true ? '' : (row.active ? 'btn-hide-row' : 'danger'))}).addClassName('item_row').store('data', row)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'categoryName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.category.name + '(' + row.category.language.name + ')') })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'languageName col-xs-3', 'style': tmp.isTitle ? 'font-weight:bold;' : ''}).update(row.category.language.name).hide() })

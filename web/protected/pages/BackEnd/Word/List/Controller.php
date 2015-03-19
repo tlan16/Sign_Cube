@@ -68,7 +68,7 @@ class Controller extends BackEndPageAbstract
 				$params[] = $languageId;
 			}
 			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('wd.id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, true, $pageNo, $pageSize, array('wd.id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)
@@ -105,11 +105,11 @@ class Controller extends BackEndPageAbstract
     		$class = trim($this->_focusEntity);
     		$id = isset($param->CallbackParameter->item_id) ? $param->CallbackParameter->item_id : array();
     			
-    		$item = $class::get($id);
+    		$item = $obj =$class::get($id);
     			
     		$item->setActive(false)
     			->save();
-    		$results['item'] = $item->getJson();
+    		$results['item'] = $item->getJson(array('language'=> $obj->getLanguage()->getJson(), 'category'=>$obj->getCategory()->getJson()));
     	}
     	catch(Exception $ex)
     	{
