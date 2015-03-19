@@ -186,7 +186,7 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 		tmp.me = this;
 		tmp.newDIv = new Element('div', {'id': tmp.me._htmlIds.definitionsContainer})
 			.insert({'bottom': new Element('div', {'class': 'row'})
-				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-success pull-right'}).setStyle('margin-right: 5%;')
+				.insert({'bottom': new Element('span', {'class': 'btn btn-sm btn-success pull-right'}).setStyle('margin-right: 5%; margin-bottom:20px;')
 					.insert({'bottom': new Element('span').update('Save Word')})
 					.observe('click', function(){
 						tmp.me._saveWord();
