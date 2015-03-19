@@ -181,18 +181,20 @@ PageJs.prototype = Object.extend(new BackEndPageJs(), {
 					.insert({'bottom': new Element('span', {'class': 'btn btn-xs btn-default', 'title': 'Edit'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
 						.observe('click', function(){
-							$(this).up('.item_row').replace(tmp.editEl = tmp.me._getEditPanel(row));
-							tmp.me._loadChosen();
-							tmp.editEl.down('.form-control[save-item-panel]').focus();
-							tmp.editEl.down('.form-control[save-item-panel]').select();
-							tmp.editEl.getElementsBySelector('.form-control[save-item-panel]').each(function(item) {
-								item.observe('keydown', function(event){
-									tmp.me.keydown(event, function() {
-										tmp.editEl.down('.btn-success span').click();
-									});
-									return false;
-								})
-							});
+							if($(this).up('.item_row')) {
+								$(this).up('.item_row').replace(tmp.editEl = tmp.me._getEditPanel(row));
+								tmp.me._loadChosen();
+								tmp.editEl.down('.form-control[save-item-panel]').focus();
+								tmp.editEl.down('.form-control[save-item-panel]').select();
+								tmp.editEl.getElementsBySelector('.form-control[save-item-panel]').each(function(item) {
+									item.observe('keydown', function(event){
+										tmp.me.keydown(event, function() {
+											tmp.editEl.down('.btn-success span').click();
+										});
+										return false;
+									})
+								});
+							}
 						})
 					})
 					.insert({'bottom': new Element('span', {'class': row.active ? 'btn btn-danger' : '', 'title': 'Delete'}).setStyle(row.active ? '' : 'display:none;')
